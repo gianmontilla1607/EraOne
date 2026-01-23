@@ -132,41 +132,45 @@
 
     <!-- MODAL (Article View) -->
     <div id="modal-overlay" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
-        <div id="modal-content" class="relative max-w-2xl w-full rounded-2xl shadow-2xl overflow-hidden bg-slate-900 border border-slate-700 transform scale-95 transition-transform duration-300 h-[90vh] md:h-auto overflow-y-auto">
+        <div id="modal-content" class="relative max-w-3xl w-full rounded-2xl shadow-2xl overflow-hidden bg-slate-900 border border-slate-700 transform scale-95 transition-transform duration-300 h-[90vh] md:h-auto md:max-h-[90vh] overflow-y-auto">
             
             <!-- Header Image Placeholder -->
-            <div id="modal-image" class="h-40 w-full bg-slate-800"></div>
-            
-            <!-- Botón Volver -->
-            <button onclick="closeModal()" class="absolute top-4 left-4 bg-black/60 backdrop-blur text-white px-4 py-2 rounded-full hover:bg-black/80 flex items-center gap-2 text-sm font-bold shadow-lg transition-all z-10 border border-white/10">
-                <i data-lucide="arrow-left" size="16"></i> Volver
-            </button>
+            <div id="modal-image" class="h-48 md:h-64 w-full bg-slate-800 bg-cover bg-center"></div>
 
-            <!-- Botón Cerrar (X) -->
-            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 z-10">
+            <!-- Botón Cerrar (X) Flotante -->
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 z-20 backdrop-blur-sm border border-white/10">
                 <i data-lucide="x" size="20"></i>
             </button>
 
-            <div class="p-8">
+            <div class="p-6 md:p-10">
+                <!-- Botón Volver (EN FLUJO) -->
+                <div class="flex items-center gap-2 mb-6 text-sm">
+                    <button onclick="closeModal()" class="flex items-center gap-1 text-amber-500 hover:text-amber-400 font-medium group transition-colors">
+                        <i data-lucide="arrow-left" size="16" class="group-hover:-translate-x-1 transition-transform"></i>
+                        <span>Volver a la sección</span>
+                    </button>
+                </div>
+
                 <!-- Meta info (Year/Tag) -->
-                <div id="modal-meta" class="flex items-center gap-3 mb-2 text-amber-500 font-mono text-sm uppercase tracking-widest">
+                <div id="modal-meta" class="flex items-center gap-3 mb-4 text-amber-500 font-mono text-sm uppercase tracking-widest border-b border-slate-800 pb-4">
                     <!-- Icon + Text injected via JS -->
                 </div>
 
-                <h2 id="modal-title" class="text-3xl font-bold mb-4 text-white"></h2>
+                <h2 id="modal-title" class="text-3xl md:text-4xl font-extrabold mb-6 text-white leading-tight"></h2>
                 
-                <div id="modal-body" class="text-lg leading-relaxed text-slate-300 space-y-4">
+                <!-- Body con soporte para HTML -->
+                <div id="modal-body" class="text-lg leading-relaxed text-slate-300 space-y-6 font-light">
                     <!-- Content injected via JS -->
                 </div>
                 
                 <!-- Ad Placeholder Inside Modal -->
-                <div class="bg-slate-800/50 border border-slate-700/50 rounded-lg flex flex-col items-center justify-center text-slate-500 text-xs uppercase tracking-widest my-8 h-24 w-full">
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-lg flex flex-col items-center justify-center text-slate-500 text-xs uppercase tracking-widest my-12 h-24 w-full">
                     <span>Publicidad</span>
                     <span class="text-[10px] opacity-50 mt-1">Apoya a EraOne</span>
                 </div>
 
-                <div class="mt-8 flex justify-end">
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-white font-medium text-sm flex items-center gap-1">
+                <div class="mt-8 flex justify-center border-t border-slate-800 pt-8">
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-white font-medium text-sm flex items-center gap-2 px-6 py-3 rounded-full hover:bg-slate-800 transition-colors">
                         Cerrar Artículo
                     </button>
                 </div>
@@ -188,6 +192,8 @@
             { id: 'explore', label: 'Explorar' },
         ];
 
+        // --- CONTENIDO EXPANDIDO ---
+
         const timelineData = [
             {
                 id: 1,
@@ -196,7 +202,15 @@
                 category: "universe",
                 icon: "atom",
                 shortDesc: "El instante en que el tiempo y el espacio comenzaron.",
-                fullContent: "Hace 13.800 millones de años, todo el universo estaba contenido en un punto infinitamente pequeño y denso. En una fracción de segundo, se expandió exponencialmente. No fue una explosión en el espacio, sino una explosión DEL espacio. En los primeros 380.000 años, el universo era una sopa opaca de plasma. Al enfriarse, se formaron los primeros átomos de hidrógeno y helio, permitiendo que la luz viajara libremente por primera vez.",
+                fullContent: `
+                    <p><strong>No fue una explosión en el espacio, sino una explosión <em>del</em> espacio.</strong> Hace 13.800 millones de años, todo lo que hoy vemos —galaxias, estrellas, planetas y el espacio vacío entre ellos— estaba comprimido en un punto de densidad infinita, más pequeño que un átomo. En una trillonésima de segundo, el universo experimentó una "inflación" brutal, expandiéndose más rápido que la velocidad de la luz.</p>
+                    
+                    <p>Durante los primeros minutos, el cosmos era un reactor nuclear titánico. Se formaron los primeros núcleos de hidrógeno y helio, pero el calor era tan intenso que la luz no podía viajar; los fotones estaban atrapados en una sopa densa de plasma. El universo era opaco, como una niebla brillante e infinita.</p>
+                    
+                    <p>Tuvieron que pasar <strong>380.000 años</strong> para que el universo se enfriara lo suficiente (a unos 3.000 °C) para que los electrones se unieran a los núcleos y formaran los primeros átomos neutros. En ese instante, la niebla se disipó y la luz pudo viajar libremente por primera vez. Esa luz primigenia todavía viaja hoy: es el Fondo Cósmico de Microondas, una "fotografía" del universo bebé.</p>
+                    
+                    <p class="text-amber-400 italic">Curiosidad: Cuando sintonizas una radio antigua o ves estática en una televisión de tubo analógica, aproximadamente el 1% de ese "ruido" es radiación remanente del Big Bang interactuando con tu antena.</p>
+                `,
                 imagePlaceholder: "bg-gradient-to-br from-orange-500 via-red-600 to-black"
             },
             {
@@ -206,7 +220,15 @@
                 category: "universe",
                 icon: "globe",
                 shortDesc: "De polvo estelar a un planeta habitable.",
-                fullContent: "Nuestro sistema solar se formó a partir del colapso de una nube molecular gigante. La Tierra nació como una bola de roca fundida, bombardeada constantemente por asteroides. Uno de estos impactos, con un protoplaneta llamado Theia, probablemente formó nuestra Luna, estabilizando el eje de la Tierra y creando las mareas esenciales para la vida.",
+                fullContent: `
+                    <p>Nuestro sistema solar nació de las cenizas de estrellas muertas. Una nube molecular gigante colapsó (posiblemente empujada por la onda expansiva de una supernova cercana), formando el Sol en el centro. El resto del material formó un disco giratorio de polvo y gas: el disco protoplanetario.</p>
+                    
+                    <p>En este caos, la gravedad hizo su trabajo. Pequeños granos de polvo chocaron y se pegaron, formando rocas, luego asteroides y finalmente protoplanetas. La Tierra temprana no era el paraíso azul que conocemos; era una bola de magma fundido, bombardeada incesantemente por restos cósmicos.</p>
+                    
+                    <p>El evento más crítico ocurrió poco después: un protoplaneta del tamaño de Marte, llamado <strong>Theia</strong>, chocó contra la Tierra joven. El impacto fue tan violento que fundió ambos mundos y expulsó una enorme cantidad de escombros a la órbita. Esos escombros se fusionaron para formar nuestra <strong>Luna</strong>.</p>
+                    
+                    <p><strong>Consecuencia clave:</strong> Sin este impacto violento, la Tierra no tendría una luna tan grande. La Luna estabiliza la inclinación de nuestro eje, lo que nos da estaciones predecibles y un clima estable durante millones de años. Sin la Luna, el clima de la Tierra sería caótico, dificultando enormemente la evolución de la vida compleja.</p>
+                `,
                 imagePlaceholder: "bg-gradient-to-br from-blue-900 via-blue-600 to-green-500"
             },
             {
@@ -216,7 +238,13 @@
                 category: "life",
                 icon: "dna",
                 shortDesc: "La materia inerte cobra vida.",
-                fullContent: "En los océanos primitivos, moléculas orgánicas complejas comenzaron a replicarse. Surgieron las primeras células procariotas. Durante miles de millones de años, la vida fue microscópica, pero estas cianobacterias inventaron la fotosíntesis, llenando la atmósfera de oxígeno y cambiando el color del planeta para siempre.",
+                fullContent: `
+                    <p>En algún lugar de los océanos primitivos, probablemente en fuentes hidrotermales profundas, ocurrió el milagro de la química: la materia inerte comenzó a comportarse como vida. Moléculas complejas (quizás ARN al principio) aprendieron a hacer copias de sí mismas. Estas primeras entidades se rodearon de membranas de grasa para protegerse del exterior, creando las primeras células procariotas.</p>
+                    
+                    <p>Durante mil millones de años, la vida fue invisible y aburrida. Pero entonces, un grupo de bacterias (las cianobacterias) descubrió una tecnología revolucionaria: la <strong>fotosíntesis</strong>. Aprendieron a usar la luz solar para romper moléculas de agua y obtener energía, liberando un gas residual tóxico para la mayoría de la vida de entonces: el oxígeno.</p>
+                    
+                    <p><strong>El Gran Evento de Oxidación:</strong> Este "residuo" cambió el planeta para siempre. El oxígeno oxidó el hierro de los océanos (volviéndolos rojos por un tiempo) y luego llenó la atmósfera, creando la capa de ozono. Aunque causó una extinción masiva de microbios anaeróbicos, el oxígeno es un combustible de alto octanaje metabólico. Su presencia permitió, eones después, que existieran animales grandes y energéticamente costosos, como nosotros.</p>
+                `,
                 imagePlaceholder: "bg-gradient-to-br from-green-400 to-emerald-900"
             },
             {
@@ -226,7 +254,13 @@
                 category: "humanity",
                 icon: "brain",
                 shortDesc: "El nacimiento del lenguaje simbólico.",
-                fullContent: "Homo sapiens no era la única especie humana, pero algo cambió en nuestro cerebro. Desarrollamos la capacidad de hablar sobre cosas que no existen: mitos, dioses, leyes y dinero. Esta ficción compartida nos permitió cooperar en grandes números, superando a los Neandertales y extendiéndonos por todo el globo.",
+                fullContent: `
+                    <p>Hace 70.000 años, el <em>Homo sapiens</em> era un animal insignificante que vivía en rincones de África. No éramos más fuertes que los Neandertales ni más rápidos que los leones. Sin embargo, algo cambió en la estructura de nuestro cerebro: desarrollamos el <strong>lenguaje ficticio</strong>.</p>
+                    
+                    <p>Muchos animales tienen lenguaje (los monos pueden gritar "¡Cuidado, un águila!"), pero solo los humanos pueden comunicar cosas que no existen físicamente: "El espíritu del río está enojado" o "Esta concha vale por tres pescados". Esta capacidad de crear y creer en <strong>ficciones compartidas</strong> (mitos, religiones, leyes, dinero, naciones) es el superpoder de nuestra especie.</p>
+                    
+                    <p><strong>¿Por qué es importante?</strong> La ficción permite la cooperación flexible a gran escala. Un chimpancé no puede cooperar con 500 extraños porque necesita conocerlos personalmente. Los humanos pueden cooperar con millones de extraños si todos creen en la misma historia (por ejemplo, el valor del dólar o los derechos humanos). Esta revolución nos permitió organizarnos, crear estrategias complejas y, finalmente, dominar el planeta, desplazando a todas las demás especies humanas.</p>
+                `,
                 imagePlaceholder: "bg-gradient-to-br from-yellow-600 to-yellow-900"
             },
             {
@@ -236,7 +270,16 @@
                 category: "invention",
                 icon: "book-open",
                 shortDesc: "Democratizando el conocimiento.",
-                fullContent: "Gutenberg adaptó una prensa de vino para crear la imprenta de tipos móviles. Antes, los libros eran tesoros exclusivos; después, las ideas (como la ciencia moderna o la reforma protestante) pudieron viajar más rápido que las plagas. Fue el internet de la era medieval.",
+                fullContent: `
+                    <p>Antes de 1440, los libros eran objetos de lujo, copiados a mano por monjes en un proceso lento y propenso a errores. Un solo libro podía costar lo mismo que una granja. El conocimiento estaba centralizado y controlado. Johannes Gutenberg, un orfebre alemán, combinó la prensa de vino con tipos móviles de metal duradero y tinta a base de aceite, creando la máquina de copiar definitiva.</p>
+                    
+                    <p>El impacto fue explosivo. En 50 años, había más libros en Europa que los producidos en los mil años anteriores. La información dejó de ser escasa. Esto tuvo consecuencias sísmicas:</p>
+                    <ul class="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>Reforma Religiosa:</strong> Martín Lutero pudo difundir sus críticas a la Iglesia Católica viralmente. La Biblia se tradujo a lenguas locales, permitiendo que la gente interpretara la fe sin intermediarios.</li>
+                        <li><strong>Revolución Científica:</strong> Los científicos pudieron publicar sus hallazgos de forma exacta y estandarizada. Antes, los datos se corrompían al copiarse; con la imprenta, Copérnico y Newton pudieron "dialogar" a través del tiempo con datos fiables.</li>
+                    </ul>
+                    <p><strong>Conexión futura:</strong> La imprenta estandarizó el almacenamiento de información. Fue el primer paso hacia la digitalización: convertir el pensamiento humano en datos reproducibles mecánicamente, el ancestro directo de los paquetes de datos de internet.</p>
+                `,
                 imagePlaceholder: "bg-gradient-to-br from-amber-800 to-gray-800"
             },
             {
@@ -246,7 +289,13 @@
                 category: "invention",
                 icon: "zap",
                 shortDesc: "El sistema nervioso global.",
-                fullContent: "Lo que comenzó como un proyecto militar de defensa se convirtió en la red que conecta a la humanidad. El primer mensaje enviado fue 'LO' (intentaban escribir LOGIN). Hoy, esta red permite que leas esto instantáneamente desde cualquier parte del mundo, colapsando la distancia física.",
+                fullContent: `
+                    <p>En plena Guerra Fría, el Departamento de Defensa de EE.UU. necesitaba una red de comunicaciones que pudiera sobrevivir a un ataque nuclear. La solución no fue construir un búnker central más fuerte, sino <strong>descentralizar</strong>. Crearon una red donde la información se rompía en pequeños "paquetes" que podían tomar cualquier ruta disponible para llegar a su destino. Si un nodo era destruido, los datos fluían por otro camino.</p>
+                    
+                    <p>El 29 de octubre de 1969, se envió el primer mensaje entre dos computadoras (de UCLA a Stanford). Intentaron escribir "LOGIN". El sistema se colgó después de la letra "O". El primer mensaje de internet fue, poéticamente, "LO".</p>
+                    
+                    <p>Lo que nació como herramienta militar y académica se transformó en el <strong>sistema nervioso de la humanidad</strong>. Por primera vez en la historia, la distancia geográfica dejó de ser una barrera para la comunicación instantánea. Esto ha acelerado la innovación (GitHub), cambiado la economía (e-commerce) y reestructurado nuestras relaciones sociales. Internet ha convertido a la especie humana en un superorganismo conectado, para bien y para mal.</p>
+                `,
                 imagePlaceholder: "bg-gradient-to-br from-blue-500 to-cyan-400"
             },
             {
@@ -256,7 +305,13 @@
                 category: "future",
                 icon: "rocket",
                 shortDesc: "La inteligencia se vuelve mercancía.",
-                fullContent: "Hemos creado máquinas capaces de crear arte, código y texto. Estamos en el umbral de una nueva era donde la inteligencia ya no es un atributo exclusivamente biológico. ¿Será esta la herramienta que nos lleve a las estrellas o el filtro que acabe con nuestra civilización?",
+                fullContent: `
+                    <p>Durante décadas, pensamos que la automatización reemplazaría primero el trabajo físico (robots en fábricas) y que la creatividad sería el último bastión humano. Nos equivocamos. La Inteligencia Artificial Generativa (LLMs como GPT, modelos de difusión) demostró que la creatividad, el lenguaje y el razonamiento lógico también pueden ser modelados matemáticamente.</p>
+                    
+                    <p>Estos modelos no "piensan" como nosotros, pero procesan patrones lingüísticos y visuales a una escala incomprensible para un cerebro biológico. Hemos logrado desacoplar la inteligencia de la conciencia biológica. Ahora, la inteligencia es un servicio público (como la electricidad) que se puede generar a demanda.</p>
+                    
+                    <p><strong>El Dilema:</strong> Estamos ante una herramienta de doble filo. Puede acelerar la ciencia médica, resolver el cambio climático y personalizar la educación para cada niño del planeta. Pero también amenaza con inundar el mundo de desinformación, desplazar empleos cognitivos y, en escenarios especulativos, superar nuestro control. Es el invento más poderoso desde el fuego, y al igual que el fuego, puede calentarnos o quemar nuestra casa.</p>
+                `,
                 imagePlaceholder: "bg-gradient-to-r from-purple-500 via-pink-500 to-red-500"
             }
         ];
@@ -266,7 +321,15 @@
                 id: "u1",
                 title: "¿Qué pasó en los primeros 380.000 años?",
                 desc: "El universo era una sopa de plasma opaco. La luz estaba atrapada.",
-                fullContent: "Antes de los 380.000 años, el universo era tan caliente y denso que los fotones (partículas de luz) no podían viajar libremente; chocaban constantemente con electrones libres. Era una niebla cósmica impenetrable. Cuando el universo se expandió y enfrió lo suficiente, los electrones se unieron a los protones para formar átomos neutros (Recombinación). De repente, la luz pudo viajar libremente. Esa luz antigua es lo que hoy vemos como el Fondo Cósmico de Microondas.",
+                fullContent: `
+                    <p>Imagina un universo sin oscuridad. En sus inicios, el cosmos no era el vasto espacio negro que vemos hoy, sino una niebla cegadora y ardiente. Durante los primeros 380.000 años después del Big Bang, la temperatura era tan extrema que los átomos no podían formarse. Los electrones vagaban libres en un estado llamado <strong>plasma</strong>.</p>
+                    
+                    <p>En este entorno, los fotones (partículas de luz) no podían viajar ni un centímetro sin chocar contra un electrón libre. La luz estaba atrapada en un juego de pinball cósmico infinito. El universo era opaco, similar al interior de una nube densa o del sol.</p>
+                    
+                    <p>La liberación llegó con la <strong>Recombinación</strong>. A medida que el universo se expandía, se enfriaba. Cuando la temperatura bajó a 3.000 Kelvin (algo más frío que la superficie del sol), los protones finalmente pudieron capturar a los electrones para formar hidrógeno neutro. De repente, el "tráfico" desapareció. Los fotones quedaron libres para viajar en línea recta por el espacio. Esa primera luz, ahora estirada por la expansión del universo hacia el espectro de microondas, es lo que detectamos hoy como el eco del Big Bang.</p>
+                    
+                    <p class="border-l-4 border-indigo-500 pl-4 text-indigo-300 italic">Dato clave: Esta luz nos muestra un mapa de las densidades del universo temprano. Las zonas un poco más densas de esa sopa primordial eventualmente colapsaron por gravedad para formar las galaxias que habitamos hoy.</p>
+                `,
                 icon: "telescope",
                 tag: "Cosmología",
                 imagePlaceholder: "bg-gradient-to-br from-indigo-900 to-purple-800"
@@ -275,7 +338,15 @@
                 id: "u2",
                 title: "Fábricas de estrellas",
                 desc: "Casi todos los átomos de tu cuerpo fueron forjados en una estrella.",
-                fullContent: "El Big Bang solo produjo Hidrógeno, Helio y un poco de Litio. ¿De dónde salieron el Carbono de tus células, el Calcio de tus huesos o el Hierro de tu sangre? Fueron cocinados en los núcleos de estrellas masivas mediante fusión nuclear. Cuando estas estrellas explotaron como supernovas, dispersaron estos elementos por la galaxia, sembrando las nubes de gas de las que nacería nuestro sistema solar. Eres, literalmente, polvo de estrellas reciclado.",
+                fullContent: `
+                    <p>El Big Bang fue un evento poco creativo químicamente: solo produjo Hidrógeno (75%), Helio (25%) y trazas de Litio. No había carbono para la vida, ni oxígeno para el agua, ni hierro para la sangre, ni silicio para las computadoras. El universo era gaseoso y estéril.</p>
+                    
+                    <p>La magia ocurrió dentro de las primeras estrellas. Una estrella es esencialmente un reactor de fusión nuclear gigante que lucha contra su propia gravedad. En sus núcleos, la presión aplasta átomos simples para crear otros más complejos, liberando energía en el proceso (luz solar). Durante millones de años, las estrellas "cocinan" elementos: helio en carbono, carbono en neón, neón en oxígeno, hasta llegar al hierro.</p>
+                    
+                    <p>Pero el hierro es el final del camino. Fusionar hierro no libera energía, sino que la consume. Cuando una estrella masiva acumula demasiado hierro en su núcleo, el reactor se apaga repentinamente. La gravedad gana, la estrella colapsa en una fracción de segundo y luego rebota en una explosión cataclísmica: una <strong>supernova</strong>.</p>
+                    
+                    <p>En esa explosión final se forjan los elementos más pesados (oro, uranio) y, lo más importante, se dispersan todos los elementos cocinados por el cosmos. Nuestro sistema solar se formó a partir de una nube enriquecida por estas explosiones previas. Literalmente, los átomos de tu mano izquierda probablemente vinieron de una estrella diferente a los de tu mano derecha.</p>
+                `,
                 icon: "atom",
                 tag: "Astrofísica",
                 imagePlaceholder: "bg-gradient-to-br from-yellow-500 to-red-600"
@@ -284,7 +355,15 @@
                 id: "u3",
                 title: "El destino final: Frío o Fuego",
                 desc: "¿Se expandirá el universo para siempre o colapsará?",
-                fullContent: "El destino del universo depende de la lucha entre la gravedad (que intenta unir todo) y la energía oscura (que intenta separarlo todo). Las mediciones actuales sugieren que la energía oscura está ganando. El escenario más probable es el 'Big Freeze': las galaxias se alejarán tanto que dejarán de verse, las estrellas se apagarán y el universo se volverá un lugar frío, oscuro y vacío para siempre.",
+                fullContent: `
+                    <p>Durante el siglo XX, los cosmólogos creían que había dos finales posibles para el universo, dependiendo de cuánta materia hubiera. Si había mucha materia, la gravedad eventualmente frenaría la expansión y haría que todo colapsara hacia atrás (el <strong>Big Crunch</strong> o Gran Implosión). Si había poca materia, la expansión continuaría para siempre, pero cada vez más lenta.</p>
+                    
+                    <p>Pero en 1998, al observar supernovas lejanas, descubrimos algo aterrador: la expansión no se está frenando, <strong>se está acelerando</strong>. Existe una fuerza misteriosa, a la que llamamos "Energía Oscura", que empuja el espacio-tiempo, separando las galaxias cada vez más rápido.</p>
+                    
+                    <p>Esto apunta al escenario más probable y melancólico: el <strong>Big Freeze</strong> (La Gran Congelación). En el futuro lejano, las galaxias se alejarán tanto unas de otras que su luz ya no nos llegará. El cielo nocturno se volverá negro. Las estrellas agotarán su combustible y se apagarán una a una. Los agujeros negros se evaporarán lentamente. El universo terminará como un lugar vasto, frío, oscuro y vacío, donde la entropía ha alcanzado su máximo y nada más puede ocurrir jamás.</p>
+                    
+                    <p>Es un final sombrío, pero nos da una perspectiva valiosa: vivimos en la "Era Estelífera", la única época dorada del universo donde la vida, la luz y la energía son posibles. Somos afortunados de estar aquí ahora.</p>
+                `,
                 icon: "globe",
                 tag: "Futuro Cósmico",
                 imagePlaceholder: "bg-gradient-to-br from-blue-950 to-black"
@@ -296,7 +375,13 @@
                 id: "l1",
                 title: "De ARN a Cerebro",
                 desc: "La escalera de la complejidad biológica.",
-                fullContent: "La vida no planeó ser inteligente. Evolucionó paso a paso. Primero, moléculas simples que se copiaban (ARN). Luego, células con membranas para protegerse. Después, células complejas con 'plantas de energía' internas (mitocondrias). Finalmente, la multicelularidad permitió la especialización: unas células formaron piel, otras músculos, y otras, el sistema nervioso. El cerebro humano es simplemente la culminación de miles de millones de años de 'prueba y error' biológico.",
+                fullContent: `
+                    <p>La evolución no es una escalera diseñada hacia la perfección; es un proceso ciego de prueba y error. Sin embargo, al mirar atrás, vemos saltos de complejidad asombrosos. Todo comenzó probablemente con el <strong>Mundo del ARN</strong>: moléculas capaces de almacenar información (como el ADN) y actuar como herramientas químicas (como las proteínas) al mismo tiempo.</p>
+                    
+                    <p>El siguiente gran salto fue la <strong>célula eucariota</strong>. Hace unos 2.000 millones de años, una arquea se "tragó" a una bacteria, pero no la digirió. Formaron una simbiosis. Esa bacteria interna se convirtió en la mitocondria, la planta de energía que alimenta toda la vida compleja. Sin ese accidente energético, la vida multicelular sería imposible por falta de potencia.</p>
+                    
+                    <p>Con energía de sobra, las células comenzaron a agruparse. Surgió la multicelularidad. Esto permitió la especialización: en lugar de que una célula hiciera todo (comer, moverse, detectar), algunas se especializaron en formar piel, otras en contraerse (músculos) y otras en transmitir señales eléctricas (neuronas). Cuando estas neuronas se agruparon en un nodo central para procesar datos más rápido, nació el cerebro. De una molécula autoreplicante a una red neuronal capaz de contemplar su propia existencia: el viaje más largo de la materia.</p>
+                `,
                 color: "border-green-500/30",
                 imagePlaceholder: "bg-gradient-to-br from-green-600 to-lime-800",
                 icon: "dna",
@@ -306,7 +391,13 @@
                 id: "l2",
                 title: "Las 5 Extinciones Masivas",
                 desc: "Por qué sobrevivimos al apocalipsis.",
-                fullContent: "La vida en la Tierra es tenaz, pero frágil. Ha habido 5 grandes momentos donde más del 75% de las especies desaparecieron (volcanes gigantes, asteroides, cambios climáticos). La más famosa acabó con los dinosaurios, pero permitió que nuestros ancestros mamíferos, pequeños y excavadores, heredaran la Tierra. Sin ese asteroide, probablemente no estarías leyendo esto.",
+                fullContent: `
+                    <p>La historia de la vida es una historia de casi morir. El registro fósil muestra cinco momentos donde la biodiversidad colapsó, eliminando más del 75% de las especies. Estos eventos, aunque trágicos, actuaron como motores de innovación evolutiva, limpiando el tablero para nuevos jugadores.</p>
+                    
+                    <p>La extinción más devastadora fue la del <strong>Pérmico-Triásico</strong> (hace 252 millones de años), apodada "La Gran Mortandad". Volcanes en Siberia ardieron durante siglos, liberando tanto CO2 que los océanos se acidificaron y la Tierra se convirtió en un horno. El 96% de la vida marina desapareció.</p>
+                    
+                    <p>La más famosa, el evento K-Pg (hace 66 millones de años), fue causada por un asteroide de 10 km que golpeó Yucatán. La explosión y el invierno nuclear subsiguiente acabaron con los dinosaurios no aviares. Pero aquí está el giro: nuestros ancestros mamíferos sobrevivieron. Eran pequeños, vivían en madrigueras (protegidos del fuego) y comían cualquier cosa (insectos, raíces). Cuando el humo se disipó, los grandes reptiles ya no estaban, y los mamíferos heredaron un planeta vacío para crecer y diversificarse. <strong>Somos hijos de los supervivientes del apocalipsis.</strong></p>
+                `,
                 color: "border-red-500/30",
                 imagePlaceholder: "bg-gradient-to-br from-red-700 to-orange-900",
                 icon: "skull",
@@ -316,7 +407,13 @@
                 id: "l3",
                 title: "El Misterio de la Conciencia",
                 desc: "¿Es la conciencia un accidente?",
-                fullContent: "Sabemos qué partes del cerebro se activan cuando sientes dolor o amor, pero no sabemos CÓMO la materia física se convierte en experiencia subjetiva (el 'problema duro' de la conciencia). Algunos científicos creen que emerge inevitablemente cuando un sistema procesa suficiente información compleja. Otros creen que es una propiedad fundamental del universo, como la gravedad.",
+                fullContent: `
+                    <p>Este es quizás el mayor misterio del universo: ¿Cómo es que 1.4 kilos de gelatina gris y húmeda dentro de tu cráneo generan la experiencia de ver el color rojo, sentir dolor o enamorarse? La ciencia puede explicar la mecánica (neuronas disparando potenciales de acción), pero no explica la <em>experiencia subjetiva</em> (lo que los filósofos llaman "qualia"). Esto se conoce como el "Problema Duro" de la conciencia.</p>
+                    
+                    <p>Existen teorías fascinantes. El <strong>Materialismo</strong> sugiere que la conciencia es una ilusión o un subproducto emergente del procesamiento de información complejo; cuando tienes suficientes datos interactuando, la "luz" se enciende. Si esto es cierto, una IA suficientemente compleja podría volverse consciente.</p>
+                    
+                    <p>Otra visión es el <strong>Panpsiquismo</strong>, que sugiere que la conciencia es una propiedad fundamental de la materia, como la masa o la carga eléctrica. Según esto, un electrón tiene una protoconciencia infinitesimal, y el cerebro humano simplemente estructura y amplifica esa propiedad básica. Sea cual sea la respuesta, la conciencia es la herramienta a través de la cual el universo se conoce a sí mismo.</p>
+                `,
                 color: "border-purple-500/30",
                 imagePlaceholder: "bg-gradient-to-br from-purple-600 to-fuchsia-900",
                 icon: "brain-circuit",
@@ -329,7 +426,13 @@
                 id: "h1",
                 title: "Del Fuego al Lenguaje",
                 desc: "El superpoder de la cooperación flexible.",
-                fullContent: "El control del fuego (hace ~1M años) permitió cocinar alimentos, reduciendo la energía necesaria para la digestión y permitiendo el crecimiento del cerebro. Pero el verdadero 'superpoder' fue el lenguaje. A diferencia de otros animales que solo comunican 'peligro' o 'comida', nosotros podemos comunicar conceptos abstractos. Esto nos permitió tejer redes de cooperación flexibles y masivas que ninguna otra especie puede igualar.",
+                fullContent: `
+                    <p>Dos tecnologías biológicas y culturales nos separaron del resto de los primates. La primera fue el <strong>control del fuego</strong>. Al cocinar nuestros alimentos, "externalizamos" la digestión. Un intestino más pequeño consume menos energía, lo que permitió que ese exceso calórico se desviara al órgano más caro del cuerpo: el cerebro. El fuego nos dio cerebros grandes.</p>
+                    
+                    <p>Pero un cerebro grande no basta (los Neandertales también lo tenían). La segunda invención fue el <strong>lenguaje complejo</strong>. No solo palabras para objetos ("río", "león"), sino gramática para ideas abstractas ("mañana", "espíritu", "tribu"). Esto nos permitió cotillear. El chisme es vital: nos permite saber en quién confiar sin interactuar directamente.</p>
+                    
+                    <p>Esta confianza extendida permitió a los Sapiens formar bandas de hasta 150 individuos (el Número de Dunbar), mientras que otros homínidos rara vez pasaban de 50. En una pelea, 150 Sapiens coordinados siempre vencerán a 50 Neandertales fuertes pero desorganizados. El lenguaje nos permitió hackear la evolución social.</p>
+                `,
                 imagePlaceholder: "bg-gradient-to-br from-orange-600 to-yellow-500",
                 icon: "flame",
                 tag: "Antropología"
@@ -338,7 +441,13 @@
                 id: "h2",
                 title: "La Trampa de la Agricultura",
                 desc: "¿Domesticamos el trigo o él a nosotros?",
-                fullContent: "Hace 12.000 años, cambiamos la caza-recolección por el cultivo. Esto permitió alimentar a más gente, creando ciudades y civilizaciones. Pero el precio fue alto: dietas peores, más enfermedades, trabajo más duro y jerarquías sociales brutales. Algunos historiadores lo llaman 'el mayor fraude de la historia': el éxito evolutivo de la especie (más ADN copiado) a costa de la felicidad individual.",
+                fullContent: `
+                    <p>Durante 200.000 años, vivimos como cazadores-recolectores. Teníamos una dieta variada, trabajábamos pocas horas y sufríamos pocas enfermedades infecciosas. Hace 12.000 años, empezamos a manipular plantas como el trigo y el arroz. Esto se vendió como el gran salto hacia la civilización, pero algunos historiadores lo ven diferente.</p>
+                    
+                    <p>La agricultura permitió un crecimiento demográfico explosivo. Podíamos alimentar a más bocas por hectárea. Pero la calidad de vida del individuo promedio <strong>se desplomó</strong>. Los campesinos trabajaban de sol a sol, tenían dietas pobres (monocultivos), sus dientes se pudrían y sus cuerpos se deformaban por el trabajo repetitivo. Además, vivir hacinados con animales trajo plagas como la viruela y la gripe.</p>
+                    
+                    <p>Desde el punto de vista evolutivo (copias de ADN), la agricultura fue un éxito rotundo para la especie humana y para el trigo. Pero desde el punto de vista de la felicidad individual, fue una trampa. También inventó el concepto de "propiedad privada", creando jerarquías, élites, ejércitos y guerras por el territorio. Las murallas de Jericó no se construyeron para protegerse de la naturaleza, sino de otros humanos.</p>
+                `,
                 imagePlaceholder: "bg-gradient-to-br from-amber-700 to-green-800",
                 icon: "wheat",
                 tag: "Historia"
@@ -350,18 +459,41 @@
                 id: "c1",
                 title: "Tu teléfono contiene átomos de supernovas",
                 excerpt: "El oro de los circuitos y el hierro de la batería no se formaron en la Tierra. Nacieron en la muerte explosiva de estrellas gigantes.",
+                fullContent: `
+                    <p>Mira tu smartphone. Es un milagro de la ingeniería moderna, pero sus materiales son reliquias de cataclismos antiguos. La pantalla táctil funciona gracias al Indio y al Estaño. La batería depende del Litio y el Cobalto. Los microchips usan Oro y Silicio.</p>
+                    
+                    <p>A excepción del hidrógeno en el agua y los plásticos, <strong>ningún átomo de tu teléfono fue creado en la Tierra</strong>. La Tierra no puede crear elementos, solo reciclarlos. El oro de los conectores es tan pesado que solo pudo formarse en la colisión de estrellas de neutrones (los eventos más violentos del universo). El silicio de los chips fue escupido por estrellas masivas al morir.</p>
+                    
+                    <p>Estos átomos vagaron por el espacio interestelar durante miles de millones de años como polvo, hasta que la gravedad los reunió en la Tierra. Luego, mineros los extrajeron, ingenieros los refinaron y ahora los sostienes en tu mano para ver memes. Tu teléfono es, literalmente, un pequeño museo de historia galáctica.</p>
+                `,
                 color: "from-yellow-400 to-orange-500"
             },
             {
                 id: "c2",
                 title: "Sin la Luna, no habría relojes",
                 excerpt: "Las mareas lunares enseñaron a la vida primitiva a medir el tiempo. Sin ciclos, la consciencia del tiempo quizás nunca habría surgido.",
+                fullContent: `
+                    <p>La Luna hace mucho más que iluminar la noche. Su gravedad tira de los océanos terrestres, creando las mareas. Hace millones de años, en las zonas intermareales (espacios que quedan cubiertos y descubiertos por el agua rítmicamente), la vida tuvo que adaptarse a un ciclo estricto. Quedarse seco significaba morir; ahogarse también.</p>
+                    
+                    <p>Esta presión evolutiva forzó a los organismos a desarrollar <strong>relojes biológicos internos</strong> (ritmos circadianos) para anticipar los cambios del entorno en lugar de solo reaccionar a ellos. Esta capacidad de "medir el tiempo" se incrustó en el ADN de la vida.</p>
+                    
+                    <p>Si avanzamos la cinta, los humanos desarrollaron calendarios observando las fases lunares (la palabra "mes" y "menstruación" comparten raíz etimológica con "luna" y "medida"). Sin un satélite tan visible y regular, nuestro concepto del tiempo matemático y cíclico podría haber tardado mucho más en desarrollarse. Sin la Luna, quizás no tendríamos relojes, ni horarios, ni historia.</p>
+                `,
                 color: "from-slate-400 to-slate-600"
             },
             {
                 id: "c3",
                 title: "De la Imprenta al Bitcoin",
                 excerpt: "Cómo la descentralización de la información en 1440 creó las bases para la descentralización del valor en el siglo XXI.",
+                fullContent: `
+                    <p>Hay un hilo invisible que conecta a Johannes Gutenberg con Satoshi Nakamoto. Ambos resolvieron el mismo problema: el problema del <strong>intermediario de confianza</strong>.</p>
+                    
+                    <p>Antes de la imprenta, la Iglesia era el "servidor central" de la verdad. Ellos interpretaban la Biblia y validaban el conocimiento. Gutenberg descentralizó la verdad: cualquiera con una Biblia podía auditar la fe. Esto rompió el monopolio de la información.</p>
+                    
+                    <p>Avanzamos 500 años. Los bancos centrales son los nuevos "servidores de la verdad", pero esta vez del valor (dinero). Controlan el libro mayor de quién tiene qué. Bitcoin (y la tecnología Blockchain) hace con el dinero lo que la imprenta hizo con los libros: crea un libro mayor distribuido que nadie controla pero que todos pueden verificar.</p>
+                    
+                    <p>La estructura lógica es idéntica: quitar poder al centro y dárselo a los nodos de la red. La Reforma Protestante fue una guerra por la descentralización de Dios; las criptomonedas son, en esencia, una reforma por la descentralización del Dinero. La historia no se repite, pero rima.</p>
+                `,
                 color: "from-blue-400 to-indigo-600"
             }
         ];
@@ -712,7 +844,7 @@
                 ${sectionHeading("Conexiones Ocultas", "Artículos virales sobre vínculos inesperados.")}
                 <div class="grid md:grid-cols-3 gap-8 mt-10">
                     ${connectionArticles.map(art => `
-                        <div class="group relative overflow-hidden rounded-2xl aspect-[3/4] cursor-pointer bg-slate-900">
+                        <div onclick="openModalById('${art.id}', 'connections')" class="group relative overflow-hidden rounded-2xl aspect-[3/4] cursor-pointer bg-slate-900">
                             <div class="absolute inset-0 bg-gradient-to-br ${art.color} opacity-20 group-hover:opacity-30 transition-opacity"></div>
                             <div class="absolute inset-0 p-8 flex flex-col justify-end bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent">
                                 <div class="absolute top-6 right-6 text-white/50 group-hover:text-white transition-colors">
@@ -844,6 +976,7 @@
             else if(type === 'universe') item = universeArticles.find(d => d.id == id);
             else if(type === 'life') item = lifeArticles.find(d => d.id == id);
             else if(type === 'humanity') item = humanityArticles.find(d => d.id == id);
+            else if(type === 'connections') item = connectionArticles.find(d => d.id == id); // Added connections type
             
             if(item) openModal(item);
         }
@@ -853,17 +986,22 @@
             const content = document.getElementById('modal-content');
             
             // Populate Data
-            document.getElementById('modal-image').className = `h-40 w-full ${item.imagePlaceholder || 'bg-slate-800'}`;
+            document.getElementById('modal-image').className = `h-48 md:h-64 w-full bg-slate-800 bg-cover bg-center ${item.imagePlaceholder || 'bg-slate-800'}`;
             
             let metaHTML = '';
             if(item.year) {
                 metaHTML = `<i data-lucide="${item.icon}"></i> <span>${item.year}</span>`;
             } else if (item.tag) {
                 metaHTML = `<i data-lucide="${item.icon}"></i> <span>${item.tag}</span>`;
+            } else if (item.title) {
+                // Fallback para conexiones u otros que no tengan tag/year
+                 metaHTML = `<i data-lucide="share-2"></i> <span>Conexión</span>`;
             }
+
             document.getElementById('modal-meta').innerHTML = metaHTML;
             document.getElementById('modal-title').innerText = item.title;
-            document.getElementById('modal-body').innerText = item.fullContent;
+            // IMPORTANTE: Cambiado a innerHTML para soportar el formato enriquecido de los artículos
+            document.getElementById('modal-body').innerHTML = item.fullContent;
 
             // Show
             overlay.classList.remove('hidden');
