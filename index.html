@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EraOne - Una sola historia</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace'],
+                    },
+                    animation: {
+                        'spin-slow': 'spin 12s linear infinite',
+                        'ping-slow': 'ping 3s cubic-bezier(0, 0, 0.2, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos personalizados para animaciones SVG nítidas */
+        .cosmic-circle {
+            transform-origin: center;
+            fill: none;
+            stroke-width: 1;
+        }
+        @keyframes expand-ring {
+            0% { transform: scale(0.1); opacity: 1; stroke-width: 4; }
+            100% { transform: scale(2); opacity: 0; stroke-width: 0; }
+        }
+        .animate-expand {
+            animation: expand-ring 4s infinite linear;
+        }
+        .delay-1 { animation-delay: 1s; }
+        .delay-2 { animation-delay: 2s; }
+        .delay-3 { animation-delay: 3s; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 transition-colors duration-300 font-sans min-h-screen flex flex-col">
+
+    <!-- NAV -->
+    <nav id="navbar" class="fixed w-full z-50 backdrop-blur-md border-b bg-slate-950/80 border-slate-800 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center cursor-pointer" onclick="switchSection('home')">
+                    <div class="w-8 h-8 bg-gradient-to-tr from-amber-400 to-yellow-600 rounded-full flex items-center justify-center mr-3">
+                        <span class="font-bold text-white text-lg">E1</span>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-white" id="brand-text">
+                        Era<span class="text-amber-500">One</span>
+                    </span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4" id="desktop-menu">
+                        <!-- Generado por JS -->
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-800/20 transition-colors">
+                        <i data-lucide="sun" id="theme-icon" class="text-amber-400"></i>
+                    </button>
+                    <div class="md:hidden">
+                        <button onclick="toggleMobileMenu()" class="p-2">
+                            <i data-lucide="menu"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 absolute w-full">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3" id="mobile-menu-items">
+                <!-- Generado por JS -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content" class="pt-20 flex-grow">
+        <!-- El contenido se inyecta aquí -->
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="footer" class="border-t py-12 bg-slate-900 border-slate-800 transition-colors duration-300 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-3 gap-8 text-center md:text-left">
+            <div>
+                <h3 class="text-2xl font-bold mb-4 text-white footer-brand">
+                    Era<span class="text-amber-500">One</span>
+                </h3>
+                <p class="text-sm text-slate-400 max-w-xs mx-auto md:mx-0">
+                    Una sola historia. Desde el Big Bang hasta tu smartphone. Educación accesible para mentes curiosas.
+                </p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4 text-amber-500">Explorar</h4>
+                <ul class="space-y-2 text-sm text-slate-400">
+                    <li class="hover:text-white cursor-pointer" onclick="switchSection('universe')">El Universo</li>
+                    <li class="hover:text-white cursor-pointer" onclick="switchSection('humanity')">La Humanidad</li>
+                    <li class="hover:text-white cursor-pointer" onclick="switchSection('future')">El Futuro</li>
+                </ul>
+            </div>
+            <div class="flex flex-col items-center md:items-end">
+                <button class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-full flex items-center gap-2 transition-transform transform hover:scale-105 mb-4 shadow-lg shadow-yellow-500/20">
+                    <i data-lucide="coffee" size="18"></i>
+                    Invítame un café
+                </button>
+                <p class="text-xs text-slate-500">© 2024 EraOne.io. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL (Article View) -->
+    <div id="modal-overlay" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div id="modal-content" class="relative max-w-2xl w-full rounded-2xl shadow-2xl overflow-hidden bg-slate-900 border border-slate-700 transform scale-95 transition-transform duration-300 h-[90vh] md:h-auto overflow-y-auto">
+            
+            <!-- Header Image Placeholder -->
+            <div id="modal-image" class="h-40 w-full bg-slate-800"></div>
+            
+            <!-- Botón Volver -->
+            <button onclick="closeModal()" class="absolute top-4 left-4 bg-black/60 backdrop-blur text-white px-4 py-2 rounded-full hover:bg-black/80 flex items-center gap-2 text-sm font-bold shadow-lg transition-all z-10 border border-white/10">
+                <i data-lucide="arrow-left" size="16"></i> Volver
+            </button>
+
+            <!-- Botón Cerrar (X) -->
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 z-10">
+                <i data-lucide="x" size="20"></i>
+            </button>
+
+            <div class="p-8">
+                <!-- Meta info (Year/Tag) -->
+                <div id="modal-meta" class="flex items-center gap-3 mb-2 text-amber-500 font-mono text-sm uppercase tracking-widest">
+                    <!-- Icon + Text injected via JS -->
+                </div>
+
+                <h2 id="modal-title" class="text-3xl font-bold mb-4 text-white"></h2>
+                
+                <div id="modal-body" class="text-lg leading-relaxed text-slate-300 space-y-4">
+                    <!-- Content injected via JS -->
+                </div>
+                
+                <!-- Ad Placeholder Inside Modal -->
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-lg flex flex-col items-center justify-center text-slate-500 text-xs uppercase tracking-widest my-8 h-24 w-full">
+                    <span>Publicidad</span>
+                    <span class="text-[10px] opacity-50 mt-1">Apoya a EraOne</span>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-white font-medium text-sm flex items-center gap-1">
+                        Cerrar Artículo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA ---
+        const navItems = [
+            { id: 'home', label: 'Inicio' },
+            { id: 'universe', label: 'El Universo' },
+            { id: 'life', label: 'La Vida' },
+            { id: 'humanity', label: 'La Humanidad' },
+            { id: 'inventions', label: 'Los Inventos' },
+            { id: 'connections', label: 'Conexiones' },
+            { id: 'future', label: 'Futuro' },
+            { id: 'explore', label: 'Explorar' },
+        ];
+
+        const timelineData = [
+            {
+                id: 1,
+                year: "-13.800 M",
+                title: "El Big Bang",
+                category: "universe",
+                icon: "atom",
+                shortDesc: "El instante en que el tiempo y el espacio comenzaron.",
+                fullContent: "Hace 13.800 millones de años, todo el universo estaba contenido en un punto infinitamente pequeño y denso. En una fracción de segundo, se expandió exponencialmente. No fue una explosión en el espacio, sino una explosión DEL espacio. En los primeros 380.000 años, el universo era una sopa opaca de plasma. Al enfriarse, se formaron los primeros átomos de hidrógeno y helio, permitiendo que la luz viajara libremente por primera vez.",
+                imagePlaceholder: "bg-gradient-to-br from-orange-500 via-red-600 to-black"
+            },
+            {
+                id: 2,
+                year: "-4.500 M",
+                title: "Formación de la Tierra",
+                category: "universe",
+                icon: "globe",
+                shortDesc: "De polvo estelar a un planeta habitable.",
+                fullContent: "Nuestro sistema solar se formó a partir del colapso de una nube molecular gigante. La Tierra nació como una bola de roca fundida, bombardeada constantemente por asteroides. Uno de estos impactos, con un protoplaneta llamado Theia, probablemente formó nuestra Luna, estabilizando el eje de la Tierra y creando las mareas esenciales para la vida.",
+                imagePlaceholder: "bg-gradient-to-br from-blue-900 via-blue-600 to-green-500"
+            },
+            {
+                id: 3,
+                year: "-3.700 M",
+                title: "Primeras Células",
+                category: "life",
+                icon: "dna",
+                shortDesc: "La materia inerte cobra vida.",
+                fullContent: "En los océanos primitivos, moléculas orgánicas complejas comenzaron a replicarse. Surgieron las primeras células procariotas. Durante miles de millones de años, la vida fue microscópica, pero estas cianobacterias inventaron la fotosíntesis, llenando la atmósfera de oxígeno y cambiando el color del planeta para siempre.",
+                imagePlaceholder: "bg-gradient-to-br from-green-400 to-emerald-900"
+            },
+            {
+                id: 4,
+                year: "-70.000",
+                title: "Revolución Cognitiva",
+                category: "humanity",
+                icon: "brain",
+                shortDesc: "El nacimiento del lenguaje simbólico.",
+                fullContent: "Homo sapiens no era la única especie humana, pero algo cambió en nuestro cerebro. Desarrollamos la capacidad de hablar sobre cosas que no existen: mitos, dioses, leyes y dinero. Esta ficción compartida nos permitió cooperar en grandes números, superando a los Neandertales y extendiéndonos por todo el globo.",
+                imagePlaceholder: "bg-gradient-to-br from-yellow-600 to-yellow-900"
+            },
+            {
+                id: 5,
+                year: "1440 d.C.",
+                title: "La Imprenta",
+                category: "invention",
+                icon: "book-open",
+                shortDesc: "Democratizando el conocimiento.",
+                fullContent: "Gutenberg adaptó una prensa de vino para crear la imprenta de tipos móviles. Antes, los libros eran tesoros exclusivos; después, las ideas (como la ciencia moderna o la reforma protestante) pudieron viajar más rápido que las plagas. Fue el internet de la era medieval.",
+                imagePlaceholder: "bg-gradient-to-br from-amber-800 to-gray-800"
+            },
+            {
+                id: 6,
+                year: "1969 d.C.",
+                title: "ARPANET (Internet)",
+                category: "invention",
+                icon: "zap",
+                shortDesc: "El sistema nervioso global.",
+                fullContent: "Lo que comenzó como un proyecto militar de defensa se convirtió en la red que conecta a la humanidad. El primer mensaje enviado fue 'LO' (intentaban escribir LOGIN). Hoy, esta red permite que leas esto instantáneamente desde cualquier parte del mundo, colapsando la distancia física.",
+                imagePlaceholder: "bg-gradient-to-br from-blue-500 to-cyan-400"
+            },
+            {
+                id: 7,
+                year: "2020s",
+                title: "IA Generativa",
+                category: "future",
+                icon: "rocket",
+                shortDesc: "La inteligencia se vuelve mercancía.",
+                fullContent: "Hemos creado máquinas capaces de crear arte, código y texto. Estamos en el umbral de una nueva era donde la inteligencia ya no es un atributo exclusivamente biológico. ¿Será esta la herramienta que nos lleve a las estrellas o el filtro que acabe con nuestra civilización?",
+                imagePlaceholder: "bg-gradient-to-r from-purple-500 via-pink-500 to-red-500"
+            }
+        ];
+
+        const universeArticles = [
+            {
+                id: "u1",
+                title: "¿Qué pasó en los primeros 380.000 años?",
+                desc: "El universo era una sopa de plasma opaco. La luz estaba atrapada.",
+                fullContent: "Antes de los 380.000 años, el universo era tan caliente y denso que los fotones (partículas de luz) no podían viajar libremente; chocaban constantemente con electrones libres. Era una niebla cósmica impenetrable. Cuando el universo se expandió y enfrió lo suficiente, los electrones se unieron a los protones para formar átomos neutros (Recombinación). De repente, la luz pudo viajar libremente. Esa luz antigua es lo que hoy vemos como el Fondo Cósmico de Microondas.",
+                icon: "telescope",
+                tag: "Cosmología",
+                imagePlaceholder: "bg-gradient-to-br from-indigo-900 to-purple-800"
+            },
+            {
+                id: "u2",
+                title: "Fábricas de estrellas",
+                desc: "Casi todos los átomos de tu cuerpo fueron forjados en una estrella.",
+                fullContent: "El Big Bang solo produjo Hidrógeno, Helio y un poco de Litio. ¿De dónde salieron el Carbono de tus células, el Calcio de tus huesos o el Hierro de tu sangre? Fueron cocinados en los núcleos de estrellas masivas mediante fusión nuclear. Cuando estas estrellas explotaron como supernovas, dispersaron estos elementos por la galaxia, sembrando las nubes de gas de las que nacería nuestro sistema solar. Eres, literalmente, polvo de estrellas reciclado.",
+                icon: "atom",
+                tag: "Astrofísica",
+                imagePlaceholder: "bg-gradient-to-br from-yellow-500 to-red-600"
+            },
+            {
+                id: "u3",
+                title: "El destino final: Frío o Fuego",
+                desc: "¿Se expandirá el universo para siempre o colapsará?",
+                fullContent: "El destino del universo depende de la lucha entre la gravedad (que intenta unir todo) y la energía oscura (que intenta separarlo todo). Las mediciones actuales sugieren que la energía oscura está ganando. El escenario más probable es el 'Big Freeze': las galaxias se alejarán tanto que dejarán de verse, las estrellas se apagarán y el universo se volverá un lugar frío, oscuro y vacío para siempre.",
+                icon: "globe",
+                tag: "Futuro Cósmico",
+                imagePlaceholder: "bg-gradient-to-br from-blue-950 to-black"
+            }
+        ];
+
+        const lifeArticles = [
+            {
+                id: "l1",
+                title: "De ARN a Cerebro",
+                desc: "La escalera de la complejidad biológica.",
+                fullContent: "La vida no planeó ser inteligente. Evolucionó paso a paso. Primero, moléculas simples que se copiaban (ARN). Luego, células con membranas para protegerse. Después, células complejas con 'plantas de energía' internas (mitocondrias). Finalmente, la multicelularidad permitió la especialización: unas células formaron piel, otras músculos, y otras, el sistema nervioso. El cerebro humano es simplemente la culminación de miles de millones de años de 'prueba y error' biológico.",
+                color: "border-green-500/30",
+                imagePlaceholder: "bg-gradient-to-br from-green-600 to-lime-800",
+                icon: "dna",
+                tag: "Evolución"
+            },
+            {
+                id: "l2",
+                title: "Las 5 Extinciones Masivas",
+                desc: "Por qué sobrevivimos al apocalipsis.",
+                fullContent: "La vida en la Tierra es tenaz, pero frágil. Ha habido 5 grandes momentos donde más del 75% de las especies desaparecieron (volcanes gigantes, asteroides, cambios climáticos). La más famosa acabó con los dinosaurios, pero permitió que nuestros ancestros mamíferos, pequeños y excavadores, heredaran la Tierra. Sin ese asteroide, probablemente no estarías leyendo esto.",
+                color: "border-red-500/30",
+                imagePlaceholder: "bg-gradient-to-br from-red-700 to-orange-900",
+                icon: "skull",
+                tag: "Historia"
+            },
+            {
+                id: "l3",
+                title: "El Misterio de la Conciencia",
+                desc: "¿Es la conciencia un accidente?",
+                fullContent: "Sabemos qué partes del cerebro se activan cuando sientes dolor o amor, pero no sabemos CÓMO la materia física se convierte en experiencia subjetiva (el 'problema duro' de la conciencia). Algunos científicos creen que emerge inevitablemente cuando un sistema procesa suficiente información compleja. Otros creen que es una propiedad fundamental del universo, como la gravedad.",
+                color: "border-purple-500/30",
+                imagePlaceholder: "bg-gradient-to-br from-purple-600 to-fuchsia-900",
+                icon: "brain-circuit",
+                tag: "Neurociencia"
+            }
+        ];
+
+        const humanityArticles = [
+            {
+                id: "h1",
+                title: "Del Fuego al Lenguaje",
+                desc: "El superpoder de la cooperación flexible.",
+                fullContent: "El control del fuego (hace ~1M años) permitió cocinar alimentos, reduciendo la energía necesaria para la digestión y permitiendo el crecimiento del cerebro. Pero el verdadero 'superpoder' fue el lenguaje. A diferencia de otros animales que solo comunican 'peligro' o 'comida', nosotros podemos comunicar conceptos abstractos. Esto nos permitió tejer redes de cooperación flexibles y masivas que ninguna otra especie puede igualar.",
+                imagePlaceholder: "bg-gradient-to-br from-orange-600 to-yellow-500",
+                icon: "flame",
+                tag: "Antropología"
+            },
+            {
+                id: "h2",
+                title: "La Trampa de la Agricultura",
+                desc: "¿Domesticamos el trigo o él a nosotros?",
+                fullContent: "Hace 12.000 años, cambiamos la caza-recolección por el cultivo. Esto permitió alimentar a más gente, creando ciudades y civilizaciones. Pero el precio fue alto: dietas peores, más enfermedades, trabajo más duro y jerarquías sociales brutales. Algunos historiadores lo llaman 'el mayor fraude de la historia': el éxito evolutivo de la especie (más ADN copiado) a costa de la felicidad individual.",
+                imagePlaceholder: "bg-gradient-to-br from-amber-700 to-green-800",
+                icon: "wheat",
+                tag: "Historia"
+            }
+        ];
+
+        const connectionArticles = [
+            {
+                id: "c1",
+                title: "Tu teléfono contiene átomos de supernovas",
+                excerpt: "El oro de los circuitos y el hierro de la batería no se formaron en la Tierra. Nacieron en la muerte explosiva de estrellas gigantes.",
+                color: "from-yellow-400 to-orange-500"
+            },
+            {
+                id: "c2",
+                title: "Sin la Luna, no habría relojes",
+                excerpt: "Las mareas lunares enseñaron a la vida primitiva a medir el tiempo. Sin ciclos, la consciencia del tiempo quizás nunca habría surgido.",
+                color: "from-slate-400 to-slate-600"
+            },
+            {
+                id: "c3",
+                title: "De la Imprenta al Bitcoin",
+                excerpt: "Cómo la descentralización de la información en 1440 creó las bases para la descentralización del valor en el siglo XXI.",
+                color: "from-blue-400 to-indigo-600"
+            }
+        ];
+
+        // --- STATE & UTILS ---
+        let darkMode = true;
+        let activeSection = 'home';
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNav();
+            switchSection('home');
+            lucide.createIcons();
+        });
+
+        function toggleTheme() {
+            darkMode = !darkMode;
+            const html = document.documentElement;
+            const body = document.body;
+            const nav = document.getElementById('navbar');
+            const footer = document.getElementById('footer');
+            const themeIcon = document.getElementById('theme-icon');
+            const brandText = document.getElementById('brand-text');
+            const footerBrand = document.querySelector('.footer-brand');
+            const modalContent = document.getElementById('modal-content');
+
+            if (darkMode) {
+                html.classList.add('dark');
+                body.classList.remove('bg-slate-50', 'text-slate-900');
+                body.classList.add('bg-slate-950', 'text-slate-100');
+                
+                nav.classList.remove('bg-white/80', 'border-slate-200');
+                nav.classList.add('bg-slate-950/80', 'border-slate-800');
+                
+                footer.classList.remove('bg-slate-100', 'border-slate-200');
+                footer.classList.add('bg-slate-900', 'border-slate-800');
+
+                themeIcon.setAttribute('data-lucide', 'sun');
+                themeIcon.classList.remove('text-slate-600');
+                themeIcon.classList.add('text-amber-400');
+                
+                brandText.classList.remove('text-slate-900');
+                brandText.classList.add('text-white');
+                footerBrand.classList.remove('text-slate-900');
+                footerBrand.classList.add('text-white');
+
+                modalContent.classList.remove('bg-white', 'text-slate-900');
+                modalContent.classList.add('bg-slate-900', 'border-slate-700');
+            } else {
+                html.classList.remove('dark');
+                body.classList.remove('bg-slate-950', 'text-slate-100');
+                body.classList.add('bg-slate-50', 'text-slate-900');
+
+                nav.classList.remove('bg-slate-950/80', 'border-slate-800');
+                nav.classList.add('bg-white/80', 'border-slate-200');
+
+                footer.classList.remove('bg-slate-900', 'border-slate-800');
+                footer.classList.add('bg-slate-100', 'border-slate-200');
+
+                themeIcon.setAttribute('data-lucide', 'moon');
+                themeIcon.classList.remove('text-amber-400');
+                themeIcon.classList.add('text-slate-600');
+
+                brandText.classList.remove('text-white');
+                brandText.classList.add('text-slate-900');
+                footerBrand.classList.remove('text-white');
+                footerBrand.classList.add('text-slate-900');
+
+                modalContent.classList.remove('bg-slate-900', 'border-slate-700');
+                modalContent.classList.add('bg-white');
+            }
+            lucide.createIcons();
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function renderNav() {
+            const desktopMenu = document.getElementById('desktop-menu');
+            const mobileMenu = document.getElementById('mobile-menu-items');
+            
+            desktopMenu.innerHTML = navItems.slice(1).map(item => `
+                <button onclick="switchSection('${item.id}')" 
+                    class="nav-btn px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-amber-400 text-slate-400"
+                    data-section="${item.id}">
+                    ${item.label}
+                </button>
+            `).join('');
+
+            mobileMenu.innerHTML = navItems.map(item => `
+                <button onclick="switchSection('${item.id}'); toggleMobileMenu()" 
+                    class="text-slate-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium w-full text-left">
+                    ${item.label}
+                </button>
+            `).join('');
+        }
+
+        function switchSection(sectionId) {
+            activeSection = sectionId;
+            const main = document.getElementById('main-content');
+            
+            // Update Active State in Nav
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.dataset.section === sectionId) {
+                    btn.classList.add('text-amber-500', 'bg-slate-800/20');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    btn.classList.remove('text-amber-500', 'bg-slate-800/20');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+
+            // Render Content
+            switch(sectionId) {
+                case 'home': main.innerHTML = renderHome(); break;
+                case 'universe': main.innerHTML = renderUniverse(); break;
+                case 'life': main.innerHTML = renderLife(); break;
+                case 'humanity': main.innerHTML = renderHumanity(); break;
+                case 'inventions': main.innerHTML = renderInventions(); break;
+                case 'connections': main.innerHTML = renderConnections(); break;
+                case 'future': main.innerHTML = renderFuture(); break;
+                case 'explore': main.innerHTML = renderExplore(); break;
+                default: main.innerHTML = renderHome();
+            }
+            
+            // Scroll to top
+            window.scrollTo(0,0);
+            // Re-init icons for new content
+            lucide.createIcons();
+        }
+
+        // --- RENDER FUNCTIONS ---
+        // Helpers for reusing HTML strings
+        const sectionHeading = (title, subtitle) => `
+            <div class="mb-10 text-center animate-fade-in">
+                <h2 class="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-yellow-500 mb-4">
+                    ${title}
+                </h2>
+                ${subtitle ? `<p class="text-lg text-slate-400 max-w-2xl mx-auto">${subtitle}</p>` : ''}
+            </div>
+        `;
+
+        const adPlaceholder = (type = 'banner') => `
+            <div class="bg-slate-800/50 border border-slate-700/50 rounded-lg flex flex-col items-center justify-center text-slate-500 text-xs uppercase tracking-widest my-8 ${type === 'sidebar' ? 'h-64 w-full' : 'h-24 w-full'}">
+                <span>Publicidad</span>
+                <span class="text-[10px] opacity-50 mt-1">Apoya a EraOne</span>
+            </div>
+        `;
+
+        // 1. HOME
+        function renderHome() {
+            const timelineHTML = timelineData.map((item, index) => {
+                const isEven = index % 2 === 0;
+                return `
+                <div class="relative flex items-center md:justify-between ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} mb-12 md:mb-24">
+                    <div class="hidden md:block w-5/12"></div>
+                    
+                    <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 z-10 cursor-pointer group" onclick="openModalById(${item.id}, 'timeline')">
+                        <div class="w-10 h-10 md:w-12 md:h-12 bg-slate-900 border-2 border-amber-500/50 rounded-full flex items-center justify-center text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-black">
+                            <i data-lucide="${item.icon}"></i>
+                        </div>
+                    </div>
+
+                    <div class="ml-16 md:ml-0 w-full md:w-5/12 pl-4 md:pl-0 cursor-pointer group" onclick="openModalById(${item.id}, 'timeline')">
+                        <div class="bg-slate-800/30 backdrop-blur border border-slate-700/50 p-6 rounded-xl hover:border-amber-500/50 transition-all hover:bg-slate-800/50">
+                            <div class="text-amber-500 font-mono text-xs md:text-sm mb-1">${item.year}</div>
+                            <h3 class="text-xl font-bold mb-2 group-hover:text-amber-400 transition-colors">${item.title}</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">${item.shortDesc}</p>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            return `
+            <div class="relative overflow-hidden py-20 px-4 text-center">
+                <div class="absolute top-0 left-0 w-full h-full z-0 opacity-20 pointer-events-none">
+                    <div class="absolute top-10 left-10 w-72 h-72 bg-blue-600 rounded-full blur-[100px]"></div>
+                    <div class="absolute bottom-10 right-10 w-96 h-96 bg-amber-600 rounded-full blur-[100px]"></div>
+                </div>
+                
+                <div class="relative z-10 max-w-4xl mx-auto">
+                    <span class="inline-block py-1 px-3 rounded-full bg-slate-800/50 border border-slate-700 text-amber-400 text-sm font-medium mb-6 animate-pulse">
+                        Bienvenido a Era One
+                    </span>
+                    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-slate-100">
+                        Una sola historia. <br/>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-600">
+                            Desde el Big Bang hasta tu smartphone.
+                        </span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-slate-400 mb-10 max-w-2xl mx-auto">
+                        Una narrativa unificada que conecta el cosmos, la biología y el ingenio humano en una línea causal continua.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button onclick="switchSection('universe')" class="bg-white text-black font-bold py-3 px-8 rounded-full hover:bg-slate-200 transition-colors">
+                            Comenzar el Viaje
+                        </button>
+                        <button onclick="switchSection('connections')" class="border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-amber-500 font-medium py-3 px-8 rounded-full transition-colors">
+                            Ver Conexiones
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-5xl mx-auto px-4 py-20 relative">
+                <h3 class="text-center text-slate-500 uppercase tracking-widest text-sm mb-16">Línea de tiempo interactiva</h3>
+                <div class="absolute left-4 md:left-1/2 top-20 bottom-0 w-0.5 bg-gradient-to-b from-blue-900 via-amber-500 to-purple-900 opacity-30"></div>
+                ${timelineHTML}
+            </div>
+            `;
+        }
+
+        // 2. UNIVERSE
+        function renderUniverse() {
+            const articlesHTML = universeArticles.map(art => `
+                <div onclick="openModalById('${art.id}', 'universe')" class="bg-slate-800/20 hover:bg-slate-800/40 border border-slate-700/50 hover:border-blue-500/50 p-6 rounded-xl transition-all duration-300 group cursor-pointer relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-4 relative z-10">
+                        <div class="p-3 bg-slate-900 rounded-lg text-blue-400 group-hover:text-blue-300 transition-colors">
+                            <i data-lucide="${art.icon}"></i>
+                        </div>
+                        <span class="text-xs font-mono text-slate-500 uppercase">${art.tag}</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 group-hover:text-blue-200 relative z-10 text-slate-100">${art.title}</h3>
+                    <p class="text-sm text-slate-400 relative z-10 mb-4">${art.desc}</p>
+                    <div class="text-xs text-blue-500 font-bold uppercase tracking-wider flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Leer más <i data-lucide="chevron-right" size="12"></i>
+                    </div>
+                </div>
+            `).join('');
+
+            return `
+            <div class="max-w-4xl mx-auto px-4 py-10">
+                ${sectionHeading("El Origen de Todo", "No estamos 'en' el universo. Somos parte del universo.")}
+                <div class="grid md:grid-cols-2 gap-8 mt-10">
+                    ${articlesHTML}
+                    
+                    <!-- Improved SVG Cosmic Visualization (Sharp) -->
+                    <div class="bg-black border border-blue-900/50 rounded-xl p-6 flex flex-col justify-center items-center text-center overflow-hidden relative min-h-[250px] group cursor-default">
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <svg width="300" height="300" viewBox="0 0 100 100" class="opacity-80">
+                                <!-- Center core -->
+                                <circle cx="50" cy="50" r="2" fill="white" />
+                                <!-- Expanding rings (SVG) -->
+                                <circle cx="50" cy="50" r="10" stroke="rgba(59, 130, 246, 0.5)" class="cosmic-circle animate-expand" />
+                                <circle cx="50" cy="50" r="10" stroke="rgba(147, 51, 234, 0.4)" class="cosmic-circle animate-expand delay-1" />
+                                <circle cx="50" cy="50" r="10" stroke="rgba(30, 58, 138, 0.3)" class="cosmic-circle animate-expand delay-2" />
+                            </svg>
+                        </div>
+                        <div class="relative z-10 bg-black/60 backdrop-blur-sm p-4 rounded-lg border border-white/10">
+                            <h4 class="font-bold text-white text-lg flex items-center justify-center gap-2">
+                                <i data-lucide="star" size="16" class="text-yellow-400"></i> Expansión Cósmica
+                            </h4>
+                            <p class="text-xs text-blue-200 mt-2">Visualización nítida: el espacio mismo estirándose.</p>
+                        </div>
+                    </div>
+
+                </div>
+                ${adPlaceholder()}
+            </div>
+            `;
+        }
+
+        // 3. LIFE
+        function renderLife() {
+            const articlesHTML = lifeArticles.map(art => `
+                <div onclick="openModalById('${art.id}', 'life')" class="bg-slate-800/20 border-l-4 ${art.color} p-6 rounded-r-xl hover:bg-slate-800/40 transition-colors cursor-pointer group">
+                    <h3 class="text-xl font-bold mb-2 group-hover:text-white transition-colors text-slate-100">${art.title}</h3>
+                    <p class="text-slate-400 mb-4">${art.desc}</p>
+                    <span class="text-xs text-slate-500 group-hover:text-amber-500 transition-colors uppercase tracking-wider font-bold">Leer artículo completo &rarr;</span>
+                </div>
+            `).join('');
+            
+            return `
+            <div class="max-w-4xl mx-auto px-4 py-10">
+                ${sectionHeading("La Vida se Abre Camino", "La complejidad emerge del caos.")}
+                <div class="space-y-8 mt-8">
+                    ${articlesHTML}
+                </div>
+                ${adPlaceholder()}
+            </div>
+            `;
+        }
+
+        // 4. HUMANITY
+        function renderHumanity() {
+            return `
+            <div class="max-w-4xl mx-auto px-4 py-10">
+                ${sectionHeading("La Humanidad", "La especie que aprendió a contar historias.")}
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="col-span-1 md:col-span-2 bg-slate-800/30 p-8 rounded-2xl border border-slate-700 hover:border-amber-500/50 transition-colors">
+                        <h3 class="text-2xl font-bold mb-4 text-slate-100">Del Fuego al Lenguaje</h3>
+                        <p class="text-slate-400 mb-4">
+                            El fuego nos dio estómagos más pequeños y cerebros más grandes. Pero el lenguaje nos dio la capacidad de cooperar en grupos de millones.
+                        </p>
+                        <button onclick="openModalById('h1', 'humanity')" class="text-amber-500 text-sm font-bold uppercase tracking-wider hover:text-amber-400">
+                            Leer Artículo
+                        </button>
+                    </div>
+                    <div onclick="openModalById('h2', 'humanity')" class="bg-slate-800/30 p-6 rounded-2xl border border-slate-700 flex flex-col justify-between cursor-pointer hover:bg-slate-800/50 hover:border-amber-500/50 transition-all">
+                        <i data-lucide="users" size="32" class="text-amber-500 mb-4"></i>
+                        <div>
+                            <h4 class="font-bold mb-2 text-slate-100">Agricultura: ¿Trampa?</h4>
+                            <p class="text-xs text-slate-400">¿Domesticamos el trigo o él a nosotros?</p>
+                        </div>
+                        <div class="mt-4 flex justify-end">
+                            <i data-lucide="chevron-right" size="16" class="text-slate-500"></i>
+                        </div>
+                    </div>
+                </div>
+                ${adPlaceholder()}
+            </div>
+            `;
+        }
+
+        // 5. INVENTIONS
+        function renderInventions() {
+            const list = [
+                { t: "La Rueda", d: "No solo movió carros, movió economías enteras y facilitó el comercio a larga distancia." },
+                { t: "Electricidad", d: "El momento en que la humanidad se independizó del sol para tener luz y energía." },
+                { t: "Internet", d: "El sistema nervioso global. La primera vez que la información viaja instantáneamente." },
+                { t: "Antibióticos", d: "Doblando la esperanza de vida humana en menos de un siglo." },
+                { t: "El Transistor", d: "El pequeño interruptor detrás de toda la era digital moderna." },
+                { t: "Inteligencia Artificial", d: "La última invención que necesitaremos crear... o la última que crearemos." }
+            ];
+            
+            return `
+            <div class="max-w-4xl mx-auto px-4 py-10">
+                ${sectionHeading("Los Inventos", "Herramientas que redefinieron la realidad.")}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    ${list.map(inv => `
+                        <div class="bg-slate-800/20 border border-slate-700 hover:border-blue-500 p-5 rounded-lg transition-all">
+                            <h4 class="font-bold text-lg mb-2 text-slate-200">${inv.t}</h4>
+                            <p class="text-sm text-slate-400">${inv.d}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            `;
+        }
+
+        // 6. CONNECTIONS
+        function renderConnections() {
+            return `
+            <div class="max-w-6xl mx-auto px-4 py-10">
+                ${sectionHeading("Conexiones Ocultas", "Artículos virales sobre vínculos inesperados.")}
+                <div class="grid md:grid-cols-3 gap-8 mt-10">
+                    ${connectionArticles.map(art => `
+                        <div class="group relative overflow-hidden rounded-2xl aspect-[3/4] cursor-pointer bg-slate-900">
+                            <div class="absolute inset-0 bg-gradient-to-br ${art.color} opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                            <div class="absolute inset-0 p-8 flex flex-col justify-end bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent">
+                                <div class="absolute top-6 right-6 text-white/50 group-hover:text-white transition-colors">
+                                    <i data-lucide="share-2" size="20"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-white mb-3 leading-tight">${art.title}</h3>
+                                <p class="text-slate-300 text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                    ${art.excerpt}
+                                </p>
+                                <div class="mt-4 h-1 w-12 bg-white/30 group-hover:w-full transition-all duration-500 rounded-full"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="mt-16 bg-slate-900 p-8 rounded-xl border border-slate-800 text-center">
+                    <h3 class="text-xl font-bold mb-4 text-white">¿Te ha volado la cabeza?</h3>
+                    <p class="text-slate-400 mb-6">Suscríbete para recibir una conexión asombrosa cada semana.</p>
+                    <div class="flex max-w-md mx-auto gap-2">
+                        <input type="email" placeholder="Tu correo electrónico" class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-amber-500" />
+                        <button class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-6 py-2 rounded-lg transition-colors">Enviar</button>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        // 7. FUTURE
+        function renderFuture() {
+            return `
+            <div class="max-w-4xl mx-auto px-4 py-10">
+                ${sectionHeading("El Futuro", "Escenarios plausibles basados en ciencia.")}
+                <div class="space-y-12">
+                    <div class="flex flex-col md:flex-row gap-8 items-center">
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold mb-3 text-red-400">Marte 2100</h3>
+                            <p class="text-slate-400 mb-4">
+                                ¿Seremos una especie multiplanetaria? Los retos biológicos y técnicos de colonizar el Planeta Rojo son inmensos, pero necesarios si queremos asegurar la supervivencia a largo plazo de la consciencia.
+                            </p>
+                            <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-red-500 w-1/4"></div>
+                            </div>
+                            <span class="text-xs text-slate-500 mt-1 block">Probabilidad estimada: 25%</span>
+                        </div>
+                        <div class="w-full md:w-1/3 aspect-square bg-gradient-to-br from-red-900 to-black rounded-full flex items-center justify-center border-4 border-red-900/20 shadow-[0_0_50px_rgba(220,38,38,0.2)]">
+                            <i data-lucide="rocket" size="48" class="text-red-500"></i>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row-reverse gap-8 items-center">
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold mb-3 text-cyan-400">Post-Humanidad</h3>
+                            <p class="text-slate-400 mb-4">
+                                La evolución biológica es lenta. La tecnológica es exponencial. ¿Nos fusionaremos con nuestras máquinas? La interfaz cerebro-computadora podría ser el siguiente gran salto evolutivo.
+                            </p>
+                            <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-cyan-500 w-3/4"></div>
+                            </div>
+                            <span class="text-xs text-slate-500 mt-1 block">Probabilidad estimada: 75%</span>
+                        </div>
+                        <div class="w-full md:w-1/3 aspect-square bg-gradient-to-br from-cyan-900 to-black rounded-full flex items-center justify-center border-4 border-cyan-900/20 shadow-[0_0_50px_rgba(8,145,178,0.2)]">
+                            <i data-lucide="brain" size="48" class="text-cyan-500"></i>
+                        </div>
+                    </div>
+                </div>
+                ${adPlaceholder()}
+            </div>
+            `;
+        }
+
+        // 8. EXPLORE
+        function renderExplore() {
+            const resources = [
+                { title: "Sapiens: De animales a dioses", author: "Yuval Noah Harari", type: "Libro" },
+                { title: "Cosmos", author: "Carl Sagan", type: "Libro / Serie" },
+                { title: "Kurzgesagt - In a Nutshell", author: "YouTube Channel", type: "Canal Educativo" },
+                { title: "El Gen Egoísta", author: "Richard Dawkins", type: "Libro" }
+            ];
+
+            return `
+            <div class="max-w-4xl mx-auto px-4 py-10">
+                ${sectionHeading("Recursos y Exploración", "Profundiza en el conocimiento.")}
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-slate-800/40 p-6 rounded-xl border border-slate-700 hover:border-amber-500/50 transition-colors">
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-slate-100">
+                            <i data-lucide="book-open" class="text-amber-500"></i> Lecturas Recomendadas
+                        </h3>
+                        <ul class="space-y-4">
+                            ${resources.map(res => `
+                                <li class="flex justify-between items-start border-b border-slate-700/50 pb-2">
+                                    <div>
+                                        <div class="font-medium text-slate-200">${res.title}</div>
+                                        <div class="text-xs text-slate-500">${res.author}</div>
+                                    </div>
+                                    <span class="text-xs bg-slate-700 px-2 py-1 rounded text-slate-300">${res.type}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                        <p class="text-xs text-slate-500 mt-4 italic">* Enlaces de afiliados apoyan este proyecto.</p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-gradient-to-r from-amber-600 to-orange-600 p-6 rounded-xl text-white shadow-lg">
+                            <h3 class="text-xl font-bold mb-2">Descarga la Infografía</h3>
+                            <p class="text-sm opacity-90 mb-4">"El Árbol de los Inventos" en alta resolución. Ideal para imprimir.</p>
+                            <button class="bg-white text-orange-600 text-sm font-bold py-2 px-4 rounded shadow hover:bg-slate-100 transition-colors w-full">
+                                Descargar PDF (Gratis)
+                            </button>
+                        </div>
+
+                        <div class="bg-slate-800/40 p-6 rounded-xl border border-slate-700 text-center">
+                            <h3 class="text-xl font-bold mb-2 text-slate-100">Quiz Cósmico</h3>
+                            <p class="text-sm text-slate-400 mb-4">¿En qué momento de la historia del universo encaja tu personalidad?</p>
+                            <button class="border border-slate-500 text-slate-300 hover:border-amber-500 hover:text-amber-500 text-sm font-bold py-2 px-4 rounded w-full transition-colors">
+                                Hacer el Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        // --- MODAL LOGIC ---
+        function openModalById(id, type) {
+            let item;
+            if(type === 'timeline') item = timelineData.find(d => d.id == id);
+            else if(type === 'universe') item = universeArticles.find(d => d.id == id);
+            else if(type === 'life') item = lifeArticles.find(d => d.id == id);
+            else if(type === 'humanity') item = humanityArticles.find(d => d.id == id);
+            
+            if(item) openModal(item);
+        }
+
+        function openModal(item) {
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+            
+            // Populate Data
+            document.getElementById('modal-image').className = `h-40 w-full ${item.imagePlaceholder || 'bg-slate-800'}`;
+            
+            let metaHTML = '';
+            if(item.year) {
+                metaHTML = `<i data-lucide="${item.icon}"></i> <span>${item.year}</span>`;
+            } else if (item.tag) {
+                metaHTML = `<i data-lucide="${item.icon}"></i> <span>${item.tag}</span>`;
+            }
+            document.getElementById('modal-meta').innerHTML = metaHTML;
+            document.getElementById('modal-title').innerText = item.title;
+            document.getElementById('modal-body').innerText = item.fullContent;
+
+            // Show
+            overlay.classList.remove('hidden');
+            // Small delay to allow transition
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+
+            // Re-render icons inside modal
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+
+            overlay.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 300);
+        }
+    </script>
+</body>
+</html>
