@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3550548161640857"
-     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EraOne - Una sola historia</title>
     
-    <!-- Tailwind CSS --> 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+    <script>if(!window.lucide)document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.383.0/lucide.min.js"><\/script>');</script>
+    <script>window.lucide=window.lucide||{createIcons:function(){}};</script>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
@@ -111,14 +111,14 @@
                     Era<span class="text-amber-500">One</span>
                 </h3>
                 <p class="text-sm text-slate-400 max-w-xs mx-auto md:mx-0">
-                    Una sola historia. Desde el Big Bang hasta tu smartphone. Educación accesible para mentes curiosas.
+                    Simulaciones y explicaciones para explorar el universo, la astronomía y el espacio.
                 </p>
             </div>
             <div>
                 <h4 class="font-bold mb-4 text-amber-500">Explorar</h4>
                 <ul class="space-y-2 text-sm text-slate-400">
                     <li class="hover:text-white cursor-pointer" onclick="switchSection('universe')">El Universo</li>
-                    <li class="hover:text-white cursor-pointer" onclick="switchSection('humanity')">La Humanidad</li>
+                    <li class="hover:text-white cursor-pointer" onclick="switchSection('simulations')">Simulaciones</li>
                     <li class="hover:text-white cursor-pointer" onclick="switchSection('future')">El Futuro</li>
                 </ul>
             </div>
@@ -127,52 +127,66 @@
                     <i data-lucide="coffee" size="18"></i>
                     Invítame un café
                 </button>
-                <p class="text-xs text-slate-500">© 2024 EraOne.io. Todos los derechos reservados.</p>
+                <p class="text-xs text-slate-500">© 2026 EraOne. Ciencia para mentes curiosas.</p>
             </div>
         </div>
     </footer>
 
+    <!-- VISOR DE SIMULACIONES (pantalla completa) -->
+    <div id="sim-viewer" class="fixed inset-0 z-[55] hidden flex-col bg-slate-950">
+        <div class="h-14 shrink-0 flex items-center gap-2 md:gap-3 px-3 md:px-5 border-b border-white/10 bg-slate-900/95 backdrop-blur">
+            <button onclick="closeSim()" class="flex items-center gap-2 text-sm font-bold text-white bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 transition-colors"><i data-lucide="arrow-left" size="16"></i><span class="hidden sm:inline">Todas las simulaciones</span><span class="sm:hidden">Volver</span></button>
+            <div id="sv-title" class="hidden md:block flex-1 min-w-0 text-white font-semibold truncate text-center"></div>
+            <select id="sv-select" onchange="selectSim(this.value)" class="lg:hidden flex-1 md:flex-none min-w-0 bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-sm text-white"></select>
+            <div class="hidden md:flex items-center gap-2 text-slate-400 mr-2" title="Tamaño del visor"><i data-lucide="minimize-2" size="15"></i><input id="sv-size" type="range" min="1" max="100" value="50" oninput="setSimSize(this.value)" aria-label="Tamaño del visor" class="w-28 accent-cyan-300"><i data-lucide="maximize-2" size="15"></i></div>
+            <div class="flex gap-1 ml-auto md:ml-0">
+                <button onclick="navSim(-1)" aria-label="Simulación anterior" class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white"><i data-lucide="chevron-left" size="18"></i></button>
+                <button onclick="navSim(1)" aria-label="Simulación siguiente" class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white"><i data-lucide="chevron-right" size="18"></i></button>
+            </div>
+        </div>
+        <div class="flex flex-1 min-h-0">
+            <nav id="sv-rail" class="hidden lg:block w-72 shrink-0 overflow-y-auto border-r border-white/10 bg-slate-900/60 p-3"></nav>
+            <div id="sv-main" class="flex-1 min-w-0 overflow-y-auto"></div>
+        </div>
+    </div>
+
     <!-- MODAL (Article View) -->
     <div id="modal-overlay" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
-        <div id="modal-content" class="relative max-w-3xl w-full rounded-2xl shadow-2xl overflow-hidden bg-slate-900 border border-slate-700 transform scale-95 transition-transform duration-300 h-[90vh] md:h-auto md:max-h-[90vh] overflow-y-auto">
+        <div id="modal-content" class="relative max-w-4xl w-full rounded-3xl shadow-2xl overflow-hidden bg-slate-900 border border-white/10 transform scale-95 transition-transform duration-300 h-[92vh] md:h-auto md:max-h-[92vh] overflow-y-auto">
             
             <!-- Header Image Placeholder -->
-            <div id="modal-image" class="h-48 md:h-64 w-full bg-slate-800 bg-cover bg-center"></div>
+            <div id="modal-image" class="h-40 w-full bg-slate-800"></div>
+            
+            <!-- Botón Volver -->
+            <button onclick="closeModal()" class="absolute top-4 left-4 bg-black/60 backdrop-blur text-white px-4 py-2 rounded-full hover:bg-black/80 flex items-center gap-2 text-sm font-bold shadow-lg transition-all z-10 border border-white/10">
+                <i data-lucide="arrow-left" size="16"></i> Volver
+            </button>
 
-            <!-- Botón Cerrar (X) Flotante -->
-            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 z-20 backdrop-blur-sm border border-white/10">
+            <!-- Botón Cerrar (X) -->
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 z-10">
                 <i data-lucide="x" size="20"></i>
             </button>
 
-            <div class="p-6 md:p-10">
-                <!-- Botón Volver (EN FLUJO) -->
-                <div class="flex items-center gap-2 mb-6 text-sm">
-                    <button onclick="closeModal()" class="flex items-center gap-1 text-amber-500 hover:text-amber-400 font-medium group transition-colors">
-                        <i data-lucide="arrow-left" size="16" class="group-hover:-translate-x-1 transition-transform"></i>
-                        <span>Volver a la sección</span>
-                    </button>
-                </div>
-
+            <div class="p-6 md:p-12">
                 <!-- Meta info (Year/Tag) -->
-                <div id="modal-meta" class="flex items-center gap-3 mb-4 text-amber-500 font-mono text-sm uppercase tracking-widest border-b border-slate-800 pb-4">
+                <div id="modal-meta" style="display:none" class="flex items-center gap-3 mb-2 text-amber-500 font-mono text-sm uppercase tracking-widest">
                     <!-- Icon + Text injected via JS -->
                 </div>
 
-                <h2 id="modal-title" class="text-3xl md:text-4xl font-extrabold mb-6 text-white leading-tight"></h2>
+                <h2 id="modal-title" style="display:none" class="text-3xl font-bold mb-4 text-white"></h2>
                 
-                <!-- Body con soporte para HTML -->
-                <div id="modal-body" class="text-lg leading-relaxed text-slate-300 space-y-6 font-light">
+                <div id="modal-body" class="text-lg leading-relaxed text-slate-300 space-y-4">
                     <!-- Content injected via JS -->
                 </div>
                 
                 <!-- Ad Placeholder Inside Modal -->
-                <div class="bg-slate-800/50 border border-slate-700/50 rounded-lg flex flex-col items-center justify-center text-slate-500 text-xs uppercase tracking-widest my-12 h-24 w-full">
+                <div class="bg-slate-800/50 border border-slate-700/50 rounded-lg flex flex-col items-center justify-center text-slate-500 text-xs uppercase tracking-widest my-8 h-24 w-full">
                     <span>Publicidad</span>
                     <span class="text-[10px] opacity-50 mt-1">Apoya a EraOne</span>
                 </div>
 
-                <div class="mt-8 flex justify-center border-t border-slate-800 pt-8">
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-white font-medium text-sm flex items-center gap-2 px-6 py-3 rounded-full hover:bg-slate-800 transition-colors">
+                <div class="mt-8 flex justify-end">
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-white font-medium text-sm flex items-center gap-1">
                         Cerrar Artículo
                     </button>
                 </div>
@@ -185,16 +199,10 @@
         // --- DATA ---
         const navItems = [
             { id: 'home', label: 'Inicio' },
+            { id: 'simulations', label: 'Simulaciones' },
             { id: 'universe', label: 'El Universo' },
-            { id: 'life', label: 'La Vida' },
-            { id: 'humanity', label: 'La Humanidad' },
-            { id: 'inventions', label: 'Los Inventos' },
-            { id: 'connections', label: 'Conexiones' },
-            { id: 'future', label: 'Futuro' },
             { id: 'explore', label: 'Explorar' },
         ];
-
-        // --- CONTENIDO EXPANDIDO ---
 
         const timelineData = [
             {
@@ -204,15 +212,7 @@
                 category: "universe",
                 icon: "atom",
                 shortDesc: "El instante en que el tiempo y el espacio comenzaron.",
-                fullContent: `
-                    <p><strong>No fue una explosión en el espacio, sino una explosión <em>del</em> espacio.</strong> Hace 13.800 millones de años, todo lo que hoy vemos —galaxias, estrellas, planetas y el espacio vacío entre ellos— estaba comprimido en un punto de densidad infinita, más pequeño que un átomo. En una trillonésima de segundo, el universo experimentó una "inflación" brutal, expandiéndose más rápido que la velocidad de la luz.</p>
-                    
-                    <p>Durante los primeros minutos, el cosmos era un reactor nuclear titánico. Se formaron los primeros núcleos de hidrógeno y helio, pero el calor era tan intenso que la luz no podía viajar; los fotones estaban atrapados en una sopa densa de plasma. El universo era opaco, como una niebla brillante e infinita.</p>
-                    
-                    <p>Tuvieron que pasar <strong>380.000 años</strong> para que el universo se enfriara lo suficiente (a unos 3.000 °C) para que los electrones se unieran a los núcleos y formaran los primeros átomos neutros. En ese instante, la niebla se disipó y la luz pudo viajar libremente por primera vez. Esa luz primigenia todavía viaja hoy: es el Fondo Cósmico de Microondas, una "fotografía" del universo bebé.</p>
-                    
-                    <p class="text-amber-400 italic">Curiosidad: Cuando sintonizas una radio antigua o ves estática en una televisión de tubo analógica, aproximadamente el 1% de ese "ruido" es radiación remanente del Big Bang interactuando con tu antena.</p>
-                `,
+                fullContent: "Hace 13.800 millones de años, todo el universo estaba contenido en un punto infinitamente pequeño y denso. En una fracción de segundo, se expandió exponencialmente. No fue una explosión en el espacio, sino una explosión DEL espacio. En los primeros 380.000 años, el universo era una sopa opaca de plasma. Al enfriarse, se formaron los primeros átomos de hidrógeno y helio, permitiendo que la luz viajara libremente por primera vez.",
                 imagePlaceholder: "bg-gradient-to-br from-orange-500 via-red-600 to-black"
             },
             {
@@ -222,15 +222,7 @@
                 category: "universe",
                 icon: "globe",
                 shortDesc: "De polvo estelar a un planeta habitable.",
-                fullContent: `
-                    <p>Nuestro sistema solar nació de las cenizas de estrellas muertas. Una nube molecular gigante colapsó (posiblemente empujada por la onda expansiva de una supernova cercana), formando el Sol en el centro. El resto del material formó un disco giratorio de polvo y gas: el disco protoplanetario.</p>
-                    
-                    <p>En este caos, la gravedad hizo su trabajo. Pequeños granos de polvo chocaron y se pegaron, formando rocas, luego asteroides y finalmente protoplanetas. La Tierra temprana no era el paraíso azul que conocemos; era una bola de magma fundido, bombardeada incesantemente por restos cósmicos.</p>
-                    
-                    <p>El evento más crítico ocurrió poco después: un protoplaneta del tamaño de Marte, llamado <strong>Theia</strong>, chocó contra la Tierra joven. El impacto fue tan violento que fundió ambos mundos y expulsó una enorme cantidad de escombros a la órbita. Esos escombros se fusionaron para formar nuestra <strong>Luna</strong>.</p>
-                    
-                    <p><strong>Consecuencia clave:</strong> Sin este impacto violento, la Tierra no tendría una luna tan grande. La Luna estabiliza la inclinación de nuestro eje, lo que nos da estaciones predecibles y un clima estable durante millones de años. Sin la Luna, el clima de la Tierra sería caótico, dificultando enormemente la evolución de la vida compleja.</p>
-                `,
+                fullContent: "Nuestro sistema solar se formó a partir del colapso de una nube molecular gigante. La Tierra nació como una bola de roca fundida, bombardeada constantemente por asteroides. Uno de estos impactos, con un protoplaneta llamado Theia, probablemente formó nuestra Luna, estabilizando el eje de la Tierra y creando las mareas esenciales para la vida.",
                 imagePlaceholder: "bg-gradient-to-br from-blue-900 via-blue-600 to-green-500"
             },
             {
@@ -240,13 +232,7 @@
                 category: "life",
                 icon: "dna",
                 shortDesc: "La materia inerte cobra vida.",
-                fullContent: `
-                    <p>En algún lugar de los océanos primitivos, probablemente en fuentes hidrotermales profundas, ocurrió el milagro de la química: la materia inerte comenzó a comportarse como vida. Moléculas complejas (quizás ARN al principio) aprendieron a hacer copias de sí mismas. Estas primeras entidades se rodearon de membranas de grasa para protegerse del exterior, creando las primeras células procariotas.</p>
-                    
-                    <p>Durante mil millones de años, la vida fue invisible y aburrida. Pero entonces, un grupo de bacterias (las cianobacterias) descubrió una tecnología revolucionaria: la <strong>fotosíntesis</strong>. Aprendieron a usar la luz solar para romper moléculas de agua y obtener energía, liberando un gas residual tóxico para la mayoría de la vida de entonces: el oxígeno.</p>
-                    
-                    <p><strong>El Gran Evento de Oxidación:</strong> Este "residuo" cambió el planeta para siempre. El oxígeno oxidó el hierro de los océanos (volviéndolos rojos por un tiempo) y luego llenó la atmósfera, creando la capa de ozono. Aunque causó una extinción masiva de microbios anaeróbicos, el oxígeno es un combustible de alto octanaje metabólico. Su presencia permitió, eones después, que existieran animales grandes y energéticamente costosos, como nosotros.</p>
-                `,
+                fullContent: "En los océanos primitivos, moléculas orgánicas complejas comenzaron a replicarse. Surgieron las primeras células procariotas. Durante miles de millones de años, la vida fue microscópica, pero estas cianobacterias inventaron la fotosíntesis, llenando la atmósfera de oxígeno y cambiando el color del planeta para siempre.",
                 imagePlaceholder: "bg-gradient-to-br from-green-400 to-emerald-900"
             },
             {
@@ -256,13 +242,7 @@
                 category: "humanity",
                 icon: "brain",
                 shortDesc: "El nacimiento del lenguaje simbólico.",
-                fullContent: `
-                    <p>Hace 70.000 años, el <em>Homo sapiens</em> era un animal insignificante que vivía en rincones de África. No éramos más fuertes que los Neandertales ni más rápidos que los leones. Sin embargo, algo cambió en la estructura de nuestro cerebro: desarrollamos el <strong>lenguaje ficticio</strong>.</p>
-                    
-                    <p>Muchos animales tienen lenguaje (los monos pueden gritar "¡Cuidado, un águila!"), pero solo los humanos pueden comunicar cosas que no existen físicamente: "El espíritu del río está enojado" o "Esta concha vale por tres pescados". Esta capacidad de crear y creer en <strong>ficciones compartidas</strong> (mitos, religiones, leyes, dinero, naciones) es el superpoder de nuestra especie.</p>
-                    
-                    <p><strong>¿Por qué es importante?</strong> La ficción permite la cooperación flexible a gran escala. Un chimpancé no puede cooperar con 500 extraños porque necesita conocerlos personalmente. Los humanos pueden cooperar con millones de extraños si todos creen en la misma historia (por ejemplo, el valor del dólar o los derechos humanos). Esta revolución nos permitió organizarnos, crear estrategias complejas y, finalmente, dominar el planeta, desplazando a todas las demás especies humanas.</p>
-                `,
+                fullContent: "Homo sapiens no era la única especie humana, pero algo cambió en nuestro cerebro. Desarrollamos la capacidad de hablar sobre cosas que no existen: mitos, dioses, leyes y dinero. Esta ficción compartida nos permitió cooperar en grandes números, superando a los Neandertales y extendiéndonos por todo el globo.",
                 imagePlaceholder: "bg-gradient-to-br from-yellow-600 to-yellow-900"
             },
             {
@@ -272,16 +252,7 @@
                 category: "invention",
                 icon: "book-open",
                 shortDesc: "Democratizando el conocimiento.",
-                fullContent: `
-                    <p>Antes de 1440, los libros eran objetos de lujo, copiados a mano por monjes en un proceso lento y propenso a errores. Un solo libro podía costar lo mismo que una granja. El conocimiento estaba centralizado y controlado. Johannes Gutenberg, un orfebre alemán, combinó la prensa de vino con tipos móviles de metal duradero y tinta a base de aceite, creando la máquina de copiar definitiva.</p>
-                    
-                    <p>El impacto fue explosivo. En 50 años, había más libros en Europa que los producidos en los mil años anteriores. La información dejó de ser escasa. Esto tuvo consecuencias sísmicas:</p>
-                    <ul class="list-disc pl-5 space-y-2 mb-4">
-                        <li><strong>Reforma Religiosa:</strong> Martín Lutero pudo difundir sus críticas a la Iglesia Católica viralmente. La Biblia se tradujo a lenguas locales, permitiendo que la gente interpretara la fe sin intermediarios.</li>
-                        <li><strong>Revolución Científica:</strong> Los científicos pudieron publicar sus hallazgos de forma exacta y estandarizada. Antes, los datos se corrompían al copiarse; con la imprenta, Copérnico y Newton pudieron "dialogar" a través del tiempo con datos fiables.</li>
-                    </ul>
-                    <p><strong>Conexión futura:</strong> La imprenta estandarizó el almacenamiento de información. Fue el primer paso hacia la digitalización: convertir el pensamiento humano en datos reproducibles mecánicamente, el ancestro directo de los paquetes de datos de internet.</p>
-                `,
+                fullContent: "Gutenberg adaptó una prensa de vino para crear la imprenta de tipos móviles. Antes, los libros eran tesoros exclusivos; después, las ideas (como la ciencia moderna o la reforma protestante) pudieron viajar más rápido que las plagas. Fue el internet de la era medieval.",
                 imagePlaceholder: "bg-gradient-to-br from-amber-800 to-gray-800"
             },
             {
@@ -291,13 +262,7 @@
                 category: "invention",
                 icon: "zap",
                 shortDesc: "El sistema nervioso global.",
-                fullContent: `
-                    <p>En plena Guerra Fría, el Departamento de Defensa de EE.UU. necesitaba una red de comunicaciones que pudiera sobrevivir a un ataque nuclear. La solución no fue construir un búnker central más fuerte, sino <strong>descentralizar</strong>. Crearon una red donde la información se rompía en pequeños "paquetes" que podían tomar cualquier ruta disponible para llegar a su destino. Si un nodo era destruido, los datos fluían por otro camino.</p>
-                    
-                    <p>El 29 de octubre de 1969, se envió el primer mensaje entre dos computadoras (de UCLA a Stanford). Intentaron escribir "LOGIN". El sistema se colgó después de la letra "O". El primer mensaje de internet fue, poéticamente, "LO".</p>
-                    
-                    <p>Lo que nació como herramienta militar y académica se transformó en el <strong>sistema nervioso de la humanidad</strong>. Por primera vez en la historia, la distancia geográfica dejó de ser una barrera para la comunicación instantánea. Esto ha acelerado la innovación (GitHub), cambiado la economía (e-commerce) y reestructurado nuestras relaciones sociales. Internet ha convertido a la especie humana en un superorganismo conectado, para bien y para mal.</p>
-                `,
+                fullContent: "Lo que comenzó como un proyecto militar de defensa se convirtió en la red que conecta a la humanidad. El primer mensaje enviado fue 'LO' (intentaban escribir LOGIN). Hoy, esta red permite que leas esto instantáneamente desde cualquier parte del mundo, colapsando la distancia física.",
                 imagePlaceholder: "bg-gradient-to-br from-blue-500 to-cyan-400"
             },
             {
@@ -307,31 +272,26 @@
                 category: "future",
                 icon: "rocket",
                 shortDesc: "La inteligencia se vuelve mercancía.",
-                fullContent: `
-                    <p>Durante décadas, pensamos que la automatización reemplazaría primero el trabajo físico (robots en fábricas) y que la creatividad sería el último bastión humano. Nos equivocamos. La Inteligencia Artificial Generativa (LLMs como GPT, modelos de difusión) demostró que la creatividad, el lenguaje y el razonamiento lógico también pueden ser modelados matemáticamente.</p>
-                    
-                    <p>Estos modelos no "piensan" como nosotros, pero procesan patrones lingüísticos y visuales a una escala incomprensible para un cerebro biológico. Hemos logrado desacoplar la inteligencia de la conciencia biológica. Ahora, la inteligencia es un servicio público (como la electricidad) que se puede generar a demanda.</p>
-                    
-                    <p><strong>El Dilema:</strong> Estamos ante una herramienta de doble filo. Puede acelerar la ciencia médica, resolver el cambio climático y personalizar la educación para cada niño del planeta. Pero también amenaza con inundar el mundo de desinformación, desplazar empleos cognitivos y, en escenarios especulativos, superar nuestro control. Es el invento más poderoso desde el fuego, y al igual que el fuego, puede calentarnos o quemar nuestra casa.</p>
-                `,
+                fullContent: "Hemos creado máquinas capaces de crear arte, código y texto. Estamos en el umbral de una nueva era donde la inteligencia ya no es un atributo exclusivamente biológico. ¿Será esta la herramienta que nos lleve a las estrellas o el filtro que acabe con nuestra civilización?",
                 imagePlaceholder: "bg-gradient-to-r from-purple-500 via-pink-500 to-red-500"
             }
         ];
 
+        const EXTRA={
+        u1:[['La luz más antigua','Esa primera luz liberada hace unos 13.800 millones de años hoy llega como microondas a unos 2,7 K. En 1965, Arno Penzias y Robert Wilson la detectaron por casualidad con una antena de radio. Satélites como COBE, WMAP y Planck han cartografiado sus diminutas variaciones de temperatura, de una parte entre cien mil.'],['Semillas de las galaxias','Esas variaciones son las huellas de las primeras diferencias de densidad. La gravedad las amplificó durante cientos de millones de años hasta formar estrellas, galaxias y la red cósmica. Su patrón permite medir la edad, la geometría y la composición del universo.']],
+        u2:[['Cómo se forja un elemento','Las estrellas como el Sol fusionan hidrógeno en helio y, al final, producen carbono y oxígeno. Las más masivas encadenan fusiones hasta el hierro. Los elementos más pesados, como el oro, necesitan eventos extremos: supernovas y fusiones de estrellas de neutrones.'],['Reciclaje cósmico','Las nubes enriquecidas por estrellas muertas forman nuevas generaciones de estrellas con más elementos pesados. El Sol es de segunda o tercera generación, y por eso su sistema pudo formar planetas rocosos. Cada generación deja el universo un poco más rico en ingredientes para la vida.']],
+        u3:[['Tres posibles finales','Si la expansión se acelera para siempre, las galaxias se alejarán hasta quedar aisladas: el escenario del «Gran Frío». Si la energía oscura crece con el tiempo, la expansión podría desgarrar galaxias, estrellas y átomos («Gran Desgarro»). Si la gravedad volviera a dominar, todo se contraería («Gran Colapso»).'],['Lo que dicen las observaciones','Las mediciones actuales indican una expansión acelerada compatible con una constante cosmológica, lo que favorece el Gran Frío. Aun así, la naturaleza de la energía oscura sigue siendo uno de los mayores enigmas de la física, y el destino del universo no está cerrado.']],
+        l1:[['Del primer replicador a la célula','Antes del ADN, muchos científicos creen que moléculas de ARN podían almacenar información y acelerar reacciones, como propone la hipótesis del «mundo de ARN». Con el tiempo aparecieron membranas, el ADN y proteínas, hasta formar las primeras células hace unos 3.800 millones de años.'],['El sistema nervioso','Las primeras redes de neuronas surgieron en animales simples como las medusas. La centralización en ganglios y luego en un cerebro permitió respuestas más rápidas y complejas. En los vertebrados, el cerebro creció y se plegó, lo que permitió el aprendizaje, la memoria y el lenguaje.']],
+        l2:[['Cinco grandes crisis','Las cinco extinciones masivas ocurrieron hace unos 445, 375, 252, 201 y 66 millones de años. La del Pérmico (252 Ma) fue la peor: desaparecieron en torno al 90 % de las especies marinas, probablemente por un vulcanismo masivo que alteró el clima y los océanos.'],['Después del desastre','Cada extinción liberó nichos ecológicos. Tras la caída de los dinosaurios no aviares hace 66 millones de años, los mamíferos se diversificaron. Muchos científicos advierten de que hoy vivimos una crisis de biodiversidad con una tasa de pérdida de especies muy superior a la normal.']],
+        l3:[['El «problema difícil»','Sabemos mucho sobre qué zonas del cerebro se activan con ciertas experiencias, pero no por qué esa actividad se siente como algo. Filósofos como David Chalmers llaman a esto el «problema difícil» de la conciencia.'],['Teorías en competencia','Entre las propuestas están la teoría del espacio de trabajo global, la de la información integrada y las teorías de orden superior. Ninguna ha logrado consenso, y los experimentos actuales intentan ponerlas a prueba con registros cerebrales y estudios clínicos.']],
+        h1:[['Dominar el fuego','El uso controlado del fuego, hace al menos cientos de miles de años, permitió cocinar, lo que facilita digerir y obtener más energía del alimento. También protegía del frío y de los depredadores, y alargaba el día alrededor de una hoguera.'],['El lenguaje y la cultura','El lenguaje permitió transmitir conocimiento más allá de la experiencia individual, coordinar grupos y construir historias compartidas. Fue clave para acumular cultura: cada generación empieza donde terminó la anterior.']],
+        h2:[['Más comida, más problemas','Hace unos 12.000 años comenzó la agricultura. Permitió sostener poblaciones mayores y ciudades, pero a menudo trajo dietas menos variadas, más enfermedades infecciosas por la vida en densidad y desigualdad social por el almacenamiento de excedentes.'],['Un cambio sin retorno','Una vez que la población creció, volver a la caza y la recolección no era viable. La agricultura impulsó la propiedad, la escritura, los estados y la tecnología, pero también transformó para siempre los ecosistemas del planeta.']]};
         const universeArticles = [
             {
                 id: "u1",
                 title: "¿Qué pasó en los primeros 380.000 años?",
                 desc: "El universo era una sopa de plasma opaco. La luz estaba atrapada.",
-                fullContent: `
-                    <p>Imagina un universo sin oscuridad. En sus inicios, el cosmos no era el vasto espacio negro que vemos hoy, sino una niebla cegadora y ardiente. Durante los primeros 380.000 años después del Big Bang, la temperatura era tan extrema que los átomos no podían formarse. Los electrones vagaban libres en un estado llamado <strong>plasma</strong>.</p>
-                    
-                    <p>En este entorno, los fotones (partículas de luz) no podían viajar ni un centímetro sin chocar contra un electrón libre. La luz estaba atrapada en un juego de pinball cósmico infinito. El universo era opaco, similar al interior de una nube densa o del sol.</p>
-                    
-                    <p>La liberación llegó con la <strong>Recombinación</strong>. A medida que el universo se expandía, se enfriaba. Cuando la temperatura bajó a 3.000 Kelvin (algo más frío que la superficie del sol), los protones finalmente pudieron capturar a los electrones para formar hidrógeno neutro. De repente, el "tráfico" desapareció. Los fotones quedaron libres para viajar en línea recta por el espacio. Esa primera luz, ahora estirada por la expansión del universo hacia el espectro de microondas, es lo que detectamos hoy como el eco del Big Bang.</p>
-                    
-                    <p class="border-l-4 border-indigo-500 pl-4 text-indigo-300 italic">Dato clave: Esta luz nos muestra un mapa de las densidades del universo temprano. Las zonas un poco más densas de esa sopa primordial eventualmente colapsaron por gravedad para formar las galaxias que habitamos hoy.</p>
-                `,
+                fullContent: "Antes de los 380.000 años, el universo era tan caliente y denso que los fotones (partículas de luz) no podían viajar libremente; chocaban constantemente con electrones libres. Era una niebla cósmica impenetrable. Cuando el universo se expandió y enfrió lo suficiente, los electrones se unieron a los protones para formar átomos neutros (Recombinación). De repente, la luz pudo viajar libremente. Esa luz antigua es lo que hoy vemos como el Fondo Cósmico de Microondas.",
                 icon: "telescope",
                 tag: "Cosmología",
                 imagePlaceholder: "bg-gradient-to-br from-indigo-900 to-purple-800"
@@ -340,15 +300,7 @@
                 id: "u2",
                 title: "Fábricas de estrellas",
                 desc: "Casi todos los átomos de tu cuerpo fueron forjados en una estrella.",
-                fullContent: `
-                    <p>El Big Bang fue un evento poco creativo químicamente: solo produjo Hidrógeno (75%), Helio (25%) y trazas de Litio. No había carbono para la vida, ni oxígeno para el agua, ni hierro para la sangre, ni silicio para las computadoras. El universo era gaseoso y estéril.</p>
-                    
-                    <p>La magia ocurrió dentro de las primeras estrellas. Una estrella es esencialmente un reactor de fusión nuclear gigante que lucha contra su propia gravedad. En sus núcleos, la presión aplasta átomos simples para crear otros más complejos, liberando energía en el proceso (luz solar). Durante millones de años, las estrellas "cocinan" elementos: helio en carbono, carbono en neón, neón en oxígeno, hasta llegar al hierro.</p>
-                    
-                    <p>Pero el hierro es el final del camino. Fusionar hierro no libera energía, sino que la consume. Cuando una estrella masiva acumula demasiado hierro en su núcleo, el reactor se apaga repentinamente. La gravedad gana, la estrella colapsa en una fracción de segundo y luego rebota en una explosión cataclísmica: una <strong>supernova</strong>.</p>
-                    
-                    <p>En esa explosión final se forjan los elementos más pesados (oro, uranio) y, lo más importante, se dispersan todos los elementos cocinados por el cosmos. Nuestro sistema solar se formó a partir de una nube enriquecida por estas explosiones previas. Literalmente, los átomos de tu mano izquierda probablemente vinieron de una estrella diferente a los de tu mano derecha.</p>
-                `,
+                fullContent: "El Big Bang solo produjo Hidrógeno, Helio y un poco de Litio. ¿De dónde salieron el Carbono de tus células, el Calcio de tus huesos o el Hierro de tu sangre? Fueron cocinados en los núcleos de estrellas masivas mediante fusión nuclear. Cuando estas estrellas explotaron como supernovas, dispersaron estos elementos por la galaxia, sembrando las nubes de gas de las que nacería nuestro sistema solar. Eres, literalmente, polvo de estrellas reciclado.",
                 icon: "atom",
                 tag: "Astrofísica",
                 imagePlaceholder: "bg-gradient-to-br from-yellow-500 to-red-600"
@@ -357,18 +309,50 @@
                 id: "u3",
                 title: "El destino final: Frío o Fuego",
                 desc: "¿Se expandirá el universo para siempre o colapsará?",
-                fullContent: `
-                    <p>Durante el siglo XX, los cosmólogos creían que había dos finales posibles para el universo, dependiendo de cuánta materia hubiera. Si había mucha materia, la gravedad eventualmente frenaría la expansión y haría que todo colapsara hacia atrás (el <strong>Big Crunch</strong> o Gran Implosión). Si había poca materia, la expansión continuaría para siempre, pero cada vez más lenta.</p>
-                    
-                    <p>Pero en 1998, al observar supernovas lejanas, descubrimos algo aterrador: la expansión no se está frenando, <strong>se está acelerando</strong>. Existe una fuerza misteriosa, a la que llamamos "Energía Oscura", que empuja el espacio-tiempo, separando las galaxias cada vez más rápido.</p>
-                    
-                    <p>Esto apunta al escenario más probable y melancólico: el <strong>Big Freeze</strong> (La Gran Congelación). En el futuro lejano, las galaxias se alejarán tanto unas de otras que su luz ya no nos llegará. El cielo nocturno se volverá negro. Las estrellas agotarán su combustible y se apagarán una a una. Los agujeros negros se evaporarán lentamente. El universo terminará como un lugar vasto, frío, oscuro y vacío, donde la entropía ha alcanzado su máximo y nada más puede ocurrir jamás.</p>
-                    
-                    <p>Es un final sombrío, pero nos da una perspectiva valiosa: vivimos en la "Era Estelífera", la única época dorada del universo donde la vida, la luz y la energía son posibles. Somos afortunados de estar aquí ahora.</p>
-                `,
+                fullContent: "El destino del universo depende de la lucha entre la gravedad (que intenta unir todo) y la energía oscura (que intenta separarlo todo). Las mediciones actuales sugieren que la energía oscura está ganando. El escenario más probable es el 'Big Freeze': las galaxias se alejarán tanto que dejarán de verse, las estrellas se apagarán y el universo se volverá un lugar frío, oscuro y vacío para siempre.",
                 icon: "globe",
                 tag: "Futuro Cósmico",
                 imagePlaceholder: "bg-gradient-to-br from-blue-950 to-black"
+            },
+            {
+                id: "u4",
+                title: "Agujeros negros: donde el tiempo se detiene",
+                desc: "Regiones del espacio donde la gravedad es tan intensa que ni la luz escapa.",
+                fullContent: "Un agujero negro se forma cuando una masa enorme se concentra en un espacio diminuto. Su frontera, el horizonte de sucesos, marca el punto sin retorno: cualquier cosa que lo cruce, incluida la luz, no puede salir. Hay agujeros negros estelares, de unas pocas a decenas de masas solares, y supermasivos, de millones o miles de millones, en el centro de casi todas las galaxias grandes.",
+                icon: "circle-dot",
+                tag: "Astrofísica",
+                imagePlaceholder: "bg-gradient-to-br from-slate-900 to-orange-900",
+                extra: [["Cómo los «vemos»","No se ven directamente, pero sí su entorno: el gas que cae forma un disco de acreción que se calienta hasta brillar en rayos X. En 2019 el Event Horizon Telescope obtuvo la primera imagen de la sombra de un agujero negro, el de la galaxia M87, y en 2022 la de Sagitario A* en el centro de la Vía Láctea."],["Tiempo y gravedad","La relatividad general predice que el tiempo transcurre más despacio cerca de una gran masa. Para un observador lejano, un reloj cerca del horizonte parece casi detenido. Es un efecto real y medible a pequeña escala: los relojes de los satélites GPS lo compensan."],["¿Qué hay dentro?","En el centro, las ecuaciones predicen una singularidad de densidad infinita, señal de que la teoría deja de ser válida. Describir ese interior exige una teoría cuántica de la gravedad, aún por construir. Stephen Hawking mostró además que los agujeros negros emiten una radiación muy débil y pueden evaporarse en tiempos inmensos."]]
+            },
+            {
+                id: "u5",
+                title: "Materia y energía oscura: el 95 % invisible",
+                desc: "Lo que vemos es solo una pequeña parte del cosmos.",
+                fullContent: "Las estrellas, el gas y los planetas que conocemos forman solo alrededor del 5 % del contenido del universo. Aproximadamente el 27 % es materia oscura, que no emite luz pero sí ejerce gravedad, y cerca del 68 % es energía oscura, responsable de que la expansión se acelere. Nadie sabe aún de qué están hechas.",
+                icon: "eye-off",
+                tag: "Cosmología",
+                imagePlaceholder: "bg-gradient-to-br from-purple-950 to-slate-900",
+                extra: [["Pruebas de la materia oscura","Las estrellas de las galaxias giran demasiado rápido para la masa visible, los cúmulos de galaxias curvan la luz más de lo esperado (lentes gravitacionales) y el Cúmulo Bala muestra la materia oscura separada del gas tras una colisión. Todo apunta a materia invisible adicional."],["Candidatos y búsquedas","Se buscan partículas aún no descubiertas, como las WIMP o los axiones, con detectores subterráneos, aceleradores y telescopios. Hasta ahora no hay detección directa concluyente."],["La energía oscura","En 1998, el estudio de supernovas lejanas reveló que la expansión del universo se acelera. La explicación más simple es una constante cosmológica, una energía del propio espacio vacío. Las medidas actuales intentan comprobar si es realmente constante o cambia con el tiempo."]]
+            },
+            {
+                id: "u6",
+                title: "Exoplanetas: ¿hay otros mundos como el nuestro?",
+                desc: "Se han confirmado miles de planetas fuera del sistema solar.",
+                fullContent: "Desde el primer exoplaneta alrededor de una estrella parecida al Sol, descubierto en 1995, se han confirmado miles de mundos. Hay gigantes gaseosos muy cercanos a su estrella, «supertierras», mundos con océanos posibles y sistemas con varios planetas rocosos. Los astrónomos buscan especialmente planetas en la zona habitable, donde el agua podría ser líquida.",
+                icon: "orbit",
+                tag: "Exoplanetas",
+                imagePlaceholder: "bg-gradient-to-br from-teal-900 to-slate-900",
+                extra: [["Cómo se descubren","El método del tránsito detecta la leve caída de brillo cuando un planeta pasa por delante de su estrella; la velocidad radial mide el pequeño bamboleo de la estrella por la gravedad del planeta. Misiones como Kepler y TESS han descubierto la mayoría de los planetas conocidos."],["Qué hay en sus atmósferas","Cuando un planeta transita, parte de la luz estelar atraviesa su atmósfera. El telescopio James Webb analiza esa luz para detectar moléculas como agua, dióxido de carbono o metano, y estudiar su composición y clima."],["¿Y la vida?","Aún no hay evidencia de vida fuera de la Tierra. Los científicos buscan biofirmas, combinaciones de gases difíciles de explicar sin procesos biológicos. Encontrarlas exigirá observaciones muy precisas y mucha cautela en la interpretación."]]
+            },
+            {
+                id: "u7",
+                title: "Ondas gravitacionales: escuchar el universo",
+                desc: "Ondulaciones del espacio-tiempo que revelan los eventos más violentos del cosmos.",
+                fullContent: "Einstein predijo en 1916 que las masas aceleradas deforman el espacio-tiempo y producen ondas que viajan a la velocidad de la luz. En 2015, los detectores LIGO registraron por primera vez la señal de la fusión de dos agujeros negros a más de mil millones de años luz. Desde entonces se han detectado cientos de eventos.",
+                icon: "waves",
+                tag: "Física",
+                imagePlaceholder: "bg-gradient-to-br from-blue-950 to-cyan-900",
+                extra: [["Una medida casi imposible","Al pasar una onda, la distancia entre dos espejos separados varios kilómetros cambia menos que el tamaño de un protón. LIGO usa láseres e interferometría para medir esa variación diminuta, aislando los espejos de vibraciones de todo tipo."],["Un nuevo sentido","La astronomía tradicional usa luz; las ondas gravitacionales aportan información distinta. En 2017, la fusión de dos estrellas de neutrones se vio a la vez en ondas gravitacionales y en luz, lo que confirmó que esos eventos fabrican elementos como el oro y el platino."],["El futuro","Proyectos como LISA, un observatorio espacial, y detectores de nueva generación buscarán ondas de fusiones de agujeros negros supermasivos y quizá de los primeros instantes del universo."]]
             }
         ];
 
@@ -377,13 +361,7 @@
                 id: "l1",
                 title: "De ARN a Cerebro",
                 desc: "La escalera de la complejidad biológica.",
-                fullContent: `
-                    <p>La evolución no es una escalera diseñada hacia la perfección; es un proceso ciego de prueba y error. Sin embargo, al mirar atrás, vemos saltos de complejidad asombrosos. Todo comenzó probablemente con el <strong>Mundo del ARN</strong>: moléculas capaces de almacenar información (como el ADN) y actuar como herramientas químicas (como las proteínas) al mismo tiempo.</p>
-                    
-                    <p>El siguiente gran salto fue la <strong>célula eucariota</strong>. Hace unos 2.000 millones de años, una arquea se "tragó" a una bacteria, pero no la digirió. Formaron una simbiosis. Esa bacteria interna se convirtió en la mitocondria, la planta de energía que alimenta toda la vida compleja. Sin ese accidente energético, la vida multicelular sería imposible por falta de potencia.</p>
-                    
-                    <p>Con energía de sobra, las células comenzaron a agruparse. Surgió la multicelularidad. Esto permitió la especialización: en lugar de que una célula hiciera todo (comer, moverse, detectar), algunas se especializaron en formar piel, otras en contraerse (músculos) y otras en transmitir señales eléctricas (neuronas). Cuando estas neuronas se agruparon en un nodo central para procesar datos más rápido, nació el cerebro. De una molécula autoreplicante a una red neuronal capaz de contemplar su propia existencia: el viaje más largo de la materia.</p>
-                `,
+                fullContent: "La vida no planeó ser inteligente. Evolucionó paso a paso. Primero, moléculas simples que se copiaban (ARN). Luego, células con membranas para protegerse. Después, células complejas con 'plantas de energía' internas (mitocondrias). Finalmente, la multicelularidad permitió la especialización: unas células formaron piel, otras músculos, y otras, el sistema nervioso. El cerebro humano es simplemente la culminación de miles de millones de años de 'prueba y error' biológico.",
                 color: "border-green-500/30",
                 imagePlaceholder: "bg-gradient-to-br from-green-600 to-lime-800",
                 icon: "dna",
@@ -393,13 +371,7 @@
                 id: "l2",
                 title: "Las 5 Extinciones Masivas",
                 desc: "Por qué sobrevivimos al apocalipsis.",
-                fullContent: `
-                    <p>La historia de la vida es una historia de casi morir. El registro fósil muestra cinco momentos donde la biodiversidad colapsó, eliminando más del 75% de las especies. Estos eventos, aunque trágicos, actuaron como motores de innovación evolutiva, limpiando el tablero para nuevos jugadores.</p>
-                    
-                    <p>La extinción más devastadora fue la del <strong>Pérmico-Triásico</strong> (hace 252 millones de años), apodada "La Gran Mortandad". Volcanes en Siberia ardieron durante siglos, liberando tanto CO2 que los océanos se acidificaron y la Tierra se convirtió en un horno. El 96% de la vida marina desapareció.</p>
-                    
-                    <p>La más famosa, el evento K-Pg (hace 66 millones de años), fue causada por un asteroide de 10 km que golpeó Yucatán. La explosión y el invierno nuclear subsiguiente acabaron con los dinosaurios no aviares. Pero aquí está el giro: nuestros ancestros mamíferos sobrevivieron. Eran pequeños, vivían en madrigueras (protegidos del fuego) y comían cualquier cosa (insectos, raíces). Cuando el humo se disipó, los grandes reptiles ya no estaban, y los mamíferos heredaron un planeta vacío para crecer y diversificarse. <strong>Somos hijos de los supervivientes del apocalipsis.</strong></p>
-                `,
+                fullContent: "La vida en la Tierra es tenaz, pero frágil. Ha habido 5 grandes momentos donde más del 75% de las especies desaparecieron (volcanes gigantes, asteroides, cambios climáticos). La más famosa acabó con los dinosaurios, pero permitió que nuestros ancestros mamíferos, pequeños y excavadores, heredaran la Tierra. Sin ese asteroide, probablemente no estarías leyendo esto.",
                 color: "border-red-500/30",
                 imagePlaceholder: "bg-gradient-to-br from-red-700 to-orange-900",
                 icon: "skull",
@@ -409,13 +381,7 @@
                 id: "l3",
                 title: "El Misterio de la Conciencia",
                 desc: "¿Es la conciencia un accidente?",
-                fullContent: `
-                    <p>Este es quizás el mayor misterio del universo: ¿Cómo es que 1.4 kilos de gelatina gris y húmeda dentro de tu cráneo generan la experiencia de ver el color rojo, sentir dolor o enamorarse? La ciencia puede explicar la mecánica (neuronas disparando potenciales de acción), pero no explica la <em>experiencia subjetiva</em> (lo que los filósofos llaman "qualia"). Esto se conoce como el "Problema Duro" de la conciencia.</p>
-                    
-                    <p>Existen teorías fascinantes. El <strong>Materialismo</strong> sugiere que la conciencia es una ilusión o un subproducto emergente del procesamiento de información complejo; cuando tienes suficientes datos interactuando, la "luz" se enciende. Si esto es cierto, una IA suficientemente compleja podría volverse consciente.</p>
-                    
-                    <p>Otra visión es el <strong>Panpsiquismo</strong>, que sugiere que la conciencia es una propiedad fundamental de la materia, como la masa o la carga eléctrica. Según esto, un electrón tiene una protoconciencia infinitesimal, y el cerebro humano simplemente estructura y amplifica esa propiedad básica. Sea cual sea la respuesta, la conciencia es la herramienta a través de la cual el universo se conoce a sí mismo.</p>
-                `,
+                fullContent: "Sabemos qué partes del cerebro se activan cuando sientes dolor o amor, pero no sabemos CÓMO la materia física se convierte en experiencia subjetiva (el 'problema duro' de la conciencia). Algunos científicos creen que emerge inevitablemente cuando un sistema procesa suficiente información compleja. Otros creen que es una propiedad fundamental del universo, como la gravedad.",
                 color: "border-purple-500/30",
                 imagePlaceholder: "bg-gradient-to-br from-purple-600 to-fuchsia-900",
                 icon: "brain-circuit",
@@ -428,13 +394,7 @@
                 id: "h1",
                 title: "Del Fuego al Lenguaje",
                 desc: "El superpoder de la cooperación flexible.",
-                fullContent: `
-                    <p>Dos tecnologías biológicas y culturales nos separaron del resto de los primates. La primera fue el <strong>control del fuego</strong>. Al cocinar nuestros alimentos, "externalizamos" la digestión. Un intestino más pequeño consume menos energía, lo que permitió que ese exceso calórico se desviara al órgano más caro del cuerpo: el cerebro. El fuego nos dio cerebros grandes.</p>
-                    
-                    <p>Pero un cerebro grande no basta (los Neandertales también lo tenían). La segunda invención fue el <strong>lenguaje complejo</strong>. No solo palabras para objetos ("río", "león"), sino gramática para ideas abstractas ("mañana", "espíritu", "tribu"). Esto nos permitió cotillear. El chisme es vital: nos permite saber en quién confiar sin interactuar directamente.</p>
-                    
-                    <p>Esta confianza extendida permitió a los Sapiens formar bandas de hasta 150 individuos (el Número de Dunbar), mientras que otros homínidos rara vez pasaban de 50. En una pelea, 150 Sapiens coordinados siempre vencerán a 50 Neandertales fuertes pero desorganizados. El lenguaje nos permitió hackear la evolución social.</p>
-                `,
+                fullContent: "El control del fuego (hace ~1M años) permitió cocinar alimentos, reduciendo la energía necesaria para la digestión y permitiendo el crecimiento del cerebro. Pero el verdadero 'superpoder' fue el lenguaje. A diferencia de otros animales que solo comunican 'peligro' o 'comida', nosotros podemos comunicar conceptos abstractos. Esto nos permitió tejer redes de cooperación flexibles y masivas que ninguna otra especie puede igualar.",
                 imagePlaceholder: "bg-gradient-to-br from-orange-600 to-yellow-500",
                 icon: "flame",
                 tag: "Antropología"
@@ -443,13 +403,7 @@
                 id: "h2",
                 title: "La Trampa de la Agricultura",
                 desc: "¿Domesticamos el trigo o él a nosotros?",
-                fullContent: `
-                    <p>Durante 200.000 años, vivimos como cazadores-recolectores. Teníamos una dieta variada, trabajábamos pocas horas y sufríamos pocas enfermedades infecciosas. Hace 12.000 años, empezamos a manipular plantas como el trigo y el arroz. Esto se vendió como el gran salto hacia la civilización, pero algunos historiadores lo ven diferente.</p>
-                    
-                    <p>La agricultura permitió un crecimiento demográfico explosivo. Podíamos alimentar a más bocas por hectárea. Pero la calidad de vida del individuo promedio <strong>se desplomó</strong>. Los campesinos trabajaban de sol a sol, tenían dietas pobres (monocultivos), sus dientes se pudrían y sus cuerpos se deformaban por el trabajo repetitivo. Además, vivir hacinados con animales trajo plagas como la viruela y la gripe.</p>
-                    
-                    <p>Desde el punto de vista evolutivo (copias de ADN), la agricultura fue un éxito rotundo para la especie humana y para el trigo. Pero desde el punto de vista de la felicidad individual, fue una trampa. También inventó el concepto de "propiedad privada", creando jerarquías, élites, ejércitos y guerras por el territorio. Las murallas de Jericó no se construyeron para protegerse de la naturaleza, sino de otros humanos.</p>
-                `,
+                fullContent: "Hace 12.000 años, cambiamos la caza-recolección por el cultivo. Esto permitió alimentar a más gente, creando ciudades y civilizaciones. Pero el precio fue alto: dietas peores, más enfermedades, trabajo más duro y jerarquías sociales brutales. Algunos historiadores lo llaman 'el mayor fraude de la historia': el éxito evolutivo de la especie (más ADN copiado) a costa de la felicidad individual.",
                 imagePlaceholder: "bg-gradient-to-br from-amber-700 to-green-800",
                 icon: "wheat",
                 tag: "Historia"
@@ -461,41 +415,18 @@
                 id: "c1",
                 title: "Tu teléfono contiene átomos de supernovas",
                 excerpt: "El oro de los circuitos y el hierro de la batería no se formaron en la Tierra. Nacieron en la muerte explosiva de estrellas gigantes.",
-                fullContent: `
-                    <p>Mira tu smartphone. Es un milagro de la ingeniería moderna, pero sus materiales son reliquias de cataclismos antiguos. La pantalla táctil funciona gracias al Indio y al Estaño. La batería depende del Litio y el Cobalto. Los microchips usan Oro y Silicio.</p>
-                    
-                    <p>A excepción del hidrógeno en el agua y los plásticos, <strong>ningún átomo de tu teléfono fue creado en la Tierra</strong>. La Tierra no puede crear elementos, solo reciclarlos. El oro de los conectores es tan pesado que solo pudo formarse en la colisión de estrellas de neutrones (los eventos más violentos del universo). El silicio de los chips fue escupido por estrellas masivas al morir.</p>
-                    
-                    <p>Estos átomos vagaron por el espacio interestelar durante miles de millones de años como polvo, hasta que la gravedad los reunió en la Tierra. Luego, mineros los extrajeron, ingenieros los refinaron y ahora los sostienes en tu mano para ver memes. Tu teléfono es, literalmente, un pequeño museo de historia galáctica.</p>
-                `,
                 color: "from-yellow-400 to-orange-500"
             },
             {
                 id: "c2",
                 title: "Sin la Luna, no habría relojes",
                 excerpt: "Las mareas lunares enseñaron a la vida primitiva a medir el tiempo. Sin ciclos, la consciencia del tiempo quizás nunca habría surgido.",
-                fullContent: `
-                    <p>La Luna hace mucho más que iluminar la noche. Su gravedad tira de los océanos terrestres, creando las mareas. Hace millones de años, en las zonas intermareales (espacios que quedan cubiertos y descubiertos por el agua rítmicamente), la vida tuvo que adaptarse a un ciclo estricto. Quedarse seco significaba morir; ahogarse también.</p>
-                    
-                    <p>Esta presión evolutiva forzó a los organismos a desarrollar <strong>relojes biológicos internos</strong> (ritmos circadianos) para anticipar los cambios del entorno en lugar de solo reaccionar a ellos. Esta capacidad de "medir el tiempo" se incrustó en el ADN de la vida.</p>
-                    
-                    <p>Si avanzamos la cinta, los humanos desarrollaron calendarios observando las fases lunares (la palabra "mes" y "menstruación" comparten raíz etimológica con "luna" y "medida"). Sin un satélite tan visible y regular, nuestro concepto del tiempo matemático y cíclico podría haber tardado mucho más en desarrollarse. Sin la Luna, quizás no tendríamos relojes, ni horarios, ni historia.</p>
-                `,
                 color: "from-slate-400 to-slate-600"
             },
             {
                 id: "c3",
                 title: "De la Imprenta al Bitcoin",
                 excerpt: "Cómo la descentralización de la información en 1440 creó las bases para la descentralización del valor en el siglo XXI.",
-                fullContent: `
-                    <p>Hay un hilo invisible que conecta a Johannes Gutenberg con Satoshi Nakamoto. Ambos resolvieron el mismo problema: el problema del <strong>intermediario de confianza</strong>.</p>
-                    
-                    <p>Antes de la imprenta, la Iglesia era el "servidor central" de la verdad. Ellos interpretaban la Biblia y validaban el conocimiento. Gutenberg descentralizó la verdad: cualquiera con una Biblia podía auditar la fe. Esto rompió el monopolio de la información.</p>
-                    
-                    <p>Avanzamos 500 años. Los bancos centrales son los nuevos "servidores de la verdad", pero esta vez del valor (dinero). Controlan el libro mayor de quién tiene qué. Bitcoin (y la tecnología Blockchain) hace con el dinero lo que la imprenta hizo con los libros: crea un libro mayor distribuido que nadie controla pero que todos pueden verificar.</p>
-                    
-                    <p>La estructura lógica es idéntica: quitar poder al centro y dárselo a los nodos de la red. La Reforma Protestante fue una guerra por la descentralización de Dios; las criptomonedas son, en esencia, una reforma por la descentralización del Dinero. La historia no se repite, pero rima.</p>
-                `,
                 color: "from-blue-400 to-indigo-600"
             }
         ];
@@ -613,6 +544,7 @@
             // Render Content
             switch(sectionId) {
                 case 'home': main.innerHTML = renderHome(); break;
+                case 'simulations': main.innerHTML = renderSimulations(); break;
                 case 'universe': main.innerHTML = renderUniverse(); break;
                 case 'life': main.innerHTML = renderLife(); break;
                 case 'humanity': main.innerHTML = renderHumanity(); break;
@@ -627,6 +559,7 @@
             window.scrollTo(0,0);
             // Re-init icons for new content
             lucide.createIcons();
+            decorateCards();
         }
 
         // --- RENDER FUNCTIONS ---
@@ -649,88 +582,679 @@
 
         // 1. HOME
         function renderHome() {
-            const timelineHTML = timelineData.map((item, index) => {
-                const isEven = index % 2 === 0;
-                return `
-                <div class="relative flex items-center md:justify-between ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} mb-12 md:mb-24">
-                    <div class="hidden md:block w-5/12"></div>
-                    
-                    <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 z-10 cursor-pointer group" onclick="openModalById(${item.id}, 'timeline')">
-                        <div class="w-10 h-10 md:w-12 md:h-12 bg-slate-900 border-2 border-amber-500/50 rounded-full flex items-center justify-center text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-black">
-                            <i data-lucide="${item.icon}"></i>
-                        </div>
-                    </div>
-
-                    <div class="ml-16 md:ml-0 w-full md:w-5/12 pl-4 md:pl-0 cursor-pointer group" onclick="openModalById(${item.id}, 'timeline')">
-                        <div class="bg-slate-800/30 backdrop-blur border border-slate-700/50 p-6 rounded-xl hover:border-amber-500/50 transition-all hover:bg-slate-800/50">
-                            <div class="text-amber-500 font-mono text-xs md:text-sm mb-1">${item.year}</div>
-                            <h3 class="text-xl font-bold mb-2 group-hover:text-amber-400 transition-colors">${item.title}</h3>
-                            <p class="text-slate-400 text-sm leading-relaxed">${item.shortDesc}</p>
-                        </div>
-                    </div>
-                </div>
-                `;
-            }).join('');
-
             return `
-            <div class="relative overflow-hidden py-20 px-4 text-center">
-                <div class="absolute top-0 left-0 w-full h-full z-0 opacity-20 pointer-events-none">
-                    <div class="absolute top-10 left-10 w-72 h-72 bg-blue-600 rounded-full blur-[100px]"></div>
-                    <div class="absolute bottom-10 right-10 w-96 h-96 bg-amber-600 rounded-full blur-[100px]"></div>
+            <section class="relative overflow-hidden px-4 pt-16 pb-20 md:pt-24 md:pb-28">
+                <div class="absolute inset-0 pointer-events-none opacity-40">
+                    <div class="absolute w-80 h-80 bg-indigo-600/30 rounded-full blur-[110px] -top-20 -left-20"></div>
+                    <div class="absolute w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px] top-20 right-0"></div>
+                    <div class="absolute w-64 h-64 bg-violet-600/20 rounded-full blur-[100px] bottom-0 left-1/3"></div>
                 </div>
-                
-                <div class="relative z-10 max-w-4xl mx-auto">
-                    <span class="inline-block py-1 px-3 rounded-full bg-slate-800/50 border border-slate-700 text-amber-400 text-sm font-medium mb-6 animate-pulse">
-                        Bienvenido a Era One
-                    </span>
-                    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-slate-100">
-                        Una sola historia. <br/>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-600">
-                            Desde el Big Bang hasta tu smartphone.
-                        </span>
-                    </h1>
-                    <p class="text-xl md:text-2xl text-slate-400 mb-10 max-w-2xl mx-auto">
-                        Una narrativa unificada que conecta el cosmos, la biología y el ingenio humano en una línea causal continua.
-                    </p>
-                    <div class="flex flex-col sm:flex-row justify-center gap-4">
-                        <button onclick="switchSection('universe')" class="bg-white text-black font-bold py-3 px-8 rounded-full hover:bg-slate-200 transition-colors">
-                            Comenzar el Viaje
-                        </button>
-                        <button onclick="switchSection('connections')" class="border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-amber-500 font-medium py-3 px-8 rounded-full transition-colors">
-                            Ver Conexiones
-                        </button>
+                <div class="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-200 mb-6">
+                            <span class="w-2 h-2 rounded-full bg-cyan-300 animate-pulse"></span>
+                            Ciencia para explorar, no solo leer
+                        </div>
+                        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight text-white mb-6">
+                            El universo<br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400">en tus manos.</span>
+                        </h1>
+                        <p class="text-lg md:text-xl leading-relaxed text-slate-300 max-w-xl mb-8">
+                            Experimenta con planetas, estrellas y fenómenos cósmicos. Cambia variables, observa qué ocurre y entiende la ciencia detrás de cada resultado.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button onclick="switchSection('simulations')" class="bg-cyan-300 hover:bg-cyan-200 text-slate-950 font-bold px-7 py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2">
+                                <i data-lucide="orbit" size="19"></i> Probar simulaciones
+                            </button>
+                            <button onclick="switchSection('universe')" class="border border-slate-600 hover:border-cyan-300 text-white px-7 py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2">
+                                <i data-lucide="book-open" size="18"></i> Explorar explicaciones
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 max-w-lg mt-10 pt-6 border-t border-white/10">
+                            <div><div class="text-2xl font-bold text-white">2D + 3D</div><div class="text-xs text-slate-400 mt-1">Modelos visuales</div></div>
+                            <div><div class="text-2xl font-bold text-white">Interactivo</div><div class="text-xs text-slate-400 mt-1">Tú controlas</div></div>
+                            <div><div class="text-2xl font-bold text-white">Científico</div><div class="text-xs text-slate-400 mt-1">Aprende el porqué</div></div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-blue-500/10 blur-3xl rounded-full"></div>
+                        <div class="relative rounded-3xl border border-white/10 bg-slate-900/70 p-4 md:p-6 shadow-2xl shadow-blue-950/40">
+                            <div class="flex items-center justify-between mb-4">
+                                <div><div class="text-xs uppercase tracking-[.25em] text-cyan-300">Vista previa</div><div class="text-white font-semibold mt-1">Un sistema planetario</div></div>
+                                <span class="text-xs border border-white/10 rounded-full px-3 py-1 text-slate-400">Modelo conceptual</span>
+                            </div>
+                            <div class="relative overflow-hidden rounded-2xl bg-[#050816] border border-indigo-900/50 aspect-[4/3]">
+                                <div class="absolute inset-0" style="background-image:radial-gradient(white .7px,transparent .7px);background-size:31px 31px;opacity:.35"></div>
+                                <div class="absolute rounded-full border border-blue-300/20 w-[80%] aspect-square top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                                <div class="absolute rounded-full border border-blue-300/20 w-[60%] aspect-square top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                                <div class="absolute rounded-full border border-blue-300/20 w-[40%] aspect-square top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                                <div class="absolute w-14 h-14 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-br from-yellow-100 via-amber-400 to-orange-600 shadow-[0_0_45px_rgba(251,191,36,.65)]"></div>
+                                <div class="absolute w-4 h-4 rounded-full bg-cyan-300 shadow-[0_0_18px_rgba(103,232,249,.9)] top-[27%] left-[57%]"></div>
+                                <div class="absolute w-3 h-3 rounded-full bg-orange-400 shadow-[0_0_15px_rgba(251,146,60,.8)] top-[67%] left-[28%]"></div>
+                                <div class="absolute w-5 h-5 rounded-full bg-blue-400 shadow-[0_0_18px_rgba(96,165,250,.8)] top-[20%] left-[29%]"></div>
+                                <div class="absolute bottom-4 left-4 right-4 flex justify-between text-xs text-slate-400"><span>Órbitas simplificadas</span><span>Movimiento en tiempo real</span></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 mt-4">
+                                <div class="rounded-xl bg-white/5 border border-white/5 p-3"><i data-lucide="sliders-horizontal" class="text-cyan-300 mb-2" size="18"></i><div class="text-sm text-white font-medium">Modifica parámetros</div><div class="text-xs text-slate-400 mt-1">Velocidad, distancia y escala.</div></div>
+                                <div class="rounded-xl bg-white/5 border border-white/5 p-3"><i data-lucide="brain" class="text-violet-300 mb-2" size="18"></i><div class="text-sm text-white font-medium">Comprende el resultado</div><div class="text-xs text-slate-400 mt-1">Cada modelo incluye contexto.</div></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="max-w-5xl mx-auto px-4 py-20 relative">
-                <h3 class="text-center text-slate-500 uppercase tracking-widest text-sm mb-16">Línea de tiempo interactiva</h3>
-                <div class="absolute left-4 md:left-1/2 top-20 bottom-0 w-0.5 bg-gradient-to-b from-blue-900 via-amber-500 to-purple-900 opacity-30"></div>
-                ${timelineHTML}
-            </div>
-            `;
+            <section class="max-w-7xl mx-auto px-4 py-12 md:py-16">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                    <div><p class="text-xs uppercase tracking-[.25em] text-cyan-300 mb-2">Laboratorio EraOne</p><h2 class="text-3xl md:text-4xl font-bold text-white">Empieza a experimentar</h2></div>
+                    <p class="text-slate-400 max-w-xl">Simulaciones educativas para descubrir cómo funcionan algunos de los fenómenos más fascinantes del espacio.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-5">
+                    <button onclick="switchSection('simulations')" class="text-left rounded-2xl border border-cyan-400/30 bg-gradient-to-br from-cyan-950/70 to-slate-900 p-6 hover:-translate-y-1 transition-transform">
+                        <div class="w-12 h-12 rounded-xl bg-cyan-400/10 text-cyan-300 flex items-center justify-center mb-5"><i data-lucide="orbit" size="24"></i></div>
+                        <div class="text-xs text-cyan-300 uppercase tracking-widest mb-2">Simulación disponible</div><h3 class="text-xl font-bold text-white mb-2">Sistema solar</h3><p class="text-sm text-slate-400 leading-relaxed">Ajusta la velocidad orbital y la distancia de los planetas en un modelo visual.</p><div class="mt-5 text-sm font-bold text-cyan-300">Abrir laboratorio →</div>
+                    </button>
+                    <button onclick="openSim('moon')" class="text-left rounded-2xl border border-amber-400/30 bg-gradient-to-br from-amber-950/50 to-slate-900 p-6 hover:-translate-y-1 transition-transform">
+                        <div class="w-12 h-12 rounded-xl bg-amber-400/10 text-amber-300 flex items-center justify-center mb-5"><i data-lucide="moon-star" size="24"></i></div>
+                        <div class="text-xs text-amber-300 uppercase tracking-widest mb-2">Simulación disponible</div><h3 class="text-xl font-bold text-white mb-2">Tierra, Luna y eclipses</h3><p class="text-sm text-slate-400 leading-relaxed">Observa fases lunares, eclipses y cómo cambia la iluminación según la posición.</p><div class="mt-5 text-sm font-bold text-amber-300">Abrir simulación →</div>
+                    </button>
+                    <button onclick="openSim('transit')" class="text-left rounded-2xl border border-violet-400/30 bg-gradient-to-br from-violet-950/50 to-slate-900 p-6 hover:-translate-y-1 transition-transform">
+                        <div class="w-12 h-12 rounded-xl bg-violet-400/10 text-violet-300 flex items-center justify-center mb-5"><i data-lucide="telescope" size="24"></i></div>
+                        <div class="text-xs text-violet-300 uppercase tracking-widest mb-2">Simulación disponible</div><h3 class="text-xl font-bold text-white mb-2">Cazador de exoplanetas</h3><p class="text-sm text-slate-400 leading-relaxed">Detecta un planeta por la caída de brillo de su estrella y estima sus características.</p><div class="mt-5 text-sm font-bold text-violet-300">Abrir simulación →</div>
+                    </button>
+                </div>
+            </section>
+
+            <section class="border-y border-white/10 bg-slate-900/50">
+                <div class="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-2 gap-8 items-center">
+                    <div><p class="text-xs uppercase tracking-[.25em] text-cyan-300 mb-3">La idea detrás de EraOne</p><h2 class="text-2xl md:text-3xl font-bold text-white mb-4">No solo mires el cosmos. Haz preguntas.</h2><p class="text-slate-400 leading-relaxed">Una buena simulación no sustituye la ciencia real: te permite jugar con un modelo, observar patrones y comprender qué variables importan. Las explicaciones de EraOne separarán los conceptos científicos de las simplificaciones visuales.</p></div>
+                    <div class="grid grid-cols-2 gap-3"><div class="p-4 rounded-xl bg-slate-950 border border-white/10"><i data-lucide="mouse-pointer-2" class="text-cyan-300 mb-3"></i><h3 class="font-semibold text-white">Interactúa</h3><p class="text-xs text-slate-400 mt-1">Cambia valores y pausa el movimiento.</p></div><div class="p-4 rounded-xl bg-slate-950 border border-white/10"><i data-lucide="chart-no-axes-combined" class="text-violet-300 mb-3"></i><h3 class="font-semibold text-white">Compara</h3><p class="text-xs text-slate-400 mt-1">Relaciona las variables con el resultado.</p></div></div>
+                </div>
+            </section>`;
         }
 
-        // 2. UNIVERSE
-        function renderUniverse() {
-            const articlesHTML = universeArticles.map(art => `
-                <div onclick="openModalById('${art.id}', 'universe')" class="bg-slate-800/20 hover:bg-slate-800/40 border border-slate-700/50 hover:border-blue-500/50 p-6 rounded-xl transition-all duration-300 group cursor-pointer relative overflow-hidden">
-                    <div class="flex justify-between items-start mb-4 relative z-10">
-                        <div class="p-3 bg-slate-900 rounded-lg text-blue-400 group-hover:text-blue-300 transition-colors">
-                            <i data-lucide="${art.icon}"></i>
-                        </div>
-                        <span class="text-xs font-mono text-slate-500 uppercase">${art.tag}</span>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2 group-hover:text-blue-200 relative z-10 text-slate-100">${art.title}</h3>
-                    <p class="text-sm text-slate-400 relative z-10 mb-4">${art.desc}</p>
-                    <div class="text-xs text-blue-500 font-bold uppercase tracking-wider flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        Leer más <i data-lucide="chevron-right" size="12"></i>
-                    </div>
+        // SIMULACIÓN 01: Sistema solar (modelo educativo, no a escala)
+        function renderSolarSim() {
+            return `
+            <div class="mx-auto px-4 md:px-6 py-5 md:py-7" style="max-width:var(--sim-w,1180px)">
+                <div class="mb-8">
+                    <div class="flex items-center gap-2 text-cyan-300 text-xs uppercase tracking-[.25em] mb-3"><i data-lucide="flask-conical" size="16"></i> Fase 1 · Laboratorio interactivo 01</div>
+                    <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">Explora el sistema solar</h2>
+                    <p class="text-slate-400 text-lg max-w-3xl">Observa cómo se mueven los planetas alrededor del Sol. Cambia la velocidad y la distancia orbital, pausa el modelo y consulta la explicación científica.</p>
                 </div>
-            `).join('');
+                <div class="grid md:grid-cols-[minmax(0,1fr)_300px] lg:grid-cols-[minmax(0,1fr)_340px] gap-5 items-start">
+                    <div class="rounded-2xl overflow-hidden md:sticky md:top-3 self-start border border-white/10 bg-[#050816]">
+                        <div class="flex items-center justify-between gap-4 p-4 border-b border-white/10 bg-slate-900/80">
+                            <div><div class="text-white font-semibold">Vista orbital</div><div class="text-xs text-slate-400 mt-1">Animación conceptual · distancias no a escala</div></div>
+                            <div class="flex gap-2">
+                                <button id="sim-pause" onclick="toggleSolarPause()" class="rounded-lg bg-cyan-300 text-slate-950 px-3 py-2 text-sm font-bold flex items-center gap-2"><i data-lucide="pause" size="15"></i><span>Pausar</span></button>
+                                <button onclick="resetSolarSimulation()" class="rounded-lg border border-white/15 text-slate-300 hover:text-white px-3 py-2 text-sm flex items-center gap-2"><i data-lucide="rotate-ccw" size="15"></i><span>Reiniciar</span></button>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <canvas id="solar-canvas" class="block w-full" style="height: var(--sim-h, 54vh); min-height: 300px;" aria-label="Simulación animada del sistema solar"></canvas>
+                            <div class="absolute bottom-3 left-3 text-[11px] text-slate-500 bg-black/40 rounded px-2 py-1">Representación simplificada</div>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 border-t border-white/10">
+                            <div class="p-4 border-r border-white/10"><div class="text-xs text-slate-500">Cuerpos mostrados</div><div class="text-xl text-white font-bold">Sol + 8</div></div>
+                            <div class="p-4 sm:border-r border-white/10"><div class="text-xs text-slate-500">Modelo</div><div id="sim-view-label" class="text-xl text-white font-bold">2D orbital</div></div>
+                            <div class="p-4 border-r border-white/10"><div class="text-xs text-slate-500">Velocidad visual</div><div id="sim-speed-readout" class="text-xl text-white font-bold">1.0×</div></div>
+                            <div class="p-4"><div class="text-xs text-slate-500">Planeta seleccionado</div><div id="sim-planet-readout" class="text-xl text-white font-bold">Tierra</div></div>
+                        </div>
+                    </div>
+
+                    <aside class="space-y-5">
+                        <div class="rounded-2xl border border-white/10 bg-slate-900/70 p-5">
+                            <h2 class="text-lg font-bold text-white mb-1">Controles del modelo</h2><p class="text-sm text-slate-400 mb-5">Modifica las variables para ver cómo cambia la representación.</p>
+                            <label for="sim-speed" class="flex justify-between text-sm mb-2"><span class="text-slate-300">Velocidad de animación</span><strong id="sim-speed-value" class="text-cyan-300">1.0×</strong></label>
+                            <input id="sim-speed" type="range" min="0" max="3" step="0.1" value="1" class="w-full accent-cyan-300">
+                            <div class="flex justify-between text-xs text-slate-500 mt-1 mb-5"><span>Pausa</span><span>Rápida</span></div>
+                            <label for="sim-distance" class="flex justify-between text-sm mb-2"><span class="text-slate-300">Separación orbital</span><strong id="sim-distance-value" class="text-cyan-300">1.0×</strong></label>
+                            <input id="sim-distance" type="range" min="0.65" max="1.35" step="0.05" value="1" class="w-full accent-cyan-300">
+                            <div class="flex justify-between text-xs text-slate-500 mt-1 mb-5"><span>Más juntas</span><span>Más separadas</span></div>
+                            <label for="sim-planet" class="block text-sm text-slate-300 mb-2">Selecciona un planeta</label>
+                            <select id="sim-planet" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-300">
+                                <option value="0">Mercurio</option><option value="1">Venus</option><option value="2" selected>Tierra</option><option value="3">Marte</option><option value="4">Júpiter</option><option value="5">Saturno</option><option value="6">Urano</option><option value="7">Neptuno</option>
+                            </select>
+                            <div class="mt-4">
+                                <div class="text-sm text-slate-300 mb-2">Estilo visual</div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button id="sim-mode-2d" onclick="setSolarView('2d')" class="rounded-lg py-2 px-3 text-sm font-semibold border border-cyan-300 bg-cyan-300/10 text-cyan-200">Vista 2D</button>
+                                    <button id="sim-mode-3d" onclick="setSolarView('3d')" class="rounded-lg py-2 px-3 text-sm font-semibold border border-slate-700 text-slate-400 hover:text-white">Perspectiva 3D</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl border border-cyan-300/20 bg-cyan-950/20 p-5">
+                            <div class="flex items-center gap-2 text-cyan-200 mb-3"><i data-lucide="info" size="18"></i><h2 class="font-bold">¿Qué estás viendo?</h2></div>
+                            <p id="sim-explanation" class="text-sm leading-relaxed text-slate-300">La Tierra completa una órbita alrededor del Sol en aproximadamente 365,25 días. En este modelo, el movimiento es acelerado para que puedas observarlo.</p>
+                            <div class="mt-4 pt-4 border-t border-cyan-300/10"><div class="text-xs uppercase tracking-widest text-cyan-300 mb-1">Dato del planeta</div><div id="sim-planet-fact" class="text-sm text-slate-300">La Tierra tiene un satélite natural: la Luna.</div></div>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-slate-900/50 p-5">
+                            <h2 class="font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="flask-conical" size="17" class="text-violet-300"></i>Prueba y observa</h2>
+                            <p class="text-sm text-slate-400">1. Aumenta la velocidad y observa las órbitas.<br>2. Cambia la separación orbital.<br>3. Selecciona Saturno y busca sus anillos.<br>4. Cambia a perspectiva 3D y compara la vista.</p>
+                            <p class="text-xs text-slate-500 mt-3">Importante: los tamaños, distancias y velocidades visuales están simplificados. No es un modelo de navegación ni una representación a escala.</p>
+                        </div>
+                    </aside>
+                </div>
+            </div>`;
+        }
+
+        let solarAnimationFrame = null;
+        let solarLastTime = 0;
+        let solarElapsed = 0;
+        let solarPaused = false;
+        let solarView = '2d';
+        let solarSpeed = 1;
+        let solarDistance = 1;
+        let solarSelected = 2;
+        const solarPlanets = [
+            {name:'Mercurio', color:'#b8b2a8', radius:3, orbit:38, period:0.24, fact:'Es el planeta más cercano al Sol y completa una vuelta en unos 88 días terrestres.', desc:'Mercurio orbita muy cerca del Sol. Su año dura aproximadamente 88 días terrestres.'},
+            {name:'Venus', color:'#e8c58c', radius:5, orbit:57, period:0.62, fact:'Su atmósfera densa produce un intenso efecto invernadero.', desc:'Venus gira alrededor del Sol en unos 225 días terrestres. Su atmósfera retiene mucho calor.'},
+            {name:'Tierra', color:'#4da6ff', radius:5, orbit:78, period:1, fact:'La Tierra tiene un satélite natural: la Luna.', desc:'La Tierra completa una órbita alrededor del Sol en aproximadamente 365,25 días. En este modelo, el movimiento es acelerado para que puedas observarlo.'},
+            {name:'Marte', color:'#ef795b', radius:4, orbit:99, period:1.88, fact:'Marte tiene dos pequeñas lunas: Fobos y Deimos.', desc:'Marte tarda cerca de 687 días terrestres en completar una órbita solar.'},
+            {name:'Júpiter', color:'#e6b78a', radius:10, orbit:128, period:11.86, fact:'Es el planeta más grande del sistema solar.', desc:'Júpiter tarda casi 11,9 años terrestres en completar su órbita.'},
+            {name:'Saturno', color:'#e9d5a4', radius:8, orbit:158, period:29.45, fact:'Sus anillos están formados principalmente por fragmentos de hielo y roca.', desc:'Saturno tarda unos 29,5 años terrestres en orbitar el Sol. Sus anillos son visibles en esta representación.'},
+            {name:'Urano', color:'#9be5e9', radius:7, orbit:188, period:84, fact:'Su eje de rotación está muy inclinado respecto a su órbita.', desc:'Urano completa una órbita en unos 84 años terrestres.'},
+            {name:'Neptuno', color:'#5577ff', radius:7, orbit:215, period:164.8, fact:'Es un planeta muy lejano y sus vientos pueden alcanzar velocidades extremas.', desc:'Neptuno necesita alrededor de 165 años terrestres para dar una vuelta al Sol.'}
+        ];
+
+        function setupSolarSystemSimulation() {
+            const canvas = document.getElementById('solar-canvas');
+            if (!canvas) return;
+            if (solarAnimationFrame) cancelAnimationFrame(solarAnimationFrame);
+            const speed = document.getElementById('sim-speed');
+            const distance = document.getElementById('sim-distance');
+            const planet = document.getElementById('sim-planet');
+            speed.addEventListener('input', () => {
+                solarSpeed = Number(speed.value);
+                document.getElementById('sim-speed-value').textContent = solarSpeed.toFixed(1) + '×';
+                document.getElementById('sim-speed-readout').textContent = solarSpeed.toFixed(1) + '×';
+            });
+            distance.addEventListener('input', () => {
+                solarDistance = Number(distance.value);
+                document.getElementById('sim-distance-value').textContent = solarDistance.toFixed(2) + '×';
+            });
+            planet.addEventListener('change', () => {
+                solarSelected = Number(planet.value);
+                updateSolarPlanetInfo();
+            });
+            solarLastTime = 0;
+            solarAnimationFrame = requestAnimationFrame(drawSolarSystem);
+            updateSolarPlanetInfo();
+        }
+
+        function updateSolarPlanetInfo() {
+            const p = solarPlanets[solarSelected];
+            const explanation = document.getElementById('sim-explanation');
+            if (!p || !explanation) return;
+            document.getElementById('sim-planet-readout').textContent = p.name;
+            document.getElementById('sim-planet-fact').textContent = p.fact;
+            explanation.textContent = p.desc;
+        }
+
+        function toggleSolarPause() {
+            solarPaused = !solarPaused;
+            const btn = document.getElementById('sim-pause');
+            if (!btn) return;
+            btn.innerHTML = solarPaused
+                ? '<i data-lucide="play" size="15"></i><span>Reanudar</span>'
+                : '<i data-lucide="pause" size="15"></i><span>Pausar</span>';
+            lucide.createIcons();
+        }
+
+        function resetSolarSimulation() {
+            solarElapsed = 0; solarPaused = false; solarSpeed = 1; solarDistance = 1; solarView = '2d'; solarSelected = 2;
+            const speed = document.getElementById('sim-speed');
+            const distance = document.getElementById('sim-distance');
+            const planet = document.getElementById('sim-planet');
+            if (speed) speed.value = '1';
+            if (distance) distance.value = '1';
+            if (planet) planet.value = '2';
+            const speedValue = document.getElementById('sim-speed-value');
+            const distanceValue = document.getElementById('sim-distance-value');
+            if (speedValue) speedValue.textContent = '1.0×';
+            if (distanceValue) distanceValue.textContent = '1.00×';
+            const btn = document.getElementById('sim-pause');
+            if (btn) btn.innerHTML = '<i data-lucide="pause" size="15"></i><span>Pausar</span>';
+            setSolarView('2d'); updateSolarPlanetInfo(); lucide.createIcons();
+        }
+
+        function setSolarView(mode) {
+            solarView = mode;
+            const b2 = document.getElementById('sim-mode-2d');
+            const b3 = document.getElementById('sim-mode-3d');
+            if (!b2 || !b3) return;
+            b2.className = mode === '2d' ? 'rounded-lg py-2 px-3 text-sm font-semibold border border-cyan-300 bg-cyan-300/10 text-cyan-200' : 'rounded-lg py-2 px-3 text-sm font-semibold border border-slate-700 text-slate-400 hover:text-white';
+            b3.className = mode === '3d' ? 'rounded-lg py-2 px-3 text-sm font-semibold border border-cyan-300 bg-cyan-300/10 text-cyan-200' : 'rounded-lg py-2 px-3 text-sm font-semibold border border-slate-700 text-slate-400 hover:text-white';
+            const label = document.getElementById('sim-view-label');
+            if (label) label.textContent = mode === '2d' ? '2D orbital' : 'Perspectiva 3D';
+        }
+
+        function drawSolarSystem(timestamp) {
+            const canvas = document.getElementById('solar-canvas');
+            if (!canvas) { solarAnimationFrame = null; return; }
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.getBoundingClientRect();
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const width = Math.max(300, rect.width);
+            const height = Math.max(330, rect.height);
+            if (canvas.width !== Math.floor(width * dpr) || canvas.height !== Math.floor(height * dpr)) {
+                canvas.width = Math.floor(width * dpr);
+                canvas.height = Math.floor(height * dpr);
+            }
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, width, height);
+            const dt = solarLastTime ? Math.min((timestamp - solarLastTime) / 1000, 0.05) : 0;
+            solarLastTime = timestamp;
+            if (!solarPaused) solarElapsed += dt * solarSpeed;
+            ctx.fillStyle = '#050816'; ctx.fillRect(0, 0, width, height);
+
+            // Star field is deterministic so it does not flicker between frames.
+            for (let i = 0; i < 115; i++) {
+                const x = (i * 97.13 + 19) % width;
+                const y = (i * 53.71 + 11) % height;
+                const r = (i % 5 === 0) ? 1.2 : 0.55;
+                ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fillStyle = i % 7 === 0 ? 'rgba(125,211,252,.8)' : 'rgba(226,232,240,.55)'; ctx.fill();
+            }
+
+            const cx = width * 0.5, cy = height * 0.5;
+            const fit = Math.min(width, height) / 500;
+            const base = fit * (solarView === '3d' ? 1.0 : 1.12);
+            const tilt = solarView === '3d' ? 0.57 : 1;
+            // Soft glow around the Sun.
+            const glow = ctx.createRadialGradient(cx, cy, 2, cx, cy, 45 * base);
+            glow.addColorStop(0, 'rgba(251,191,36,.34)'); glow.addColorStop(1, 'rgba(251,191,36,0)');
+            ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(cx, cy, 45 * base, 0, Math.PI * 2); ctx.fill();
+
+            solarPlanets.forEach((p, i) => {
+                const radius = p.orbit * base * solarDistance;
+                ctx.beginPath(); ctx.ellipse(cx, cy, radius, radius * tilt, 0, 0, Math.PI * 2);
+                ctx.strokeStyle = i === solarSelected ? 'rgba(103,232,249,.48)' : 'rgba(148,163,184,.20)';
+                ctx.lineWidth = i === solarSelected ? 1.5 : 1; ctx.stroke();
+            });
+
+            // Sun.
+            const sunGrad = ctx.createRadialGradient(cx - 5, cy - 5, 1, cx, cy, 17 * base);
+            sunGrad.addColorStop(0, '#fff7c2'); sunGrad.addColorStop(.5, '#fbbf24'); sunGrad.addColorStop(1, '#ea580c');
+            ctx.beginPath(); ctx.arc(cx, cy, 11 * base, 0, Math.PI * 2); ctx.fillStyle = sunGrad; ctx.fill();
+            ctx.fillStyle = 'rgba(253,230,138,.85)'; ctx.font = '12px Inter, sans-serif'; ctx.fillText('Sol', cx + 14 * base, cy - 12 * base);
+
+            solarPlanets.forEach((p, i) => {
+                const angle = solarElapsed * 0.42 / Math.sqrt(p.period) + i * 0.7;
+                const r = p.orbit * base * solarDistance;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r * tilt;
+                const pr = Math.max(2.2, p.radius * base * (solarView === '3d' ? 1.1 : 1));
+                if (i === solarSelected) {
+                    ctx.beginPath(); ctx.arc(x, y, pr + 7, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(103,232,249,.75)'; ctx.lineWidth = 1.5; ctx.stroke();
+                }
+                ctx.beginPath(); ctx.arc(x, y, pr, 0, Math.PI * 2); ctx.fillStyle = p.color; ctx.fill();
+                if (i === 5) {
+                    ctx.beginPath(); ctx.ellipse(x, y, pr * 1.9, pr * .75, -0.25, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#d6c59d'; ctx.lineWidth = Math.max(1, 2 * base); ctx.stroke();
+                }
+                if (i === solarSelected) {
+                    ctx.font = 'bold 12px Inter, sans-serif'; ctx.fillStyle = '#e0f2fe';
+                    ctx.fillText(p.name, x + pr + 7, y - pr - 5);
+                }
+            });
+            if (solarView === '3d') {
+                ctx.fillStyle = 'rgba(148,163,184,.75)'; ctx.font = '11px Inter, sans-serif';
+                ctx.fillText('Perspectiva inclinada (no es una simulación gravitatoria 3D)', 12, height - 14);
+            }
+            solarAnimationFrame = requestAnimationFrame(drawSolarSystem);
+        }
+
+        const IMGS=['https://images.pexels.com/photos/37824750/pexels-photo-37824750.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/13344256/pexels-photo-13344256.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/32961169/pexels-photo-32961169.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/7736151/pexels-photo-7736151.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/10144162/pexels-photo-10144162.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/34012639/pexels-photo-34012639.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/17621401/pexels-photo-17621401.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/37474090/pexels-photo-37474090.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/8237959/pexels-photo-8237959.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/17505900/pexels-photo-17505900.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/9408779/pexels-photo-9408779.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/26607689/pexels-photo-26607689.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/17662495/pexels-photo-17662495.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/38039464/pexels-photo-38039464.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/38687094/pexels-photo-38687094.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/38207820/pexels-photo-38207820.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/7736065/pexels-photo-7736065.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/38039151/pexels-photo-38039151.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/38600715/pexels-photo-38600715.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/35845484/pexels-photo-35845484.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/35845331/pexels-photo-35845331.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/18827608/pexels-photo-18827608.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/18814283/pexels-photo-18814283.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/18212022/pexels-photo-18212022.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/18211969/pexels-photo-18211969.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/12491775/pexels-photo-12491775.jpeg?auto=compress&cs=tinysrgb&w=1200'];
+        const imgFor=k=>{let h=0;for(const ch of String(k))h=(h*31+ch.charCodeAt(0))%9973;return IMGS[h%IMGS.length];};
+        function decorateCards(){document.querySelectorAll('[onclick^="openModalById"]').forEach(el=>{if(el.dataset.img||el.querySelector('img'))return;el.dataset.img=1;const m=el.getAttribute('onclick').match(/'([^']+)'/);const im=document.createElement('img');im.src=imgFor(m[1]);im.loading='lazy';im.alt='';im.className='w-full h-40 object-cover rounded-lg mb-4 opacity-90 group-hover:opacity-100 transition-opacity';im.onerror=()=>im.remove();el.prepend(im);});}
+        // ===== SIMULACIONES 02-08 (Fases 1 y 2) =====
+        const TAU=Math.PI*2, rnd=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);}, clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+        const bgStars=(c,w,h)=>{c.fillStyle='#050816';c.fillRect(0,0,w,h);for(let i=0;i<90;i++){c.fillStyle=`rgba(226,232,240,${.25+rnd(i+7)*.5})`;c.beginPath();c.arc(rnd(i)*w,rnd(i+300)*h,rnd(i+9)>.9?1.2:.6,0,TAU);c.fill();}};
+        const tempColor=T=>T<3500?'#ff6a3d':T<4500?'#ff9a4d':T<5500?'#ffc66d':T<6500?'#fff0c8':T<8500?'#e8f0ff':T<15000?'#b8d0ff':'#9db8ff';
+        const txt=(c,s,x,y,col,sz,al)=>{c.fillStyle=col||'#cbd5e1';c.font=(sz||12)+'px Inter, sans-serif';c.textAlign=al||'left';c.fillText(s,x,y);};
+        const glow=(c,x,y,r,rgb,a)=>{const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,`rgba(${rgb},${a})`);g.addColorStop(1,`rgba(${rgb},0)`);c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,TAU);c.fill();};
+        const circ=(c,x,y,r,col)=>{c.fillStyle=col;c.beginPath();c.arc(x,y,r,0,TAU);c.fill();};
+        const fnum=r=>r>=1e4?r.toExponential(1).replace('e+','×10^'):r>=10?r.toFixed(0):r.toFixed(1);
+
+        // --- Luna ---
+        const moonName=d=>d<1||d>28.5?'Luna nueva':d<6.4?'Creciente':d<8.4?'Cuarto creciente':d<13.4?'Gibosa creciente':d<16.1?'Luna llena':d<21?'Gibosa menguante':d<23?'Cuarto menguante':'Menguante';
+        const moonCalc=v=>{const th=v.day/29.5*TAU,lat=v.inc*Math.sin(th-v.node*Math.PI/180),ok=Math.abs(lat)<1.2;return{th,lat,ecl:ok&&Math.min(th,TAU-th)<.12?'solar':ok&&Math.abs(th-Math.PI)<.12?'lunar':''};};
+        const moonDisc=(c,x,y,r,th)=>{c.save();c.translate(x,y);const wan=th>Math.PI,a=wan?TAU-th:th,k=Math.cos(a);if(wan)c.scale(-1,1);circ(c,0,0,r,'#1e293b');c.fillStyle='#e2e8f0';c.beginPath();c.arc(0,0,r,-Math.PI/2,Math.PI/2);c.ellipse(0,0,Math.max(.01,r*Math.abs(k)),r,0,Math.PI/2,-Math.PI/2,k>0);c.fill();c.restore();};
+
+        // --- Laboratorio de planetas --- [masa M⊕, radio km, gravedad m/s², temp °C, color]
+        const LAB={'Mercurio':[.055,2440,3.70,167,'#b8b2a8'],'Venus':[.815,6052,8.87,464,'#e8c58c'],'Tierra':[1,6371,9.81,15,'#4da6ff'],'Luna':[.0123,1737,1.62,-20,'#cbd5e1'],'Marte':[.107,3390,3.71,-65,'#ef795b'],'Júpiter':[317.8,69911,24.79,-110,'#e6b78a'],'Saturno':[95.2,58232,10.44,-140,'#e9d5a4'],'Urano':[14.5,25362,8.69,-195,'#9be5e9'],'Neptuno':[17.1,24622,11.15,-200,'#5577ff']};
+
+        // --- Impactos ---
+        const MAT={roca:[3000,'Roca (3000 kg/m³)',60],hielo:[900,'Hielo / cometa (900 kg/m³)',120],hierro:[7800,'Hierro (7800 kg/m³)',25]};
+        const impCalc=v=>{const rho=MAT[v.m][0],vel=v.vel*1000,mass=rho*Math.PI/6*v.d**3,E=.5*mass*vel*vel,Mt=E/4.184e15,air=v.d<MAT[v.m][2],D=1.25*1.161*Math.cbrt(rho/2500)*v.d**.78*vel**.44*Math.pow(9.81,-.22)*Math.cbrt(Math.sin(v.ang*Math.PI/180));return{mass,E,Mt,air,D};};
+        const fmtMt=x=>x<.001?(x*1000).toFixed(2)+' kt':x<1?(x*1000).toFixed(0)+' kt':x<1e4?x.toFixed(1)+' Mt':x.toExponential(1).replace('e+','×10^')+' Mt';
+        const IMP_REF=[[.015,'la bomba de Hiroshima'],[12,'el evento de Tunguska (1908)'],[200,'la erupción del Krakatoa (1883)'],[1e8,'el impacto de Chicxulub (extinción de los dinosaurios)']];
+
+        // --- Diseña tu planeta ---
+        const ST={r:[.04,'#ff7a59'],s:[1,'#ffd966'],a:[10,'#bcd7ff']};
+        const plCalc=v=>{const L=ST[v.s][0],g=v.M/(v.R*v.R),ve=11.19*Math.sqrt(v.M/v.R),teq=278*Math.pow(L,.25)/Math.sqrt(v.d)*Math.pow(.7,.25),eff=v.atm*clamp((ve-3)/5,0,1),T=teq-273.15+33*Math.pow(eff,.7),hz=[Math.sqrt(L/1.1),Math.sqrt(L/.53)];
+            const sc=Math.round(100*Math.sqrt(clamp(1-Math.abs(T-15)/40,0,1)*clamp(1-Math.abs(Math.log2(g))/2,0,1)*clamp(eff/.4,0,1)*clamp(v.water/30,0,1)));
+            const cls=T>100?'Demasiado caliente: el agua líquida se evapora':T<-20?'Mundo helado':eff<.1?'Sin atmósfera útil: superficie expuesta':v.water<8?'Mundo desértico':v.water>90?'Mundo océano':sc>=60?'Potencialmente habitable':'Condiciones marginales';return{g,ve,eff,T,hz,sc,cls};};
+
+        // --- Estrellas ---
+        const starCalc=v=>{const M=Math.pow(10,v.ml),cls=M<.5?0:M<8?1:M<20?2:3;return{M,cls,life:Math.max(3e6,1e10*Math.pow(M,-2.5)),T:clamp(5772*Math.sqrt(M),2800,40000),st:v.p<5?0:v.p<80?1:v.p<92?2:v.p<97?3:4};};
+        const STN=[['Enana roja (secuencia principal)','Agotando el hidrógeno','Se apaga lentamente','Enana blanca de helio'],['Secuencia principal','Gigante roja','Nebulosa planetaria','Enana blanca'],['Secuencia principal','Supergigante roja','Supernova','Estrella de neutrones'],['Secuencia principal','Supergigante roja','Supernova','Agujero negro']];
+        const yrs=x=>x>=1e12?(x/1e12).toFixed(1)+' billones de años':x>=1e9?(x/1e9).toFixed(1)+' mil millones de años':x>=1e6?(x/1e6).toFixed(1)+' millones de años':Math.round(x)+' años';
+        const starExp=k=>k.st===0?'Una nube de gas y polvo se contrae por su propia gravedad y se calienta hasta formar una protoestrella.':k.st===1?'Fusiona hidrógeno en helio en su núcleo. Cuanto más masiva es, más brillante y caliente, pero menos tiempo vive.':k.st===2?(k.cls===0?'Las enanas rojas viven más que la edad actual del universo, así que esta fase es teórica: ninguna ha llegado aún aquí.':k.cls===1?'Sin hidrógeno en el núcleo, la estrella se expande y se enfría: se convierte en gigante roja.':'Fusiona elementos cada vez más pesados y se hincha hasta ser una supergigante.'):k.st===3?(k.cls===0?'La estrella se contrae y se apaga sin explotar.':k.cls===1?'Expulsa sus capas externas formando una nebulosa planetaria y deja al descubierto un núcleo muy caliente.':'El núcleo de hierro colapsa y la estrella estalla como supernova.'):(k.cls<2?'El remanente es una enana blanca, del tamaño de la Tierra, que se enfría durante miles de millones de años.':k.cls===2?'El núcleo colapsado forma una estrella de neutrones: unos 20 km de diámetro y una densidad enorme.':'El núcleo es tan masivo que colapsa por completo y forma un agujero negro.');
+
+        // --- Tránsitos ---
+        const ovl=(d,r)=>{if(d>=1+r)return 0;if(d<=Math.abs(1-r))return Math.PI*Math.min(1,r*r);return Math.acos((d*d+1-r*r)/(2*d))+r*r*Math.acos((d*d+r*r-1)/(2*d*r))-.5*Math.sqrt((-d+1+r)*(d+1-r)*(d-1+r)*(d+1+r));};
+        const trCalc=v=>{const a=Math.cbrt(v.sm*Math.pow(v.P/365.25,2)),rho=v.rp/109.1/v.rs,T0=v.P/Math.PI*(v.rs*.00465/a),kk=(1+rho)**2-v.b*v.b;return{a,rho,T0,tr:kk>0,dur:kk>0?T0*Math.sqrt(kk):0,xm:2.2*(1+rho),depth:ovl(v.b,rho)/Math.PI};};
+
+        // --- Binarias ---
+        const kep=(M,e)=>{let E=M;for(let i=0;i<7;i++)E-=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));return E;};
+        const binCalc=v=>{const Mt=v.m1+v.m2,P=Math.sqrt(v.a**3/Mt);return{Mt,P,TA:clamp(3*Math.sqrt(P),3,16)};};
+        const binPos=(v,k,tt)=>{const Mn=(((tt*v.sp/k.TA)%1)+1)%1*TAU,E=kep(Mn,v.e),r=v.a*(1-v.e*Math.cos(E)),nu=2*Math.atan2(Math.sqrt(1+v.e)*Math.sin(E/2),Math.sqrt(1-v.e)*Math.cos(E/2)),x=r*Math.cos(nu),y=r*Math.sin(nu);return[[-v.m2/k.Mt*x,-v.m2/k.Mt*y],[v.m1/k.Mt*x,v.m1/k.Mt*y]];};
+
+        const SIMS={
+        solar:{phase:1,n:1,icon:'orbit',title:'Sistema solar interactivo',diff:'Fácil–media'},
+        moon:{phase:1,n:2,icon:'moon-star',title:'Tierra, Luna y eclipses',diff:'Fácil–media',
+          desc:'Avanza por el ciclo lunar para ver las fases y descubre por qué los eclipses no ocurren todos los meses.',
+          ctl:[{id:'day',l:'Día del ciclo lunar',min:0,max:29.5,step:.1,val:7,f:x=>x.toFixed(1)+' d'},{id:'inc',l:'Inclinación de la órbita lunar',min:0,max:10,step:.5,val:5,f:x=>x.toFixed(1)+'°'},{id:'node',l:'Orientación de los nodos',min:0,max:180,step:1,val:90,f:x=>x+'°'}],
+          auto:{id:'day',rate:1.2,max:29.5},ol:['Fase','Iluminación','Latitud de la Luna','Eclipse'],
+          tips:['Pon los nodos en 0° y avanza hasta la Luna nueva y la Luna llena.','Con la inclinación a 0° habría eclipses cada mes.','La inclinación real de la órbita lunar es de unos 5°.'],
+          outs:v=>{const k=moonCalc(v);return[moonName(v.day),Math.round((1-Math.cos(k.th))/2*100)+' %',(k.lat>=0?'+':'')+k.lat.toFixed(1)+'°',k.ecl?'Eclipse '+k.ecl:'Ninguno'];},
+          explain:v=>{const k=moonCalc(v);return k.ecl==='solar'?'La Luna pasa entre el Sol y la Tierra y su sombra toca la superficie terrestre: eclipse solar.':k.ecl==='lunar'?'La Tierra se interpone entre el Sol y la Luna, que entra en su sombra: eclipse lunar.':'La Luna siempre tiene media cara iluminada; lo que cambia es cuánta vemos desde la Tierra. Para un eclipse hace falta Luna nueva o llena y que la Luna esté casi en el plano de la órbita terrestre (cerca de un nodo).';},
+          draw(c,w,h,t,v){bgStars(c,w,h);const k=moonCalc(v),ex=w*.46,ey=h*.5,R=Math.min(h*.34,w*.28),er=R*.2;
+            glow(c,-10,ey,w*.3,'251,191,36',.5);c.strokeStyle='rgba(251,191,36,.25)';for(let i=-3;i<=3;i++){c.beginPath();c.moveTo(w*.04,ey+i*er*.9);c.lineTo(ex-er*1.3,ey+i*er*.9);c.stroke();}
+            c.strokeStyle='rgba(148,163,184,.3)';c.beginPath();c.arc(ex,ey,R,0,TAU);c.stroke();
+            const g=c.createRadialGradient(ex-er*.4,ey-er*.3,1,ex,ey,er);g.addColorStop(0,'#7dd3fc');g.addColorStop(1,'#1d4ed8');c.fillStyle=g;c.beginPath();c.arc(ex,ey,er,0,TAU);c.fill();
+            const mx=ex-R*Math.cos(k.th),my=ey+R*Math.sin(k.th),mr=er*.4;circ(c,mx,my,mr,'#334155');c.fillStyle='#e2e8f0';c.beginPath();c.arc(mx,my,mr,Math.PI/2,Math.PI*1.5);c.fill();
+            if(k.ecl){c.strokeStyle='#fbbf24';c.lineWidth=2;c.beginPath();c.arc(mx,my,mr+5,0,TAU);c.stroke();txt(c,'Eclipse '+k.ecl,w/2,26,'#fbbf24',15,'center');}
+            txt(c,'Vista desde el polo norte (no a escala)',12,h-12,'#64748b',11);txt(c,'Sol',12,ey-er*3.4,'#fde68a',12);
+            moonDisc(c,w-50,50,32,k.th);if(k.ecl==='lunar')circ(c,w-50,50,32,'rgba(180,60,30,.55)');txt(c,'Vista desde la Tierra',w-50,98,'#94a3b8',10,'center');
+            const bw=Math.min(190,w*.36),bh=70,bx=w-bw-12,by=h-bh-26,py=by+bh/2;c.fillStyle='rgba(15,23,42,.8)';c.fillRect(bx,by,bw,bh);c.fillStyle='rgba(0,0,0,.55)';c.fillRect(bx+bw*.2,py-bh*.14,bw*.8,bh*.28);c.strokeStyle='rgba(148,163,184,.4)';c.beginPath();c.moveTo(bx,py);c.lineTo(bx+bw,py);c.stroke();
+            circ(c,bx+bw*.2,py,bh*.14,'#3b82f6');circ(c,bx+bw*.8,clamp(py+k.lat/1.2*bh*.14,by+5,by+bh-5),bh*.07,'#e2e8f0');txt(c,'Vista lateral (escala exagerada)',bx+6,by+bh+13,'#94a3b8',10);}},
+        lab:{phase:1,n:3,icon:'scale',title:'Laboratorio de planetas',diff:'Fácil',
+          desc:'Elige dos mundos y compara su tamaño, masa, gravedad y temperatura. ¿Cuánto pesarías en cada uno?',
+          ctl:[{id:'a',l:'Mundo A',val:'Tierra',opts:Object.keys(LAB).map(k=>[k,k])},{id:'b',l:'Mundo B',val:'Marte',opts:Object.keys(LAB).map(k=>[k,k])},{id:'w',l:'Tu masa',min:30,max:120,step:1,val:70,f:x=>x+' kg'}],
+          ol:['Masa de B respecto a A','Gravedad de B respecto a A','Radio de B respecto a A','Tu peso en B'],
+          tips:['Compara Júpiter con la Tierra: más masa no implica mucha más gravedad.','Compara Venus con Mercurio: el más cercano al Sol no es el más caliente.','La temperatura de los gigantes gaseosos se mide a 1 bar de presión.'],
+          outs:v=>{const A=LAB[v.a],B=LAB[v.b],r=(i)=>'×'+fnum(B[i]/A[i]);return[r(0),r(2),r(1),(v.w*B[2]/9.81).toFixed(1)+' kg'];},
+          explain:v=>{const A=LAB[v.a],B=LAB[v.b];return `La gravedad en ${v.b} es ${(B[2]/A[2]).toFixed(2)} veces la de ${v.a}. Depende de la masa y del radio (g = GM/R²): un planeta más masivo no siempre tiene más gravedad si también es mucho más grande. El «peso» mostrado es el equivalente en kg a tu peso en la Tierra.`;},
+          draw(c,w,h,t,v){bgStars(c,w,h);const A=LAB[v.a],B=LAB[v.b],R=Math.min(h*.17,w*.17),mx=Math.max(A[1],B[1]);
+            [[A,v.a,w*.27],[B,v.b,w*.73]].forEach(([P,n,x])=>{const r=Math.max(3,P[1]/mx*R);circ(c,x,h*.2,r,P[4]);if(n==='Saturno'){c.strokeStyle='#d6c59d';c.lineWidth=2;c.beginPath();c.ellipse(x,h*.2,r*1.9,r*.6,-.25,0,TAU);c.stroke();}txt(c,n,x,h*.2+R*1.1+14,'#e2e8f0',13,'center');});
+            const rows=[['Masa (escala log.)',i=>(Math.log10(i[0])+2.5)/5,i=>fnum(i[0])+' M⊕'],['Radio',i=>i[1]/mx,i=>i[1].toLocaleString('es')+' km'],['Gravedad superficial',i=>i[2]/Math.max(A[2],B[2]),i=>i[2]+' m/s²'],['Temperatura media',i=>(i[3]+273.15)/(Math.max(A[3],B[3])+273.15),i=>i[3]+' °C']];
+            const y0=h*.46,rh=(h*.53)/4,bw=w*.52;rows.forEach(([l,f,s],i)=>{const y=y0+i*rh;txt(c,l,w*.05,y+11,'#94a3b8',11);[[A,0],[B,1]].forEach(([P,j])=>{const bl=Math.max(2,clamp(f(P),0,1)*bw);c.fillStyle=P[4];c.fillRect(w*.05,y+16+j*10,bl,7);txt(c,s(P),w*.05+bl+6,y+23+j*10,'#e2e8f0',11);});});}},
+        impact:{phase:1,n:4,icon:'flame',title:'Impacto de asteroides',diff:'Media',
+          desc:'Modifica el diámetro, la velocidad y el ángulo de entrada para estimar la energía liberada y el cráter resultante.',
+          ctl:[{id:'d',l:'Diámetro del asteroide',min:1,max:4,step:.05,val:2,t:x=>Math.round(Math.pow(10,x)),f:x=>x>=1000?(x/1000).toFixed(1)+' km':x+' m'},{id:'vel',l:'Velocidad de entrada',min:11,max:72,step:1,val:20,f:x=>x+' km/s'},{id:'ang',l:'Ángulo de entrada',min:15,max:90,step:1,val:45,f:x=>x+'°'},{id:'m',l:'Composición',val:'roca',opts:Object.keys(MAT).map(k=>[k,MAT[k][1]])}],
+          auto:{id:'__',rate:0},ol:['Energía liberada','Masa del asteroide','Cráter final','Estado'],
+          tips:['Sube el diámetro de 50 a 500 m y compara la energía.','Cambia a hielo o hierro con el mismo tamaño.','Un ángulo de 90° es un impacto vertical; con 15° el cráter es menor.'],
+          outs:v=>{const k=impCalc(v);return[fmtMt(k.Mt),k.mass>=1e9?k.mass.toExponential(1).replace('e+','×10^')+' kg':Math.round(k.mass).toLocaleString('es')+' kg',k.air?'Sin cráter':k.D>=1000?(k.D/1000).toFixed(1)+' km':Math.round(k.D)+' m',k.air?'Explosión aérea':'Impacto en superficie'];},
+          explain:v=>{const k=impCalc(v),r=IMP_REF.reduce((b,x)=>Math.abs(Math.log10(k.Mt/x[0]))<Math.abs(Math.log10(k.Mt/b[0]))?x:b),q=k.Mt/r[0];return `La energía cinética es E = ½mv². Aquí equivale a ${q>=1?'≈ '+fnum(q)+'×':'≈ el '+(q*100).toFixed(0)+' % de'} ${r[1]}. ${k.air?'Un cuerpo tan pequeño y frágil suele fragmentarse en la atmósfera y libera su energía en el aire, como en Cheliábinsk (2013).':'Atraviesa la atmósfera con poco frenado y excava un cráter (modelo simplificado de escalado).'} Valores orientativos, no una predicción de daños.`;},
+          draw(c,w,h,t,v){const k=impCalc(v),gy=h*.78,ix=w*.58,tt=(t%6)/6,al=v.ang*Math.PI/180,sky=c.createLinearGradient(0,0,0,gy);sky.addColorStop(0,'#050816');sky.addColorStop(1,'#1e3a5f');c.fillStyle=sky;c.fillRect(0,0,w,gy);
+            for(let i=0;i<40;i++)circ(c,rnd(i)*w,rnd(i+60)*gy*.7,.8,'rgba(226,232,240,.6)');c.fillStyle='#3b3226';c.fillRect(0,gy,w,h-gy);
+            const ar=4+10*(Math.log10(v.d)-1)/3,L=h*.75,hy=k.air?gy-h*.25:gy,sx=ix-Math.cos(al)*L,sy=hy-Math.sin(al)*L;
+            if(tt<.45){const p=tt/.45,x=sx+(ix-sx)*p,y=sy+(hy-sy)*p,g=c.createLinearGradient(x-Math.cos(al)*90,y-Math.sin(al)*90,x,y);g.addColorStop(0,'rgba(251,146,60,0)');g.addColorStop(1,'rgba(251,146,60,.9)');c.strokeStyle=g;c.lineWidth=ar*1.4;c.beginPath();c.moveTo(x-Math.cos(al)*90,y-Math.sin(al)*90);c.lineTo(x,y);c.stroke();circ(c,x,y,ar,'#a8a29e');}
+            else{const q=(tt-.45)/.55;glow(c,ix,hy,(40+ar*6)*(.3+q),'255,200,80',1-q);
+              if(k.air){c.strokeStyle=`rgba(255,255,255,${1-q})`;c.lineWidth=2;c.beginPath();c.arc(ix,hy,q*h*.35,0,TAU);c.stroke();}
+              else{const cr=clamp(18+130*(Math.log10(k.D)-1)/3.5,10,w*.4),s=Math.min(1,q*3);c.fillStyle='#1c1814';c.beginPath();c.ellipse(ix,gy,cr/2*s,cr/6*s,0,0,Math.PI);c.fill();
+                for(let i=0;i<24;i++){const a=-rnd(i)*Math.PI,d=q*cr*(.4+rnd(i+50));circ(c,ix+Math.cos(a)*d*1.2,gy+Math.sin(a)*d*.9+q*q*cr*.5,2,`rgba(120,100,80,${1-q})`);}
+                c.strokeStyle=`rgba(255,255,255,${.6*(1-q)})`;c.lineWidth=2;c.beginPath();c.ellipse(ix,gy,q*w*.4,q*w*.04,0,0,TAU);c.stroke();}}
+            txt(c,'Superficie',12,gy+18,'#a8a29e',11);txt(c,'Escala del asteroide y del cráter no proporcional',12,h-10,'#64748b',11);}},
+        planet:{phase:1,n:5,icon:'globe',title:'Diseña tu propio planeta',diff:'Media',
+          desc:'Ajusta tamaño, masa, atmósfera, estrella, distancia y agua. El modelo estima si tu mundo podría ser habitable.',
+          ctl:[{id:'R',l:'Radio (× Tierra)',min:.3,max:2.5,step:.05,val:1,f:x=>x.toFixed(2)},{id:'M',l:'Masa (× Tierra)',min:.1,max:10,step:.1,val:1,f:x=>x.toFixed(1)},{id:'atm',l:'Atmósfera (× presión terrestre)',min:0,max:3,step:.1,val:1,f:x=>x.toFixed(1)},{id:'s',l:'Tipo de estrella',val:'s',opts:[['r','Enana roja'],['s','Tipo Sol'],['a','Blanca-azul']]},{id:'d',l:'Distancia a la estrella',min:.1,max:5,step:.05,val:1,f:x=>x.toFixed(2)+' UA'},{id:'water',l:'Superficie cubierta por agua',min:0,max:100,step:1,val:70,f:x=>x+' %'}],
+          ol:['Gravedad','Vel. de escape','Temperatura media','Habitabilidad'],
+          tips:['Reduce la masa a 0,3: la atmósfera se escapa.','Con enana roja, acerca el planeta a unas 0,2 UA.','Sube la atmósfera a 3 y observa el efecto invernadero.'],
+          outs:v=>{const k=plCalc(v);return[k.g.toFixed(2)+' g',k.ve.toFixed(1)+' km/s',k.T.toFixed(0)+' °C',k.sc+' %'];},
+          explain:v=>{const k=plCalc(v);return `${k.cls}. La zona habitable de esta estrella va de ${k.hz[0].toFixed(2)} a ${k.hz[1].toFixed(2)} UA. Modelo muy simplificado: temperatura de equilibrio + efecto invernadero, retención de atmósfera según la velocidad de escape y puntuación orientativa.`;},
+          draw(c,w,h,t,v){bgStars(c,w,h);const k=plCalc(v),[L,sc]=ST[v.s],cy=h*.4,px=w*.62,pr=22+30*Math.sqrt(v.R),sr=L<.5?30:L<5?48:68;
+            glow(c,0,cy,sr*3,'255,220,150',.35);circ(c,w*.01,cy,sr,sc);c.save();c.beginPath();c.arc(px,cy,pr,0,TAU);c.clip();
+            const hot=k.T>100,cold=k.T<-20,oc=cold?'#e0f2fe':'#1e5fd0';c.fillStyle=hot?'#7c2d12':cold?'#cbd5e1':v.water<8?'#a16207':'#4d7c3a';c.fillRect(px-pr,cy-pr,pr*2,pr*2);
+            const bl=(n,rr,col,seed)=>{for(let i=0;i<n;i++){const xx=((rnd(i+seed)+t*.03)%1)*2-1;circ(c,px+xx*pr*1.05,cy+(rnd(i+seed+40)-.5)*pr*1.5,rr*(.5+rnd(i+seed+80)),col);}};
+            if(!hot&&v.water>=90){c.fillStyle=oc;c.fillRect(px-pr,cy-pr,pr*2,pr*2);}else if(!hot&&v.water>0)bl(14,pr*(.15+.5*v.water/100),oc,0);
+            if(!hot&&k.T<10){c.fillStyle='#f1f5f9';c.beginPath();c.ellipse(px,cy-pr,pr*.8,pr*clamp((10-k.T)/50,.12,.6),0,0,TAU);c.ellipse(px,cy+pr,pr*.8,pr*clamp((10-k.T)/50,.12,.6),0,0,TAU);c.fill();}
+            bl(Math.round(k.eff*7),pr*.3,'rgba(255,255,255,.4)',200);
+            const sh=c.createLinearGradient(px-pr,0,px+pr,0);sh.addColorStop(0,'rgba(0,0,0,0)');sh.addColorStop(.55,'rgba(0,0,0,.25)');sh.addColorStop(1,'rgba(0,0,0,.8)');c.fillStyle=sh;c.fillRect(px-pr,cy-pr,pr*2,pr*2);c.restore();
+            if(k.eff>.02){c.strokeStyle=`rgba(125,211,252,${clamp(k.eff*.35,.05,.6)})`;c.lineWidth=2+k.eff*4;c.beginPath();c.arc(px,cy,pr+1+k.eff*2,0,TAU);c.stroke();}
+            txt(c,k.cls,w*.5,26,'#e2e8f0',14,'center');
+            const x0=w*.06,wd=w*.88,X=a=>x0+clamp(Math.log(a/.1)/Math.log(50),0,1)*wd,by=h*.85;c.fillStyle='rgba(148,163,184,.25)';c.fillRect(x0,by,wd,8);c.fillStyle='rgba(34,197,94,.6)';c.fillRect(X(k.hz[0]),by,Math.max(2,X(k.hz[1])-X(k.hz[0])),8);circ(c,X(v.d),by+4,7,'#7dd3fc');
+            [.1,1,5].forEach(a=>txt(c,a+' UA',X(a),by+24,'#94a3b8',10,a===.1?'left':a===5?'right':'center'));txt(c,'Zona habitable (verde)',x0,by-8,'#86efac',11);}},
+        star:{phase:2,n:6,icon:'sun',title:'El ciclo de vida de una estrella',diff:'Media',
+          desc:'Elige la masa inicial y recorre la vida de la estrella, desde la nube de gas hasta su destino final.',
+          ctl:[{id:'ml',l:'Masa inicial',min:-1,max:1.8,step:.02,val:0,t:x=>+x.toFixed(2),f:x=>(Math.pow(10,x)).toFixed(Math.pow(10,x)<10?2:0)+' M☉'},{id:'p',l:'Progreso de su vida',min:0,max:100,step:.5,val:30,f:x=>x.toFixed(0)+' %'}],
+          auto:{id:'p',rate:3,max:100},ol:['Vida total estimada','Etapa actual','Temperatura (secuencia principal)','Destino final'],
+          tips:['Compara 0,2 M☉, 1 M☉ y 25 M☉.','Observa cómo cambia la duración de la vida con la masa.','Las estrellas muy masivas viven poco y terminan como supernova.'],
+          outs:v=>{const k=starCalc(v);return[yrs(k.life),k.st===0?'Protoestrella':STN[k.cls][k.st-1],Math.round(k.T).toLocaleString('es')+' K',['Enana blanca de helio','Enana blanca','Estrella de neutrones','Agujero negro'][k.cls]];},
+          explain:v=>starExp(starCalc(v)),
+          draw(c,w,h,t,v){bgStars(c,w,h);const k=starCalc(v),cx=w/2,cy=h*.46,m=Math.min(w,h),r0=14+10*Math.log10(k.M*10),col=tempColor(k.T),sg=[[0,5],[5,80],[80,92],[92,97],[97,100]][k.st],q=(v.p-sg[0])/(sg[1]-sg[0]),hl=(r,col)=>{c.globalAlpha=.18;circ(c,cx,cy,r*1.9,col);c.globalAlpha=.1;circ(c,cx,cy,r*3,col);c.globalAlpha=1;};
+            if(k.st===0){for(let i=0;i<60;i++){const a=rnd(i)*TAU,d=(1-q*.75)*(30+rnd(i+9)*m*.33);circ(c,cx+Math.cos(a)*d,cy+Math.sin(a)*d,6+rnd(i+3)*10,'rgba(167,139,250,.22)');}glow(c,cx,cy,10+q*26,'251,191,36',.4+.4*q);circ(c,cx,cy,3+q*(r0-3),'#fb923c');}
+            else if(k.st===1){hl(r0,col);circ(c,cx,cy,r0*(1+.03*Math.sin(t*3)),col);}
+            else if(k.st===2){const r=k.cls===0?r0*(1+.3*q):r0*(1+(k.cls===1?4:7)*q),cc=k.cls===0?col:'#ff5a36';hl(r,cc);circ(c,cx,cy,r,cc);}
+            else if(k.st===3){if(k.cls===0){hl(r0*.6,'#ff6a3d');circ(c,cx,cy,r0*(1-.5*q),'#ff6a3d');}else if(k.cls===1){c.strokeStyle='rgba(94,234,212,.5)';c.lineWidth=10*(1-q*.5);c.beginPath();c.arc(cx,cy,20+q*m*.3,0,TAU);c.stroke();c.strokeStyle='rgba(232,121,249,.4)';c.lineWidth=5;c.beginPath();c.arc(cx,cy,12+q*m*.2,0,TAU);c.stroke();glow(c,cx,cy,22,'224,242,254',.9);circ(c,cx,cy,5,'#fff');}
+              else{glow(c,cx,cy,30+q*m*.5,'255,240,200',1-q*.6);c.strokeStyle=`rgba(255,180,80,${1-q})`;c.lineWidth=6;c.beginPath();c.arc(cx,cy,10+q*m*.4,0,TAU);c.stroke();circ(c,cx,cy,5,'#fff');}}
+            else{if(k.cls<2){glow(c,cx,cy,30,'224,242,254',.5);circ(c,cx,cy,6,'#e0f2fe');}else if(k.cls===2){glow(c,cx,cy,26,'165,243,252',.6);c.strokeStyle='rgba(165,243,252,.7)';c.lineWidth=3;const a=t*2;c.beginPath();c.moveTo(cx-Math.cos(a)*70,cy-Math.sin(a)*70);c.lineTo(cx+Math.cos(a)*70,cy+Math.sin(a)*70);c.stroke();circ(c,cx,cy,4,'#a5f3fc');}
+              else{c.strokeStyle='#fb923c';c.lineWidth=3;c.beginPath();c.ellipse(cx,cy,32,9,-.3,0,TAU);c.stroke();circ(c,cx,cy,12,'#000');c.strokeStyle='#fde68a';c.lineWidth=1;c.beginPath();c.arc(cx,cy,12,0,TAU);c.stroke();}}
+            txt(c,k.st===0?'Nube de gas y protoestrella':STN[k.cls][k.st-1],14,26,'#e2e8f0',15);
+            const bx=w*.06,bw=w*.88,by=h-34,cols=['#a78bfa','#fbbf24','#f87171','#f472b6','#94a3b8'];[[0,5],[5,80],[80,92],[92,97],[97,100]].forEach(([a,b],i)=>{c.fillStyle=cols[i];c.globalAlpha=i===k.st?.9:.35;c.fillRect(bx+bw*a/100,by,bw*(b-a)/100-1,8);});c.globalAlpha=1;const mx=bx+bw*v.p/100;c.fillStyle='#fff';c.beginPath();c.moveTo(mx,by-2);c.lineTo(mx-5,by-10);c.lineTo(mx+5,by-10);c.fill();txt(c,'Vida de la estrella →',bx,by+22,'#94a3b8',11);}},
+        transit:{phase:2,n:7,icon:'telescope',title:'Cazador de exoplanetas',diff:'Media',
+          desc:'Observa cómo un planeta que pasa delante de su estrella reduce su brillo y estima sus características.',
+          ctl:[{id:'rs',l:'Radio de la estrella',min:.5,max:2,step:.05,val:1,f:x=>x.toFixed(2)+' R☉'},{id:'sm',l:'Masa de la estrella',min:.5,max:2,step:.05,val:1,f:x=>x.toFixed(2)+' M☉'},{id:'rp',l:'Radio del planeta',min:.5,max:15,step:.5,val:11,f:x=>x.toFixed(1)+' R⊕'},{id:'P',l:'Periodo orbital',min:1,max:30,step:.5,val:4,f:x=>x.toFixed(1)+' d'},{id:'b',l:'Parámetro de impacto',min:0,max:1.3,step:.05,val:.2,f:x=>x.toFixed(2)},{id:'noise',l:'Ruido del telescopio',min:0,max:3000,step:50,val:300,f:x=>x+' ppm'}],
+          ol:['Profundidad','Duración del tránsito','Distancia orbital','Señal / ruido'],
+          tips:['Reduce el planeta a 1 R⊕: la señal casi desaparece en el ruido.','Sube el parámetro de impacto por encima de 1: no hay tránsito.','Alarga el periodo y observa la distancia orbital (3.ª ley de Kepler).'],
+          outs:v=>{const k=trCalc(v);return[(k.depth*100).toFixed(3)+' %',k.tr?(k.dur*24).toFixed(1)+' h':'Sin tránsito',k.a.toFixed(3)+' UA',k.depth>0?(v.noise?(k.depth*1e6/v.noise).toFixed(1):'∞'):'—'];},
+          explain:v=>{const k=trCalc(v);return k.tr?`La caída de brillo (${(k.depth*100).toFixed(3)} %) revela el tamaño del planeta: Rp ≈ Rs·√profundidad ≈ ${(v.rs*109.1*Math.sqrt(k.depth)).toFixed(1)} R⊕ (menos si el tránsito es rasante). Con el periodo y la masa de la estrella, la 3.ª ley de Kepler da la distancia orbital. Con señal/ruido bajo, el tránsito sería difícil de detectar.`:'Con este parámetro de impacto el planeta no cruza el disco de la estrella visto desde la Tierra: no se detectaría por tránsito, aunque exista.';},
+          draw(c,w,h,t,v){bgStars(c,w,h);const k=trCalc(v),top=h*.46,Rp=Math.min(top*.38,w*.14),cx=w/2,cy=top*.5,tm=k.xm*k.T0/2,ph=(t*.18)%1,x=2*(-tm+2*tm*ph)/k.T0,N=160;
+            glow(c,cx,cy,Rp*1.9,'255,210,120',.35);const sg=c.createRadialGradient(cx,cy,0,cx,cy,Rp);sg.addColorStop(0,'#fff3c4');sg.addColorStop(1,'#ffb84d');c.fillStyle=sg;c.beginPath();c.arc(cx,cy,Rp,0,TAU);c.fill();
+            circ(c,cx+x*Rp,cy+v.b*Rp,k.rho*Rp,'#0b1020');txt(c,'Vista del sistema desde la Tierra',12,18,'#94a3b8',11);
+            const gx=58,gw=w-gx-14,gy=top+14,gh=h-top-48,nz=v.noise*1e-6,yl=1-Math.max(k.depth*1.4,nz*4,2e-4),yh=1+Math.max(nz*4,k.depth*.3,6e-5),X=i=>gx+i/(N-1)*gw,Y=f=>gy+(yh-f)/(yh-yl)*gh,F=i=>{const tt=-tm+2*tm*i/(N-1);return 1-ovl(Math.hypot(2*tt/k.T0,v.b),k.rho)/Math.PI;};
+            c.strokeStyle='rgba(148,163,184,.4)';c.lineWidth=1;c.strokeRect(gx,gy,gw,gh);c.strokeStyle='rgba(125,211,252,.5)';c.beginPath();for(let i=0;i<N;i++)i?c.lineTo(X(i),Y(F(i))):c.moveTo(X(i),Y(F(i)));c.stroke();
+            const ix=Math.floor(ph*(N-1));for(let i=0;i<=ix;i++){const f=F(i)+(rnd(i)+rnd(i+999)+rnd(i+555)-1.5)*2*nz;circ(c,X(i),clamp(Y(f),gy,gy+gh),1.6,'#67e8f9');}
+            txt(c,(yh*100).toFixed(3)+'%',gx-4,gy+8,'#94a3b8',10,'right');txt(c,(yl*100).toFixed(3)+'%',gx-4,gy+gh,'#94a3b8',10,'right');txt(c,'Brillo',gx-4,gy+gh/2,'#64748b',10,'right');
+            txt(c,'−'+(tm*24).toFixed(1)+' h',gx,gy+gh+16,'#94a3b8',10);txt(c,'Tiempo',gx+gw/2,gy+gh+16,'#64748b',10,'center');txt(c,'+'+(tm*24).toFixed(1)+' h',gx+gw,gy+gh+16,'#94a3b8',10,'right');}},
+        binary:{phase:2,n:8,icon:'circle-dot',title:'Sistema de estrellas binarias',diff:'Media–alta',
+          desc:'Cambia las masas y la separación de dos estrellas y observa cómo orbitan alrededor de su centro de masa común.',
+          ctl:[{id:'m1',l:'Masa de la estrella 1',min:.5,max:10,step:.1,val:2,f:x=>x.toFixed(1)+' M☉'},{id:'m2',l:'Masa de la estrella 2',min:.5,max:10,step:.1,val:1,f:x=>x.toFixed(1)+' M☉'},{id:'a',l:'Separación media (semieje mayor)',min:2,max:16,step:.5,val:6,f:x=>x.toFixed(1)+' UA'},{id:'e',l:'Excentricidad',min:0,max:.6,step:.05,val:.3,f:x=>x.toFixed(2)},{id:'sp',l:'Velocidad de animación',min:.2,max:3,step:.1,val:1,f:x=>x.toFixed(1)+'×'}],
+          ol:['Periodo orbital','Masa total','Órbita media ★1','Órbita media ★2'],
+          tips:['Pon masas iguales: el centro de masa queda en el punto medio.','Sube la masa de la estrella 1 y mira dónde queda el centro de masa.','Con excentricidad alta, las estrellas van más rápido cerca de su máximo acercamiento.'],
+          outs:v=>{const k=binCalc(v);return[k.P<1?Math.round(k.P*365.25)+' días':k.P.toFixed(1)+' años',k.Mt.toFixed(1)+' M☉',(v.a*v.m2/k.Mt).toFixed(2)+' UA',(v.a*v.m1/k.Mt).toFixed(2)+' UA'];},
+          explain:v=>`El centro de masa queda más cerca de la estrella ${v.m1>=v.m2?'1':'2'}, la más masiva${v.m1===v.m2?' (aquí iguales)':''}. ${v.m1===v.m2?'Ambas describen órbitas idénticas.':'La menos masiva recorre una órbita mayor y se mueve más rápido.'} Tercera ley de Kepler: P² = a³ / (M₁+M₂), con P en años, a en UA y masas solares. Radios estelares dibujados fuera de escala.`,
+          draw(c,w,h,t,v){bgStars(c,w,h);const k=binCalc(v),s=Math.min(w,h)*.0176,cx=w/2,cy=h/2,ps=[binPos(v,k,t)],cols=[tempColor(5772*Math.sqrt(v.m1)),tempColor(5772*Math.sqrt(v.m2))],rr=[2+1.3*Math.sqrt(v.m1),2+1.3*Math.sqrt(v.m2)];
+            [0,1].forEach(j=>{c.strokeStyle=cols[j];c.globalAlpha=.4;c.lineWidth=1.5;c.beginPath();for(let i=0;i<=100;i++){const p=binPos(v,k,t-i*k.TA/120)[j];i?c.lineTo(cx+p[0]*s,cy+p[1]*s):c.moveTo(cx+p[0]*s,cy+p[1]*s);}c.stroke();c.globalAlpha=1;});
+            const p=ps[0];c.strokeStyle='rgba(148,163,184,.25)';c.beginPath();c.moveTo(cx+p[0][0]*s,cy+p[0][1]*s);c.lineTo(cx+p[1][0]*s,cy+p[1][1]*s);c.stroke();
+            c.strokeStyle='#e2e8f0';c.beginPath();c.moveTo(cx-6,cy);c.lineTo(cx+6,cy);c.moveTo(cx,cy-6);c.lineTo(cx,cy+6);c.stroke();txt(c,'Centro de masa',cx+9,cy-8,'#94a3b8',10);
+            [0,1].forEach(j=>{const x=cx+p[j][0]*s,y=cy+p[j][1]*s;glow(c,x,y,rr[j]*4,'255,230,180',.3);circ(c,x,y,rr[j],cols[j]);txt(c,'★'+(j+1),x+rr[j]+4,y-rr[j]-2,'#e2e8f0',11);});
+            txt(c,'Vista cenital · movimiento acelerado · radios no a escala',12,h-10,'#64748b',11);}}
+        };
+        // ===== FASES 3 y 4 =====
+        const snTime=p=>{const s=Math.pow(10,p*.115);return s<60?s.toFixed(0)+' s':s<3600?(s/60).toFixed(0)+' min':s<86400?(s/3600).toFixed(0)+' h':s<3.15e7?(s/86400).toFixed(0)+' días':(s/3.15e7).toFixed(s>3.15e9?0:1)+' años';};
+        const bhCalc=v=>{const M=Math.pow(10,v.lm),a=v.spin,Z1=1+Math.cbrt(1-a*a)*(Math.cbrt(1+a)+Math.cbrt(1-a)),Z2=Math.sqrt(3*a*a+Z1*Z1),ri=3+Z2-Math.sqrt((3-Z1)*(3+Z1+2*Z2));return{M,rs:2.95*M,ri,dil:Math.sqrt(Math.max(0,1-2/ri))};};
+        const kmF=x=>x<1e7?Math.round(x).toLocaleString('es')+' km':(x/1.496e8).toFixed(x<1.5e9?2:0)+' UA';
+        const colCalc=v=>{const cap=v.k==='ns'?2.3:60,m1=Math.min(v.m1,cap),m2=Math.min(v.m2,cap),M=m1+m2,rad=M*(v.k==='bh'?.05:.005);return{m1,m2,M,rad,rem:M-rad,f:4400/M};};
+        const colWave=(s)=>{const K=TAU*16;if(s<=.9){const u=s/.9,d=Math.max(.12,Math.pow(1-u,.25));return{ph:K*(1-Math.pow(1-u,.625)),amp:Math.min(1,.12/d)};}return{ph:K+(s-.9)*TAU*45,amp:Math.exp(-(s-.9)*55)};};
+        const orbCalc=v=>{const MU=398600,Re=6371,r0=Re+v.h,eps=v.v*v.v/2-MU/r0,hh=r0*v.v,e=Math.sqrt(Math.max(0,1+2*eps*hh*hh/(MU*MU))),p=hh*hh/MU,vc=Math.sqrt(MU/r0),ve=Math.sqrt(2*MU/r0),rp=p/(1+e),a=eps<0?-MU/(2*eps):Infinity;
+            const type=rp<Re?'Suborbital (choca con la Tierra)':Math.abs(v.v-ve)<.03?'Parabólica (escape justo)':v.v>ve?'Hiperbólica (escape)':e<.02?'Circular':'Elíptica';return{MU,Re,r0,e,p,vc,ve,rp,a,type,hh};};
+        const cosCalc=v=>{const ok=1-v.om-v.ol,E2=a=>v.om/(a*a*a)+v.ol+ok/(a*a),tab=[];let tau=0,amax=Infinity,prev=Math.log(1e-3);
+            for(let i=1;i<=400;i++){const la=Math.log(1e-3)+i*Math.log(1e4)/400,am=Math.exp((la+prev)/2),e2=E2(am);if(e2<=1e-6){amax=Math.exp(prev);break;}tau+=(la-prev)/Math.sqrt(e2);prev=la;tab.push([tau,Math.exp(la)]);}
+            let age=0,pl=Math.log(1e-3);for(let i=1;i<=300;i++){const la=Math.log(1e-3)+i*(-Math.log(1e-3))/300,e2=E2(Math.exp((la+pl)/2));age+=e2>0?(la-pl)/Math.sqrt(e2):0;pl=la;}
+            return{E2,tab,amax,age:age*977.8/v.H0};};
+        const webGen=(v)=>{const nd=[],ed=[];for(let k=0;k<16;k++)nd.push([(rnd(k*3+1)-.5)*1.8,(rnd(k*3+2)-.5)*1.8,(rnd(k*3+3)-.5)*1.8]);
+            nd.forEach((p,i)=>{nd.map((q,j)=>[j,Math.hypot(p[0]-q[0],p[1]-q[1],p[2]-q[2])]).filter(x=>x[0]!==i).sort((a,b)=>a[1]-b[1]).slice(0,2).forEach(x=>{if(!ed.some(e=>(e[0]===i&&e[1]===x[0])||(e[1]===i&&e[0]===x[0])))ed.push([i,x[0]]);});});
+            const pts=[],f=v.fil/100,g=s=>(rnd(s)+rnd(s+1)+rnd(s+2)-1.5)*.12;
+            for(let i=0;i<v.n;i++){const r=rnd(i*5+1),s=i*7+11;let p,c;if(r<f*.65){const e=ed[Math.floor(rnd(i*5+2)*ed.length)],u=rnd(i*5+3),A=nd[e[0]],B=nd[e[1]];p=[A[0]+(B[0]-A[0])*u+g(s)*.5,A[1]+(B[1]-A[1])*u+g(s+3)*.5,A[2]+(B[2]-A[2])*u+g(s+6)*.5];c=1;}else if(r<f){const n=nd[Math.floor(rnd(i*5+4)*16)];p=[n[0]+g(s)*.6,n[1]+g(s+3)*.6,n[2]+g(s+6)*.6];c=2;}else{p=[(rnd(s)-.5)*2,(rnd(s+1)-.5)*2,(rnd(s+2)-.5)*2];c=0;}pts.push([p,c]);}return{nd,ed,pts};};
+        Object.assign(SIMS,{
+        galaxy:{phase:3,n:9,icon:'sparkles',title:'Construye una galaxia',diff:'Media',
+          desc:'Diseña tu galaxia: elige cuántas estrellas tiene, cuántos brazos, el tamaño del núcleo y cuánta materia oscura la envuelve.',
+          ctl:[{id:'n',l:'Número de estrellas representadas',min:500,max:5000,step:100,val:2500,f:x=>x.toLocaleString('es')},{id:'arms',l:'Brazos espirales (0 = elíptica)',min:0,max:6,step:1,val:2,f:x=>x===0?'Elíptica':x},{id:'tw',l:'Enrollamiento de los brazos',min:.5,max:4,step:.1,val:2,f:x=>x.toFixed(1)},{id:'bulge',l:'Tamaño del núcleo',min:.05,max:.4,step:.01,val:.15,f:x=>Math.round(x*100)+' %'},{id:'dm',l:'Materia oscura (halo)',min:0,max:100,step:1,val:70,f:x=>x+' %'}],
+          ol:['Estrellas simuladas','Estructura','Velocidad en el borde','Materia oscura'],
+          tips:['Quita la materia oscura: las estrellas externas se retrasan y los brazos se enrollan.','Sube el tamaño del núcleo y reduce los brazos para acercarte a una galaxia lenticular.','Pon 0 brazos para ver una galaxia elíptica.'],
+          info:['Las galaxias son enormes conjuntos de estrellas, gas, polvo y materia oscura unidos por la gravedad. La Vía Láctea es una espiral con cientos de miles de millones de estrellas, un núcleo abultado y brazos donde nacen estrellas nuevas.','Las estrellas lejanas del centro giran casi tan rápido como las cercanas: es la curva de rotación plana, una de las pruebas principales de la materia oscura. Los brazos no son cuerpos rígidos, sino ondas de densidad por las que pasan las estrellas.'],
+          outs:v=>{const vr=SIM_vr(v,.9);return[v.n.toLocaleString('es'),v.arms?v.arms+' brazos espirales':'Elíptica',Math.round(220*vr)+' km/s',Math.round(v.dm*.85)+' % de la masa'];},
+          explain:v=>v.dm>40?'Con un halo de materia oscura la velocidad de rotación se mantiene casi constante hacia el borde (curva plana), como se observa en galaxias reales.':'Sin suficiente materia oscura, la gravedad solo la aportaría la materia visible y las estrellas externas irían mucho más lentas (curva kepleriana). Los brazos se enrollarían rápido; no coincide con lo observado.',
+          draw(c,w,h,t,v){c.fillStyle='#02030a';c.fillRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)*.44,sq=v.arms?.6:.75;if(v.dm>0)glow(c,cx,cy,R*1.25,'139,92,246',v.dm/100*.3);glow(c,cx,cy,R*.5*(.6+v.bulge*2),'255,210,140',.35);
+            let last='';for(let i=0;i<v.n;i++){const bu=rnd(i*4+1)<v.bulge*1.8;let r;if(bu)r=Math.abs(rnd(i*4+2)+rnd(i*4+3)+rnd(i*4+4)-1.5)*v.bulge*.9+.01;else r=clamp(-Math.log(1-rnd(i*4+2)*.98)*.28,.03,1);
+              let th=rnd(i*4+3)*TAU;if(!bu&&v.arms)th=(i%v.arms)*TAU/v.arms+v.tw*r*3.2+(rnd(i*4+4)-.5)*(.9-.5*r);th+=t*.25*Math.min(3,SIM_vr(v,r)/Math.max(r,.05));
+              const col=bu?'rgba(255,214,160,.75)':r<.35?'rgba(255,240,215,.7)':'rgba(170,200,255,.65)';if(col!==last){c.fillStyle=col;last=col;}c.fillRect(cx+Math.cos(th)*r*R,cy+Math.sin(th)*r*R*sq,1.5,1.5);}
+            txt(c,'Vista inclinada · estrellas y halo (violeta) esquemáticos',12,h-12,'#64748b',11);}},
+        supernova:{phase:3,n:10,icon:'zap',title:'Explosión de una supernova',diff:'Media–alta',
+          desc:'Avanza el tiempo tras el colapso del núcleo y observa cómo se expanden los restos y se dispersan los elementos químicos.',
+          ctl:[{id:'M',l:'Masa de la estrella',min:8,max:40,step:1,val:15,f:x=>x+' M☉'},{id:'p',l:'Tiempo tras la explosión (escala log.)',min:0,max:100,step:.5,val:5,f:x=>snTime(x)}],
+          auto:{id:'p',rate:5,max:100},ol:['Tiempo transcurrido','Remanente','Masa expulsada','Velocidad de la onda'],
+          tips:['Observa el colapso del núcleo en los primeros segundos.','Cambia la masa de 15 a 35 M☉ y mira el remanente.','Fíjate en las capas de colores: los elementos pesados quedan en el interior.'],
+          info:['Una estrella de más de unas 8 masas solares termina su vida cuando su núcleo de hierro ya no puede generar energía: colapsa en menos de un segundo y rebota, lanzando las capas externas a decenas de miles de km/s.','La explosión dispersa carbono, oxígeno, silicio y hierro, y sintetiza otros elementos pesados. Esa materia enriquece las nubes de gas donde nacen nuevas estrellas y planetas: buena parte de lo que nos compone se formó así.'],
+          outs:v=>{const rem=v.M<25?1.4:5;return[snTime(v.p),v.M<25?'Estrella de neutrones':'Agujero negro',(v.M-rem).toFixed(1)+' M☉','≈ 10 000 km/s'];},
+          explain:v=>v.p<8?'El núcleo de hierro colapsa en menos de un segundo: los protones y electrones se funden en neutrones y se liberan neutrinos y una onda de choque.':'La onda de choque barre las capas externas. Los elementos más pesados (hierro, níquel) quedan más adentro; el oxígeno, el carbono y el hidrógeno forman las capas exteriores, que se dispersan por el espacio.',
+          draw(c,w,h,t,v){bgStars(c,w,h);const cx=w/2,cy=h*.46,mR=Math.min(w,h)*.4,p=v.p;
+            if(p<8){const q=p/8;glow(c,cx,cy,30+q*160,'255,230,180',.2+.7*q);circ(c,cx,cy,Math.max(3,40*(1-q*.9)),'#fb7185');}
+            else{const fx=Math.pow(clamp((p-8)/92,0,1),.55),rem=v.M<25;glow(c,cx,cy,mR*fx+30,'255,200,120',Math.max(0,.35-fx*.3));
+              for(let i=0;i<450;i++){const a=rnd(i)*TAU,f=.25+.75*rnd(i+500),R=mR*fx*f;c.fillStyle=f<.4?'#fb7185':f<.62?'#fbbf24':f<.82?'#4ade80':'#60a5fa';c.globalAlpha=.85-.5*fx;c.fillRect(cx+Math.cos(a)*R,cy+Math.sin(a)*R*(.9+.2*rnd(i+900)),1.8,1.8);}c.globalAlpha=1;
+              c.strokeStyle=`rgba(255,255,255,${.4*(1-fx)})`;c.lineWidth=2;c.beginPath();c.arc(cx,cy,mR*fx,0,TAU);c.stroke();
+              if(rem){glow(c,cx,cy,22,'165,243,252',.7);circ(c,cx,cy,3,'#a5f3fc');}else{circ(c,cx,cy,9,'#000');c.strokeStyle='#fb923c';c.lineWidth=2;c.beginPath();c.ellipse(cx,cy,18,6,-.3,0,TAU);c.stroke();}}
+            [['#fb7185','Fe / Ni'],['#fbbf24','Si / S'],['#4ade80','O / C'],['#60a5fa','H / He']].forEach(([col,l],i)=>{c.fillStyle=col;c.fillRect(14+i*86,h-26,10,10);txt(c,l,28+i*86,h-17,'#94a3b8',11);});}},
+        blackhole:{phase:3,n:11,icon:'circle-dot',title:'Laboratorio de agujeros negros',diff:'Alta',
+          desc:'Explora el horizonte de sucesos, el disco de acreción y la luz curvada alrededor de un agujero negro, con cálculos relativistas básicos.',
+          ctl:[{id:'lm',l:'Masa',min:.5,max:9.6,step:.1,val:6.6,t:x=>+x.toFixed(1),f:x=>{const M=Math.pow(10,x);return M<1e4?Math.round(M)+' M☉':M.toExponential(1).replace('e+','×10^')+' M☉';}},{id:'spin',l:'Giro (parámetro a)',min:0,max:.99,step:.01,val:0,f:x=>x.toFixed(2)},{id:'incl',l:'Inclinación de la vista',min:0,max:89,step:1,val:75,f:x=>x+'°'}],
+          ol:['Radio del horizonte','Diámetro de la sombra','Órbita estable más interna','Tiempo en esa órbita'],
+          tips:['Pon el giro en 0,99: el disco puede acercarse mucho más.','Cambia la inclinación a 0° (de frente) y a 89° (de canto).','Compara 10 M☉ con 4 millones de M☉ (Sagitario A*).'],
+          info:['El horizonte de sucesos es la frontera sin retorno: su radio de Schwarzschild es rs = 2GM/c², unos 2,95 km por cada masa solar. La «sombra» que vemos es mayor (≈2,6 rs) porque la gravedad desvía la luz cercana.','El disco de acreción orbita a velocidades cercanas a la de la luz; el lado que se acerca se ve más brillante (efecto Doppler) y la luz del lado oculto se curva sobre el agujero. La imagen es una representación artística, no un trazado exacto de rayos.'],
+          outs:v=>{const k=bhCalc(v);return[kmF(k.rs),kmF(5.2*k.rs),(k.ri/2).toFixed(2)+' rs',Math.round(k.dil*100)+' % del tiempo lejano'];},
+          explain:v=>{const k=bhCalc(v);return `Con ${Math.pow(10,v.lm)<1e4?Math.round(Math.pow(10,v.lm)):Math.pow(10,v.lm).toExponential(1)} M☉, el horizonte mide ${kmF(k.rs)} de radio. A mayor giro, la órbita estable más interna se acerca al horizonte y el disco llega a ser más caliente. Un reloj en esa órbita marcaría el tiempo más despacio que uno lejano (dilatación gravitatoria, aproximación de Schwarzschild).`;},
+          draw(c,w,h,t,v){const k=bhCalc(v);c.fillStyle='#02030a';c.fillRect(0,0,w,h);const cx=w/2,cy=h/2,Rs=Math.min(w,h)*.07,sh=2.6*Rs,rin=Math.max(1.3*Rs,k.ri/2*Rs),rout=sh*3.4,inc=v.incl*Math.PI/180,ci=Math.cos(inc),si=Math.sin(inc),P=[];
+            for(let i=0;i<900;i++){const rel=Math.pow(rnd(i),1.6),r=rin+(rout-rin)*rel,ph=rnd(i+1000)*TAU+t*1.5*Math.pow(rin/r,1.5);P.push([r,rel,ph]);}
+            const dot=(x,y,rel,ph,a)=>{const br=clamp(.55+.45*(-Math.cos(ph))*si,.15,1);c.fillStyle=`hsla(${30+15*rel},100%,${62+30*(1-rel)}%,${a*br*(1-rel*.5)})`;c.fillRect(cx+x,cy+y,2,2);};
+            glow(c,cx,cy,rout*1.2,'251,146,60',.12);
+            P.forEach(([r,rel,ph])=>{const x=r*Math.cos(ph),s=Math.sin(ph);if(s<0){dot(x,s*r*ci,rel,ph,.8);const xi=x*.8;dot(xi,-(sh*1.02+(r-rin)*.08)*Math.sqrt(Math.max(0,1-Math.pow(xi/(sh*1.5),2)))*(.3+.7*si),rel,ph,.55);}});
+            circ(c,cx,cy,sh,'#000');c.strokeStyle='rgba(253,224,160,.8)';c.lineWidth=2;c.beginPath();c.arc(cx,cy,sh*1.02,0,TAU);c.stroke();
+            P.forEach(([r,rel,ph])=>{const s=Math.sin(ph);if(s>=0)dot(r*Math.cos(ph),s*r*ci,rel,ph,.9);});
+            c.setLineDash([3,4]);c.strokeStyle='rgba(148,163,184,.5)';c.lineWidth=1;c.beginPath();c.arc(cx,cy,Rs,0,TAU);c.stroke();c.setLineDash([]);
+            txt(c,'Horizonte de sucesos (rs)',cx+Rs+6,cy+4,'#94a3b8',10);txt(c,'Sombra ≈ 2,6 rs',cx,cy-sh-8,'#94a3b8',10,'center');txt(c,'Representación artística · escala relativa',12,h-12,'#64748b',11);}},
+        collision:{phase:3,n:12,icon:'waves',title:'Colisión de objetos cósmicos',diff:'Alta',
+          desc:'Observa cómo dos objetos compactos se acercan, se fusionan y emiten ondas gravitacionales cada vez más intensas.',
+          ctl:[{id:'k',l:'Tipo de objetos',val:'bh',opts:[['bh','Agujeros negros'],['ns','Estrellas de neutrones']]},{id:'m1',l:'Masa del objeto 1',min:1,max:60,step:.5,val:30,f:x=>x+' M☉'},{id:'m2',l:'Masa del objeto 2',min:1,max:60,step:.5,val:25,f:x=>x+' M☉'},{id:'p',l:'Progreso de la fusión',min:0,max:100,step:.2,val:10,f:x=>x.toFixed(0)+' %'}],
+          auto:{id:'p',rate:6,max:100},ol:['Masa total','Energía en ondas gravitacionales','Frecuencia en la fusión','Remanente'],
+          tips:['Observa cómo la señal sube en amplitud y frecuencia (chirrido) hasta la fusión.','Cambia a estrellas de neutrones (se limitan a 2,3 M☉).','Compara masas iguales con masas muy distintas.'],
+          info:['Dos objetos compactos que orbitan se acercan porque emiten ondas gravitacionales: ondulaciones del espacio-tiempo que se llevan energía. Al acercarse giran más rápido y la señal sube en frecuencia y amplitud: el «chirrido» detectado por LIGO y Virgo.','En 2015 se detectó la primera fusión de agujeros negros (GW150914). Con estrellas de neutrones, la fusión además produce una kilonova, que sintetiza oro y platino. La forma de onda aquí es una aproximación cualitativa.'],
+          outs:v=>{const k=colCalc(v);return[k.M.toFixed(1)+' M☉',k.rad.toFixed(2)+' M☉c²','≈ '+Math.round(k.f)+' Hz',v.k==='bh'?'Agujero negro de '+k.rem.toFixed(1)+' M☉':k.rem>2.7?'Agujero negro (colapso)':'Estrella de neutrones masiva'];},
+          explain:v=>{const k=colCalc(v);return `La fusión libera ≈ ${k.rad.toFixed(2)} masas solares en ondas gravitacionales (E = mc²) en fracciones de segundo. ${v.k==='ns'?'Con estrellas de neutrones, la fusión también lanza materia radiactiva (kilonova).':'Después de la fusión, el nuevo agujero negro «vibra» y se estabiliza (ringdown).'}`;},
+          draw(c,w,h,t,v){bgStars(c,w,h);const k=colCalc(v),s=v.p/100,u=clamp(s/.9,0,1),d=Math.max(.12,Math.pow(1-u,.25)),W=colWave(s),cx=w/2,cy=h*.3,sep=Math.min(w,h*.6)*.32*d,gap=Math.min(w,h)*.07,cnt=W.ph/Math.PI;
+            for(let j=0;j<6;j++){c.strokeStyle=`rgba(125,211,252,${.5*(1-j/6)*Math.max(.25,W.amp)})`;c.lineWidth=2;c.beginPath();c.arc(cx,cy,((cnt%1)+j)*gap+4,0,TAU);c.stroke();}
+            const ob=(m,x,y)=>{const r=4+4*Math.cbrt(m);if(v.k==='bh'){circ(c,x,y,r,'#000');c.strokeStyle='#fb923c';c.lineWidth=1.5;c.beginPath();c.arc(x,y,r+2,0,TAU);c.stroke();}else{glow(c,x,y,r*3,'165,243,252',.5);circ(c,x,y,r,'#a5f3fc');}};
+            if(s<.9){const a=W.ph/2;ob(k.m1,cx-k.m2/k.M*sep*Math.cos(a),cy-k.m2/k.M*sep*Math.sin(a));ob(k.m2,cx+k.m1/k.M*sep*Math.cos(a),cy+k.m1/k.M*sep*Math.sin(a));}
+            else{glow(c,cx,cy,90,'255,230,180',Math.max(0,1-(s-.9)*8));ob(k.M,cx,cy);}
+            const gx=14,gw=w-28,gy=h*.64,gh=h*.28;c.strokeStyle='rgba(148,163,184,.35)';c.strokeRect(gx,gy,gw,gh);c.setLineDash([3,4]);c.beginPath();c.moveTo(gx+gw*.9,gy);c.lineTo(gx+gw*.9,gy+gh);c.stroke();c.setLineDash([]);
+            c.strokeStyle='#67e8f9';c.lineWidth=1.3;c.beginPath();const N=300;for(let i=0;i<N;i++){const si=i/(N-1)*s,q=colWave(si),y=gy+gh/2-Math.cos(2*q.ph/2)*q.amp*gh*.45,x=gx+si*gw;i?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();
+            txt(c,'Señal de ondas gravitacionales (esquemática)',gx+4,gy-6,'#94a3b8',11);txt(c,'fusión',gx+gw*.9,gy+gh+14,'#94a3b8',10,'center');txt(c,'Tiempo →',gx+gw,gy+gh+14,'#64748b',10,'right');}},
+        orbital:{phase:4,n:13,icon:'orbit',title:'Mecánica orbital',diff:'Media–alta',
+          desc:'Lanza un satélite desde cierta altitud y velocidad y descubre cuándo su trayectoria es circular, elíptica, de escape o suborbital.',
+          ctl:[{id:'h',l:'Altitud inicial',min:200,max:36000,step:100,val:400,f:x=>x.toLocaleString('es')+' km'},{id:'v',l:'Velocidad (horizontal)',min:1,max:12,step:.01,val:7.67,f:x=>x.toFixed(2)+' km/s'}],
+          auto:{id:'__',rate:0},ol:['Tipo de trayectoria','Periodo orbital','Velocidad circular local','Velocidad de escape local'],
+          tips:['A 400 km, 7,67 km/s da una órbita casi circular.','Súbela a 9 km/s: la órbita se vuelve elíptica.','Pasa de 10,8 km/s a 400 km: escapa de la Tierra.'],
+          info:['Un satélite no «flota»: cae continuamente alrededor de la Tierra. Con la velocidad circular, la curvatura de su caída coincide con la de la superficie; con menos velocidad la órbita es elíptica o choca con el suelo; con más, se alarga hasta llegar a la velocidad de escape.','La velocidad de escape es √2 veces la circular (a 400 km, unos 10,8 km/s). Las órbitas son cónicas: círculo, elipse, parábola o hipérbola, según la energía orbital. Simulación con gravedad newtoniana y sin atmósfera.'],
+          outs:v=>{const k=orbCalc(v),P=k.e<1&&k.rp>=k.Re?2*Math.PI*Math.sqrt(Math.pow(k.a,3)/k.MU):0;return[k.type,P?(P<7200?Math.round(P/60)+' min':(P/3600).toFixed(1)+' h'):'—',k.vc.toFixed(2)+' km/s',k.ve.toFixed(2)+' km/s'];},
+          explain:v=>{const k=orbCalc(v);return `Trayectoria: ${k.type.toLowerCase()}. Excentricidad e = ${k.e.toFixed(2)}. Perigeo a ${Math.round(k.rp-k.Re).toLocaleString('es')} km de altitud${k.e<1?`; apogeo a ${Math.round(k.p/(1-k.e)-k.Re).toLocaleString('es')} km`:''}.`;},
+          draw(c,w,h,t,v){bgStars(c,w,h);const k=orbCalc(v),mk=()=>({x:k.r0,y:0,vx:0,vy:v.v,lt:t,tr:[],st:'',end:0}),key=v.h+'|'+v.v;
+            if(!G.o||G.key!==key||t<G.o.lt||(G.o.end&&t-G.o.end>2.5)){G.key=key;G.o=mk();}const o=G.o;let sim=(t-o.lt)*700;o.lt=t;
+            while(sim>0&&!o.st){const dt=Math.min(5,sim);sim-=dt;const r=Math.hypot(o.x,o.y),a=-k.MU/(r*r*r);o.vx+=a*o.x*dt;o.vy+=a*o.y*dt;o.x+=o.vx*dt;o.y+=o.vy*dt;const rr=Math.hypot(o.x,o.y);if(rr<k.Re)o.st='Impacto con la superficie';else if(rr>60*k.Re)o.st='Ha escapado';}
+            if(o.st&&!o.end)o.end=t;o.tr.push([o.x,o.y]);if(o.tr.length>500)o.tr.shift();
+            const Rv=k.e<1?Math.max(Math.min(k.p/(1-k.e),40*k.Re)*1.15,k.r0*1.3):8*k.Re,sc=Math.min(w,h)*.45/Rv,cx=w/2,cy=h/2,X=x=>cx+x*sc,Y=y=>cy-y*sc;
+            glow(c,cx,cy,k.Re*sc*1.5,'96,165,250',.35);circ(c,cx,cy,Math.max(5,k.Re*sc),'#1d4ed8');circ(c,cx-k.Re*sc*.3,cy-k.Re*sc*.3,Math.max(2,k.Re*sc*.4),'#3b82f6');
+            c.strokeStyle='rgba(148,163,184,.35)';c.lineWidth=1;c.setLineDash([4,4]);c.beginPath();const th0=k.e>1e-6?Math.acos(clamp((k.p/k.r0-1)/k.e,-1,1)):0,lim=k.e<1?Math.PI:Math.acos(-1/k.e)*.97;let f=true;
+            for(let i=0;i<=240;i++){const th=-lim+2*lim*i/240,r=k.p/(1+k.e*Math.cos(th));if(r<0||r>Rv*3)continue;const a=th-th0;const px=X(r*Math.cos(a)),py=Y(r*Math.sin(a));f?c.moveTo(px,py):c.lineTo(px,py);f=false;}c.stroke();c.setLineDash([]);
+            c.strokeStyle='rgba(251,191,36,.5)';c.beginPath();o.tr.forEach((p,i)=>i?c.lineTo(X(p[0]),Y(p[1])):c.moveTo(X(p[0]),Y(p[1])));c.stroke();
+            circ(c,X(o.x),Y(o.y),4,'#fde68a');if(o.st)txt(c,o.st,cx,28,'#fbbf24',15,'center');txt(c,'Gravedad newtoniana · sin atmósfera · movimiento acelerado',12,h-12,'#64748b',11);}},
+        expansion:{phase:4,n:14,icon:'maximize',title:'Expansión del universo',diff:'Alta',
+          desc:'Cambia la constante de Hubble, la materia y la energía oscura, y observa cómo se alejan las galaxias a lo largo de la historia cósmica.',
+          ctl:[{id:'H0',l:'Constante de Hubble',min:50,max:100,step:1,val:70,f:x=>x+' km/s/Mpc'},{id:'om',l:'Materia (Ωm)',min:.1,max:1.5,step:.05,val:.3,f:x=>x.toFixed(2)},{id:'ol',l:'Energía oscura (ΩΛ)',min:0,max:.95,step:.05,val:.7,f:x=>x.toFixed(2)},{id:'p',l:'Época cósmica',min:0,max:100,step:.5,val:50,f:x=>x<66.7?'Pasado':x<67.5?'Hoy':'Futuro'}],
+          auto:{id:'p',rate:3,max:100},ol:['Factor de escala a','Corrimiento al rojo z','Edad del universo hoy','Velocidad de recesión (galaxia marcada)'],
+          tips:['Pon ΩΛ = 0: la expansión se frena por la gravedad de la materia.','Con ΩΛ = 0,7 la expansión se acelera en el futuro.','Sube Ωm a 1,5 con ΩΛ bajo: el universo podría recolapsar.'],
+          info:['El universo no se expande «hacia» algún sitio: las distancias entre galaxias lejanas crecen con el factor de escala a(t). La ley de Hubble dice que v = H·d: cuanto más lejos, más rápido se aleja. Esto explica el corrimiento al rojo de la luz.','La ecuación de Friedmann relaciona la expansión con el contenido del universo: materia, energía oscura y curvatura. Con los valores observados (Ωm≈0,3, ΩΛ≈0,7) la edad es ≈13,8 mil millones de años y la expansión se acelera. Aquí es un modelo simplificado.'],
+          outs:v=>{const k=cosCalc(v),a=SIM_a(v,k);return[a.toFixed(2),a>0?'z = '+(1/a-1).toFixed(2):'—',k.age.toFixed(1)+' mil M. de años',Math.round(v.H0*Math.sqrt(Math.max(0,k.E2(a)))*Math.hypot(300,200)*a).toLocaleString('es')+' km/s'];},
+          explain:v=>{const k=cosCalc(v),q=v.om/2-v.ol;return `${isFinite(k.amax)&&k.amax<10?'Con estos parámetros la expansión se detiene y el universo recolapsaría. ':q<0?'La energía oscura domina: la expansión se acelera. ':'La gravedad de la materia domina: la expansión se frena. '}Las galaxias no se mueven por el espacio: es el espacio entre ellas el que crece. La velocidad de recesión puede superar a la de la luz sin violar la relatividad.`;},
+          draw(c,w,h,t,v){const k=cosCalc(v),a=SIM_a(v,k);c.fillStyle='#02030a';c.fillRect(0,0,w,h*.74);const cx=w/2,cy=h*.37,sc=Math.min(w,h*.74)*.5/900;
+            for(let i=0;i<70;i++){const gx=(rnd(i*2+1)-.5)*1800,gy=(rnd(i*2+2)-.5)*1800,x=cx+gx*a*sc,y=cy+gy*a*sc;if(x<-5||x>w+5||y<-5||y>h*.74+5)continue;c.fillStyle=`rgba(190,210,255,${.35+.5*rnd(i+70)})`;c.beginPath();c.ellipse(x,y,2.6,1.6,rnd(i)*3,0,TAU);c.fill();}
+            const rx=cx+300*a*sc,ry=cy-200*a*sc;c.strokeStyle='rgba(251,191,36,.6)';c.setLineDash([4,4]);c.beginPath();c.moveTo(cx,cy);c.lineTo(rx,ry);c.stroke();c.setLineDash([]);circ(c,cx,cy,5,'#fbbf24');circ(c,rx,ry,4,'#67e8f9');txt(c,'Vía Láctea',cx+8,cy-8,'#fde68a',11);txt(c,Math.round(Math.hypot(300,200)*a)+' Mpc',(cx+rx)/2+6,(cy+ry)/2-6,'#67e8f9',11);
+            const gx=40,gw=w-56,gy=h*.78,gh=h*.14,tab=k.tab,tm=tab.length?tab[tab.length-1][0]:1,am=Math.min(4,Math.max(1.2,tab.length?tab[tab.length-1][1]:1));c.strokeStyle='rgba(148,163,184,.4)';c.strokeRect(gx,gy,gw,gh);c.strokeStyle='#67e8f9';c.beginPath();tab.forEach(([tau,aa],i)=>{const x=gx+tau/tm*gw,y=gy+gh-Math.min(aa,am)/am*gh;i?c.lineTo(x,y):c.moveTo(x,y);});c.stroke();
+            const m=tab.find(q=>q[1]>=a)||tab[tab.length-1];if(m)circ(c,gx+m[0]/tm*gw,gy+gh-Math.min(m[1],am)/am*gh,4,'#fbbf24');txt(c,'a(t)',gx-6,gy+12,'#94a3b8',10,'right');txt(c,'Edad del universo →',gx+gw,gy+gh+14,'#64748b',10,'right');}},
+        web:{phase:4,n:15,icon:'network',title:'La red cósmica',diff:'Alta',
+          desc:'Navega por filamentos de galaxias, cúmulos y enormes vacíos, y observa cómo cambia la estructura al variar el agrupamiento.',
+          ctl:[{id:'n',l:'Galaxias mostradas',min:1000,max:6000,step:250,val:3500,f:x=>x.toLocaleString('es')},{id:'fil',l:'Grado de agrupamiento',min:0,max:100,step:1,val:65,f:x=>x+' %'},{id:'z',l:'Zoom',min:.6,max:1.8,step:.05,val:1,f:x=>x.toFixed(2)+'×'}],
+          auto:{id:'__',rate:0},ol:['Galaxias','En filamentos','En cúmulos','En el campo / vacíos'],
+          tips:['Con agrupamiento 0 % la distribución es casi uniforme.','Súbelo a 90 % y observa filamentos y vacíos.','Usa el zoom para acercarte a los nodos.'],
+          info:['A gran escala las galaxias no se distribuyen al azar: forman una red de filamentos y muros que rodean enormes vacíos casi sin galaxias, con cúmulos masivos en los nodos donde se cruzan los filamentos.','Esta estructura creció a partir de minúsculas diferencias de densidad en el universo primitivo, amplificadas por la gravedad (sobre todo de la materia oscura) durante miles de millones de años. La simulación es esquemática, no un mapa real.'],
+          outs:v=>[v.n.toLocaleString('es'),Math.round(v.fil*.65)+' %',Math.round(v.fil*.35)+' %',(100-v.fil)+' %'],
+          explain:v=>v.fil>60?'La gravedad ha reunido la materia en filamentos y nodos, dejando vacíos amplios entre ellos, como en las observaciones de grandes cartografías del cielo.':'Con poco agrupamiento las galaxias se reparten casi uniformemente: así era el universo primitivo, antes de que la gravedad amplificara las diferencias de densidad.',
+          draw(c,w,h,t,v){c.fillStyle='#02030a';c.fillRect(0,0,w,h);const key=v.n+'|'+v.fil;if(!G.web||G.wk!==key){G.web=webGen(v);G.wk=key;}const W=G.web,cx=w/2,cy=h/2,R=Math.min(w,h)*.5*v.z,an=t*.12,ca=Math.cos(an),sa=Math.sin(an);
+            const pr=p=>{const x=p[0]*ca+p[2]*sa,z=-p[0]*sa+p[2]*ca,f=1/(1.9-z*.5);return[cx+x*R*f*.62,cy+p[1]*R*f*.62,z];};
+            c.strokeStyle=`rgba(147,197,253,${.15*v.fil/100})`;c.lineWidth=1;W.ed.forEach(([i,j])=>{const a=pr(W.nd[i]),b=pr(W.nd[j]);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();});
+            const cols=['#64748b','#93c5fd','#fde68a'];W.pts.forEach(([p,cl])=>{const q=pr(p);c.globalAlpha=clamp(.45+q[2]*.4,.15,.95);c.fillStyle=cols[cl];c.fillRect(q[0],q[1],cl===2?2:1.4,cl===2?2:1.4);});c.globalAlpha=1;
+            txt(c,'Representación esquemática · escala de cientos de Mpc',12,h-12,'#64748b',11);}}
+        });
+        const SIM_vr=(v,r)=>{const kp=Math.sqrt(.3/Math.max(r,.3))*Math.min(1,r/.1),fl=Math.min(1,r/.15);return kp*(1-v.dm/100)+fl*v.dm/100;};
+        const SIM_a=(v,k)=>Math.min(Math.pow(10,-1+1.5*v.p/100),isFinite(k.amax)?k.amax*.98:99);
+        Object.entries({solar:'sol',moon:'sol',lab:'sol',impact:'sol',planet:'mundos',transit:'mundos',star:'stars',binary:'stars',supernova:'stars',blackhole:'extreme',collision:'extreme',galaxy:'cosmo',orbital:'cosmo',expansion:'cosmo',web:'cosmo'}).forEach(([k,c])=>SIMS[k].cat=c);
+        SIMS.moon.info=['Las fases lunares no las causa la sombra de la Tierra: son la parte iluminada de la Luna que vemos según su posición respecto al Sol. El ciclo dura unos 29,5 días.','Un eclipse exige alineación: la órbita lunar está inclinada unos 5° respecto a la de la Tierra, así que solo hay eclipses cuando Luna nueva o llena coinciden con un nodo.'];
+        SIMS.impact.info=['La energía cinética crece con la masa y con el cuadrado de la velocidad, por eso un asteroide pequeño pero rápido puede liberar tanta energía como una bomba nuclear. Las rocas pequeñas se fragmentan en la atmósfera; las grandes llegan al suelo.','Los asteroides cercanos a la Tierra se vigilan con telescopios, y la misión DART (2022) demostró que se puede desviar uno con un impacto cinético.'];
+        SIMS.star.info=['La masa lo determina casi todo: las estrellas pequeñas arden despacio y viven billones de años; las masivas son brillantes pero duran millones. Al agotar el combustible, el destino depende de la masa inicial.','Los remanentes (enanas blancas, estrellas de neutrones y agujeros negros) son laboratorios de física extrema.'];
+        SIMS.transit.info=['El método del tránsito mide la caída de brillo cuando un planeta pasa por delante de su estrella. La profundidad indica el tamaño del planeta y el periodo, su distancia orbital (tercera ley de Kepler).','Misiones como Kepler y TESS han descubierto miles de exoplanetas con esta técnica.'];
+        SIMS.binary.info=['Más de la mitad de las estrellas parecidas al Sol tienen compañera. Ambas orbitan su centro de masa común, que queda más cerca de la más masiva.','Medir sus órbitas es la forma más directa de determinar la masa de las estrellas.'];
+        const SIM_ORDER=['solar','moon','lab','impact','planet','star','transit','binary','galaxy','supernova','blackhole','collision','orbital','expansion','web'];
+        let activeSim='solar', G=null;
+        function openSim(id){switchSection('simulations');selectSim(id);}
+        function selectSim(id){
+            activeSim=id;const v=document.getElementById('sim-viewer');v.classList.remove('hidden');v.classList.add('flex');document.body.style.overflow='hidden';
+            const s=SIMS[id];document.getElementById('sv-title').textContent=`${String(s.n).padStart(2,'0')} · ${s.title}`;
+            document.getElementById('sv-select').innerHTML=SIM_ORDER.map(k=>`<option value="${k}"${k===id?' selected':''}>${String(SIMS[k].n).padStart(2,'0')} · ${SIMS[k].title}</option>`).join('');
+            const PH={1:'Fase 1 · Primeras simulaciones',2:'Fase 2 · Estrellas y planetas',3:'Fase 3 · Galaxias y extremos',4:'Fase 4 · Universo a gran escala'};let last=0;
+            document.getElementById('sv-rail').innerHTML=SIM_ORDER.map(k=>{const q=SIMS[k],on=k===id,h=q.phase!==last?`<div class="text-[11px] uppercase tracking-[.18em] text-slate-500 px-2 pt-4 pb-2">${PH[q.phase]}</div>`:'';last=q.phase;return h+`<button onclick="selectSim('${k}')" class="w-full flex items-center gap-3 text-left rounded-xl px-3 py-2.5 mb-1 transition-colors ${on?'bg-cyan-300/15 border border-cyan-300/40 text-white':'border border-transparent text-slate-300 hover:bg-white/5'}"><i data-lucide="${q.icon}" size="16" class="${on?'text-cyan-300':'text-slate-500'} shrink-0"></i><span class="text-sm leading-snug">${q.title}</span></button>`;}).join('')+`<div class="relative mt-5 rounded-xl overflow-hidden h-36"><img src="${imgFor('rail')}" alt="" loading="lazy" onerror="this.remove()" class="absolute inset-0 w-full h-full object-cover opacity-70"><div class="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent"></div><p class="absolute bottom-3 left-3 right-3 text-xs text-slate-200">Cada simulación es un modelo educativo simplificado del cosmos.</p></div>`;
+            const m=document.getElementById('sv-main');setSimSize(simSize);m.innerHTML=id==='solar'?renderSolarSim():renderGenericSim(id);m.scrollTop=0;
+            lucide.createIcons();setupSims();
+        }
+        let simSize=50;
+        function setSimSize(v){simSize=+v;const m=document.getElementById('sv-main');m.style.setProperty('--sim-h',(30+simSize*.45)+'vh');m.style.setProperty('--sim-w',(660+simSize*11)+'px');const r=document.getElementById('sv-size');if(r)r.value=simSize;}
+        function navSim(d){const i=SIM_ORDER.indexOf(activeSim);selectSim(SIM_ORDER[(i+d+SIM_ORDER.length)%SIM_ORDER.length]);}
+        function closeSim(){const v=document.getElementById('sim-viewer');v.classList.add('hidden');v.classList.remove('flex');document.getElementById('sv-main').innerHTML='';document.body.style.overflow='';G=null;}
+        document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('sim-viewer').classList.contains('hidden')&&document.getElementById('modal-overlay').classList.contains('hidden'))closeSim();});
+        let simCat='all';
+        const CATS=[['all','Todas'],['sol','Sistema solar'],['mundos','Mundos'],['stars','Estrellas'],['extreme','Cosmos extremo'],['cosmo','Cosmología']];
+        function setCat(k){simCat=k;switchSection('simulations');}
+        function renderSimulations(){
+            const card=k=>{const s=SIMS[k];return `<button onclick="selectSim('${k}')" class="group text-left rounded-2xl overflow-hidden border border-white/10 bg-slate-900/60 hover:border-cyan-300/60 hover:-translate-y-1 transition-all"><div class="relative h-36 overflow-hidden"><img src="${imgFor(k)}" alt="" loading="lazy" onerror="this.remove()" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"><div class="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div><span class="absolute top-3 left-3 text-xs font-bold bg-black/60 text-cyan-300 rounded-full px-2.5 py-1">${String(s.n).padStart(2,'0')}</span><span class="absolute top-3 right-3 text-[11px] bg-black/60 text-slate-300 rounded-full px-2.5 py-1">${s.diff}</span></div><div class="p-4"><div class="flex items-center gap-2 mb-1"><i data-lucide="${s.icon}" size="16" class="text-cyan-300 shrink-0"></i><h3 class="font-bold text-white leading-snug">${s.title}</h3></div><p class="text-sm text-slate-400 line-clamp-2">${s.desc||'Órbitas, movimiento y comparación de los planetas del sistema solar.'}</p><div class="mt-3 text-sm font-bold text-cyan-300">Abrir simulación →</div></div></button>`;};
+            const grp=(p,t)=>{const l=SIM_ORDER.filter(k=>SIMS[k].phase===p&&(simCat==='all'||SIMS[k].cat===simCat));return l.length?`<div class="mb-10"><div class="text-xs uppercase tracking-[.2em] text-slate-400 mb-4">${t}</div><div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">${l.map(card).join('')}</div></div>`:'';};
+            const chips=CATS.map(([k,l])=>`<button onclick="setCat('${k}')" class="px-3 py-1.5 rounded-full text-sm border ${simCat===k?'border-cyan-300 bg-cyan-300/10 text-cyan-200':'border-white/10 text-slate-400 hover:text-white'}">${l}</button>`).join('');
+            return `<div class="max-w-7xl mx-auto px-4 py-10"><div class="relative rounded-3xl overflow-hidden border border-white/10 mb-8"><img src="${imgFor('hub')}" alt="" onerror="this.remove()" class="absolute inset-0 w-full h-full object-cover opacity-50"><div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/75 to-transparent"></div><div class="relative p-8 md:p-12"><p class="text-xs uppercase tracking-[.25em] text-cyan-300 mb-2">EraOne · Laboratorio del universo</p><h1 class="text-3xl md:text-5xl font-bold text-white mb-3">Simulaciones</h1><p class="text-slate-300 text-lg max-w-2xl">Quince experiencias interactivas que se abren en un espacio a pantalla completa. Dentro puedes pasar de una a otra sin volver al menú.</p></div></div><div class="flex flex-wrap gap-2 mb-8">${chips}</div>${grp(1,'Fase 1 · Primeras simulaciones')}${grp(2,'Fase 2 · Estrellas y sistemas planetarios')}${grp(3,'Fase 3 · Galaxias y fenómenos extremos')}${grp(4,'Fase 4 · El universo a gran escala')}</div>`;
+        }
+        function renderGenericSim(id){const s=SIMS[id];
+            const ctl=s.ctl.map(c=>c.opts?`<div class="mb-4"><label for="gc-${c.id}" class="block text-sm text-slate-300 mb-2">${c.l}</label><select id="gc-${c.id}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-cyan-300">${c.opts.map(o=>`<option value="${o[0]}"${o[0]==c.val?' selected':''}>${o[1]}</option>`).join('')}</select></div>`:`<div class="mb-4"><label for="gc-${c.id}" class="flex justify-between text-sm mb-2"><span class="text-slate-300">${c.l}</span><strong id="gv-${c.id}" class="text-cyan-300"></strong></label><input id="gc-${c.id}" type="range" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.val}" class="w-full accent-cyan-300"></div>`).join('');
+            return `<div class="mx-auto px-4 md:px-6 py-5 md:py-7" style="max-width:var(--sim-w,1180px)"><div class="relative rounded-2xl overflow-hidden mb-8 border border-white/10 bg-slate-900"><img src="${imgFor(id)}" alt="" loading="lazy" onerror="this.remove()" class="absolute inset-0 w-full h-full object-cover opacity-50"><div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-slate-950/10"></div><div class="relative p-5 md:p-7"><div class="flex items-center gap-2 text-cyan-300 text-xs uppercase tracking-[.25em] mb-3"><i data-lucide="flask-conical" size="16"></i> Fase ${s.phase} · Laboratorio interactivo ${String(s.n).padStart(2,'0')}</div><h2 class="text-2xl md:text-4xl font-bold text-white mb-2">${s.title}</h2><p class="text-slate-300 max-w-2xl">${s.desc}</p></div></div>
+            <div class="grid md:grid-cols-[minmax(0,1fr)_300px] lg:grid-cols-[minmax(0,1fr)_340px] gap-5 items-start"><div class="rounded-2xl overflow-hidden md:sticky md:top-3 self-start border border-white/10 bg-[#050816]"><div class="flex items-center justify-between gap-4 p-4 border-b border-white/10 bg-slate-900/80"><div><div class="text-white font-semibold">Vista de la simulación</div><div class="text-xs text-slate-400 mt-1">Modelo educativo simplificado</div></div><div class="flex gap-2"><button id="g-pause" onclick="genPause()" class="rounded-lg bg-cyan-300 text-slate-950 px-3 py-2 text-sm font-bold flex items-center gap-2"><i data-lucide="pause" size="15"></i><span>Pausar</span></button><button onclick="genReset()" class="rounded-lg border border-white/15 text-slate-300 hover:text-white px-3 py-2 text-sm flex items-center gap-2"><i data-lucide="rotate-ccw" size="15"></i><span>Reiniciar</span></button></div></div>
+            <canvas id="sim-canvas" class="block w-full" style="height:var(--sim-h,54vh);min-height:300px" aria-label="${s.title}"></canvas>
+            <div class="grid grid-cols-2 sm:grid-cols-4 border-t border-white/10">${s.ol.map((l,i)=>`<div class="p-4 ${i<3?'sm:border-r':''} ${i%2===0?'border-r sm:border-r':''} border-white/10"><div class="text-xs text-slate-500">${l}</div><div id="go-${i}" class="text-base text-white font-bold mt-1"></div></div>`).join('')}</div></div>
+            <aside class="space-y-5"><div class="rounded-2xl border border-white/10 bg-slate-900/70 p-5"><h2 class="text-lg font-bold text-white mb-4">Controles del modelo</h2>${ctl}</div><div class="rounded-2xl border border-cyan-300/20 bg-cyan-950/20 p-5"><div class="flex items-center gap-2 text-cyan-200 mb-3"><i data-lucide="info" size="18"></i><h2 class="font-bold">¿Qué estás viendo?</h2></div><p id="sim-explain" class="text-sm leading-relaxed text-slate-300"></p></div><div class="rounded-2xl border border-white/10 bg-slate-900/50 p-5"><h2 class="font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="flask-conical" size="17" class="text-violet-300"></i>Prueba y observa</h2><p class="text-sm text-slate-400">${s.tips.map((x,i)=>`${i+1}. ${x}`).join('<br>')}</p><p class="text-xs text-slate-500 mt-3">Importante: son modelos simplificados con fines educativos; los tamaños y escalas visuales no son reales.</p></div></aside></div>${s.info?`<section class="mt-10 rounded-2xl border border-white/10 bg-slate-900/50 p-6 md:p-8"><h2 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="book-open" size="20" class="text-cyan-300"></i>La ciencia detrás de la simulación</h2><div class="grid lg:grid-cols-[1fr_300px] gap-6 items-start"><div class="space-y-4 text-slate-300 leading-relaxed">${s.info.map(x=>`<p>${x}</p>`).join('')}</div><img src="${imgFor(id+'x')}" alt="" loading="lazy" onerror="this.remove()" class="w-full h-52 lg:h-60 object-cover rounded-xl border border-white/10"></div></section>`:''}</div>`;}
+        function setupSims(){
+            G=null;if(activeSim==='solar'){setupSolarSystemSimulation();return;}
+            const s=SIMS[activeSim];if(!document.getElementById('sim-canvas'))return;G={s,v:{},t:0,paused:false,last:0,tok:Math.random()};const tok=G.tok;
+            const rd=c=>{const el=document.getElementById('gc-'+c.id);let x=c.opts?el.value:Number(el.value);if(c.t)x=c.t(x);G.v[c.id]=x;const o=document.getElementById('gv-'+c.id);if(o)o.textContent=c.f(x);};
+            s.ctl.forEach(c=>{rd(c);document.getElementById('gc-'+c.id).addEventListener('input',()=>rd(c));});
+            const frame=ts=>{if(!G||G.tok!==tok)return;const cv=document.getElementById('sim-canvas');if(!cv)return;
+                const dt=G.last?Math.min((ts-G.last)/1000,.05):0;G.last=ts;
+                if(!G.paused){G.t+=dt;const a=s.auto,c=a&&s.ctl.find(c=>c.id===a.id);if(c&&a.rate){let x=G.v[a.id]+a.rate*dt;if(x>a.max)x-=a.max;document.getElementById('gc-'+c.id).value=x;rd(c);}}
+                const r=cv.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(300,r.width),h=Math.max(330,r.height);
+                if(cv.width!==Math.floor(w*dpr)||cv.height!==Math.floor(h*dpr)){cv.width=Math.floor(w*dpr);cv.height=Math.floor(h*dpr);}
+                const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);s.draw(ctx,w,h,G.t,G.v);
+                s.outs(G.v).forEach((o,i)=>{const e=document.getElementById('go-'+i);if(e)e.textContent=o;});const ex=document.getElementById('sim-explain');if(ex)ex.textContent=s.explain(G.v);
+                requestAnimationFrame(frame);};
+            requestAnimationFrame(frame);
+        }
+        function genPause(){if(!G)return;G.paused=!G.paused;document.getElementById('g-pause').innerHTML=G.paused?'<i data-lucide="play" size="15"></i><span>Reanudar</span>':'<i data-lucide="pause" size="15"></i><span>Pausar</span>';lucide.createIcons();}
+        function genReset(){if(!G)return;G.s.ctl.forEach(c=>{const el=document.getElementById('gc-'+c.id);el.value=c.val;el.dispatchEvent(new Event('input'));});G.t=0;if(G.paused)genPause();}
+
+        // 2. UNIVERSE
+        const readMin=a=>Math.max(1,Math.round((a.fullContent+' '+(a.extra||EXTRA[a.id]||[]).map(x=>x[1]).join(' ')).split(' ').length/200));
+        function articleCard(a,type,big){return `<article onclick="openModalById('${a.id}','${type}')" class="group cursor-pointer rounded-2xl overflow-hidden border border-white/10 bg-slate-900/60 hover:border-amber-400/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-amber-500/5 transition-all duration-300 flex flex-col ${big?'md:col-span-2 md:flex-row':''}"><div class="relative overflow-hidden ${big?'md:w-1/2 h-56 md:h-auto md:min-h-[300px]':'h-48'}"><img src="${imgFor(a.id)}" alt="" loading="lazy" onerror="this.remove()" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"><div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"></div>${a.tag?`<span class="absolute top-3 left-3 text-[11px] uppercase tracking-widest font-bold bg-black/60 backdrop-blur text-amber-300 rounded-full px-3 py-1">${a.tag}</span>`:''}</div><div class="p-6 md:p-7 flex flex-col flex-1 ${big?'md:w-1/2 justify-center':''}"><h3 class="${big?'text-2xl md:text-3xl':'text-xl'} font-bold text-white leading-tight mb-3 group-hover:text-amber-200 transition-colors">${a.title}</h3><p class="text-slate-400 leading-relaxed mb-5">${a.desc}</p><div class="mt-auto flex items-center justify-between text-xs text-slate-500"><span class="flex items-center gap-1.5"><i data-lucide="clock" size="13"></i>${readMin(a)} min de lectura</span><span class="font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1">Leer artículo <i data-lucide="arrow-right" size="13"></i></span></div></div></article>`;}
+        function renderUniverse() {
+            const articlesHTML = universeArticles.map((a,i)=>articleCard(a,'universe',i===0)).join('');
 
             return `
-            <div class="max-w-4xl mx-auto px-4 py-10">
+            <div class="max-w-6xl mx-auto px-4 py-10">
                 ${sectionHeading("El Origen de Todo", "No estamos 'en' el universo. Somos parte del universo.")}
                 <div class="grid md:grid-cols-2 gap-8 mt-10">
                     ${articlesHTML}
@@ -763,18 +1287,12 @@
 
         // 3. LIFE
         function renderLife() {
-            const articlesHTML = lifeArticles.map(art => `
-                <div onclick="openModalById('${art.id}', 'life')" class="bg-slate-800/20 border-l-4 ${art.color} p-6 rounded-r-xl hover:bg-slate-800/40 transition-colors cursor-pointer group">
-                    <h3 class="text-xl font-bold mb-2 group-hover:text-white transition-colors text-slate-100">${art.title}</h3>
-                    <p class="text-slate-400 mb-4">${art.desc}</p>
-                    <span class="text-xs text-slate-500 group-hover:text-amber-500 transition-colors uppercase tracking-wider font-bold">Leer artículo completo &rarr;</span>
-                </div>
-            `).join('');
+            const articlesHTML = lifeArticles.map((a,i)=>articleCard(a,'life',i===0)).join('');
             
             return `
-            <div class="max-w-4xl mx-auto px-4 py-10">
+            <div class="max-w-6xl mx-auto px-4 py-10">
                 ${sectionHeading("La Vida se Abre Camino", "La complejidad emerge del caos.")}
-                <div class="space-y-8 mt-8">
+                <div class="grid md:grid-cols-2 gap-8 mt-10">
                     ${articlesHTML}
                 </div>
                 ${adPlaceholder()}
@@ -785,29 +1303,9 @@
         // 4. HUMANITY
         function renderHumanity() {
             return `
-            <div class="max-w-4xl mx-auto px-4 py-10">
+            <div class="max-w-6xl mx-auto px-4 py-10">
                 ${sectionHeading("La Humanidad", "La especie que aprendió a contar historias.")}
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="col-span-1 md:col-span-2 bg-slate-800/30 p-8 rounded-2xl border border-slate-700 hover:border-amber-500/50 transition-colors">
-                        <h3 class="text-2xl font-bold mb-4 text-slate-100">Del Fuego al Lenguaje</h3>
-                        <p class="text-slate-400 mb-4">
-                            El fuego nos dio estómagos más pequeños y cerebros más grandes. Pero el lenguaje nos dio la capacidad de cooperar en grupos de millones.
-                        </p>
-                        <button onclick="openModalById('h1', 'humanity')" class="text-amber-500 text-sm font-bold uppercase tracking-wider hover:text-amber-400">
-                            Leer Artículo
-                        </button>
-                    </div>
-                    <div onclick="openModalById('h2', 'humanity')" class="bg-slate-800/30 p-6 rounded-2xl border border-slate-700 flex flex-col justify-between cursor-pointer hover:bg-slate-800/50 hover:border-amber-500/50 transition-all">
-                        <i data-lucide="users" size="32" class="text-amber-500 mb-4"></i>
-                        <div>
-                            <h4 class="font-bold mb-2 text-slate-100">Agricultura: ¿Trampa?</h4>
-                            <p class="text-xs text-slate-400">¿Domesticamos el trigo o él a nosotros?</p>
-                        </div>
-                        <div class="mt-4 flex justify-end">
-                            <i data-lucide="chevron-right" size="16" class="text-slate-500"></i>
-                        </div>
-                    </div>
-                </div>
+                <div class="grid md:grid-cols-2 gap-8 mt-10">${humanityArticles.map(a=>articleCard(a,'humanity',false)).join('')}</div>
                 ${adPlaceholder()}
             </div>
             `;
@@ -846,8 +1344,8 @@
                 ${sectionHeading("Conexiones Ocultas", "Artículos virales sobre vínculos inesperados.")}
                 <div class="grid md:grid-cols-3 gap-8 mt-10">
                     ${connectionArticles.map(art => `
-                        <div onclick="openModalById('${art.id}', 'connections')" class="group relative overflow-hidden rounded-2xl aspect-[3/4] cursor-pointer bg-slate-900">
-                            <div class="absolute inset-0 bg-gradient-to-br ${art.color} opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                        <div class="group relative overflow-hidden rounded-2xl aspect-[3/4] cursor-pointer bg-slate-900">
+                            <img src="${imgFor(art.id)}" alt="" loading="lazy" onerror="this.remove()" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700"><div class="absolute inset-0 bg-gradient-to-br ${art.color} opacity-20 group-hover:opacity-30 transition-opacity"></div>
                             <div class="absolute inset-0 p-8 flex flex-col justify-end bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent">
                                 <div class="absolute top-6 right-6 text-white/50 group-hover:text-white transition-colors">
                                     <i data-lucide="share-2" size="20"></i>
@@ -978,7 +1476,6 @@
             else if(type === 'universe') item = universeArticles.find(d => d.id == id);
             else if(type === 'life') item = lifeArticles.find(d => d.id == id);
             else if(type === 'humanity') item = humanityArticles.find(d => d.id == id);
-            else if(type === 'connections') item = connectionArticles.find(d => d.id == id); // Added connections type
             
             if(item) openModal(item);
         }
@@ -988,22 +1485,20 @@
             const content = document.getElementById('modal-content');
             
             // Populate Data
-            document.getElementById('modal-image').className = `h-48 md:h-64 w-full bg-slate-800 bg-cover bg-center ${item.imagePlaceholder || 'bg-slate-800'}`;
+            const mi=document.getElementById('modal-image');mi.className='relative h-72 md:h-96 w-full bg-slate-800 bg-cover bg-center flex items-end';mi.style.backgroundImage=`linear-gradient(to top,rgba(15,23,42,1) 5%,rgba(15,23,42,.55) 50%,rgba(15,23,42,.15)),url('${imgFor(item.id||item.title)}')`;
+            mi.innerHTML=`<div class="p-6 md:p-12 w-full"><div class="inline-flex items-center gap-2 text-[11px] md:text-xs uppercase tracking-[.2em] font-bold text-amber-300 bg-black/50 backdrop-blur rounded-full px-3 py-1.5 mb-4"><i data-lucide="${item.icon||'sparkles'}" size="14"></i>${item.year||item.tag||'EraOne'}</div><h2 class="text-3xl md:text-5xl font-bold text-white leading-tight max-w-3xl">${item.title}</h2></div>`;
             
             let metaHTML = '';
             if(item.year) {
                 metaHTML = `<i data-lucide="${item.icon}"></i> <span>${item.year}</span>`;
             } else if (item.tag) {
                 metaHTML = `<i data-lucide="${item.icon}"></i> <span>${item.tag}</span>`;
-            } else if (item.title) {
-                // Fallback para conexiones u otros que no tengan tag/year
-                 metaHTML = `<i data-lucide="share-2"></i> <span>Conexión</span>`;
             }
-
             document.getElementById('modal-meta').innerHTML = metaHTML;
-            document.getElementById('modal-title').innerText = item.title;
-            // IMPORTANTE: Cambiado a innerHTML para soportar el formato enriquecido de los artículos
-            document.getElementById('modal-body').innerHTML = item.fullContent;
+            const mt=document.getElementById('modal-title');mt.innerText=item.title;mt.className='text-3xl md:text-4xl font-bold text-white mb-4 leading-tight';
+            const sents=item.fullContent.match(/[^.!?]+[.!?]+["»”)]?\s*/g)||[item.fullContent],paras=[];for(let i=0;i<sents.length;i+=2)paras.push(sents.slice(i,i+2).join('').trim());
+            const exs=item.extra||EXTRA[item.id]||[],ex=exs.map((x,i)=>`<div class="pt-8 mt-4 border-t border-white/10"><div class="flex items-center gap-3 mb-3"><span class="font-mono text-sm text-amber-400">${String(i+1).padStart(2,'0')}</span><h3 class="text-2xl md:text-3xl font-bold text-white leading-tight">${x[0]}</h3></div><p>${x[1]}</p></div>`).join('');const mb=document.getElementById('modal-body');mb.className='space-y-6 text-slate-300 text-base md:text-lg leading-relaxed max-w-3xl mx-auto';
+            mb.innerHTML=paras.map((p,i)=>`<p class="${i===0?'text-xl md:text-2xl text-slate-100 font-medium leading-snug border-l-4 border-amber-400 pl-5':''}">${p}</p>`).join('')+ex+`<div class="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-400"><span class="flex items-center gap-2"><i data-lucide="clock" size="14"></i>${Math.max(1,Math.round((item.fullContent+' '+exs.map(x=>x[1]).join(' ')).split(' ').length/200))} min de lectura</span><button onclick="closeModal();switchSection('simulations')" class="text-cyan-300 font-bold hover:text-cyan-200">Probar una simulación →</button></div>`;
 
             // Show
             overlay.classList.remove('hidden');
@@ -1033,5 +1528,3 @@
     </script>
 </body>
 </html>
-
-
