@@ -3,7 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EraOne - Una sola historia</title>
+    <title>EraOne · Simulaciones y explicaciones del universo</title>
+    <meta name="description" content="EraOne reúne 15 simulaciones interactivas y artículos para explorar el sistema solar, las estrellas, los agujeros negros y la estructura del universo.">
+    <meta name="theme-color" content="#020617">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8234850298162123" crossorigin="anonymous"></script>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="EraOne">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:title" content="EraOne · Simulaciones y explicaciones del universo">
+    <meta property="og:description" content="Explora el cosmos con 15 simulaciones interactivas: planetas, estrellas, agujeros negros, galaxias y expansión del universo.">
+    <meta property="og:image" content="https://images.pexels.com/photos/37824750/pexels-photo-37824750.png?auto=compress&cs=tinysrgb&w=1200">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EraOne · Simulaciones y explicaciones del universo">
+    <meta name="twitter:description" content="15 simulaciones interactivas y artículos para entender el cosmos.">
+    <meta name="twitter:image" content="https://images.pexels.com/photos/37824750/pexels-photo-37824750.png?auto=compress&cs=tinysrgb&w=1200">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23020617'/%3E%3Cellipse cx='32' cy='32' rx='24' ry='9' fill='none' stroke='%23f59e0b' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23fbbf24'/%3E%3C/svg%3E">
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"EraOne","inLanguage":"es","description":"Simulaciones interactivas y artículos educativos sobre astronomía y el universo."}</script>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -123,10 +139,12 @@
                 </ul>
             </div>
             <div class="flex flex-col items-center md:items-end">
-                <button class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded-full flex items-center gap-2 transition-transform transform hover:scale-105 mb-4 shadow-lg shadow-yellow-500/20">
-                    <i data-lucide="coffee" size="18"></i>
-                    Invítame un café
-                </button>
+                <ul class="flex flex-wrap justify-center md:justify-end gap-x-4 gap-y-1 text-sm text-slate-400 mb-4">
+                    <li class="hover:text-white cursor-pointer" onclick="switchSection('about')">Acerca de</li>
+                    <li class="hover:text-white cursor-pointer" onclick="switchSection('contact')">Contacto</li>
+                    <li class="hover:text-white cursor-pointer" onclick="switchSection('privacy')">Privacidad</li>
+                    <li class="hover:text-white cursor-pointer" onclick="switchSection('terms')">Términos</li>
+                </ul>
                 <p class="text-xs text-slate-500">© 2026 EraOne. Ciencia para mentes curiosas.</p>
             </div>
         </div>
@@ -552,6 +570,7 @@
                 case 'connections': main.innerHTML = renderConnections(); break;
                 case 'future': main.innerHTML = renderFuture(); break;
                 case 'explore': main.innerHTML = renderExplore(); break;
+                case 'about': case 'contact': case 'privacy': case 'terms': main.innerHTML = renderInfoPage(sectionId); break;
                 default: main.innerHTML = renderHome();
             }
             
@@ -566,9 +585,9 @@
         // Helpers for reusing HTML strings
         const sectionHeading = (title, subtitle) => `
             <div class="mb-10 text-center animate-fade-in">
-                <h2 class="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-yellow-500 mb-4">
+                <h1 class="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-yellow-500 mb-4">
                     ${title}
-                </h2>
+                </h1>
                 ${subtitle ? `<p class="text-lg text-slate-400 max-w-2xl mx-auto">${subtitle}</p>` : ''}
             </div>
         `;
@@ -906,6 +925,13 @@
             solarAnimationFrame = requestAnimationFrame(drawSolarSystem);
         }
 
+        const CONTACT_EMAIL='contacto@tudominio.com';
+        const INFO_PAGES={
+        about:{t:'Acerca de EraOne',sub:'Ciencia para mentes curiosas.',b:[['¿Qué es EraOne?','EraOne es un proyecto educativo que cuenta la historia del universo, desde el Big Bang hasta el futuro lejano, con artículos y simulaciones interactivas pensadas para que cualquiera pueda explorar la astronomía.'],['Qué encontrarás','Quince simulaciones organizadas en cuatro fases (sistema solar, estrellas y planetas, galaxias y fenómenos extremos, y el universo a gran escala) y artículos con explicaciones divulgativas sobre cosmología, vida y humanidad.'],['Nuestro enfoque','Las simulaciones son modelos simplificados con fines educativos. Cada una incluye una sección «Sobre esta simulación» que explica qué representa, qué puedes modificar y qué limitaciones tiene, con referencias a fuentes científicas.'],['Participa','Si detectas un error o tienes una sugerencia, escríbenos desde la página de Contacto. Tu opinión ayuda a mejorar el proyecto.']]},
+        contact:{t:'Contacto',sub:'Escríbenos: leemos todos los mensajes.',b:[['Correo electrónico',`Para consultas, sugerencias o correcciones, escribe a <a class="text-amber-400 underline" href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>.`],['Qué puedes enviarnos','Errores en un artículo o simulación, ideas para nuevas simulaciones, preguntas sobre el contenido o propuestas de colaboración educativa.'],['Tiempo de respuesta','Intentamos responder en unos días. Ten en cuenta que no ofrecemos asesoría científica, médica ni legal personalizada.']]},
+        privacy:{t:'Política de privacidad',sub:'Última actualización: octubre de 2026.',b:[['Qué datos recopilamos','EraOne no tiene cuentas de usuario ni almacena información personal en tu navegador mediante cookies propias o almacenamiento local. Las simulaciones se ejecutan en tu dispositivo. Los servicios de publicidad de terceros descritos más abajo sí pueden usar cookies.'],['Recursos de terceros','Para funcionar, la página carga recursos desde servicios externos: Tailwind CSS, la librería de iconos Lucide (jsDelivr o cdnjs), Google Fonts, Google AdSense y las imágenes alojadas en Pexels. Al cargarlos, estos proveedores pueden recibir datos técnicos como tu dirección IP y el tipo de navegador, según sus propias políticas de privacidad.'],['Formularios y correo','El campo de suscripción que aparece en la sección Conexiones es solo visual: actualmente no envía ni guarda ningún dato. Si nos escribes por correo electrónico, usaremos tu mensaje y tu dirección únicamente para responderte.'],['Publicidad','EraOne utiliza Google AdSense para mostrar anuncios. Google y sus socios publicitarios pueden usar cookies e identificadores para mostrar anuncios, incluidos anuncios personalizados según tus visitas a este y otros sitios, y para medir su rendimiento. Puedes gestionar o desactivar la personalización de anuncios en la configuración de anuncios de Google (adssettings.google.com) y obtener más información en la política de publicidad de Google. Si EraOne se dirige a visitantes del Espacio Económico Europeo, Reino Unido o Suiza, se solicitará tu consentimiento antes de usar estas cookies.'],['Tus derechos','Puedes solicitar información, corrección o eliminación de los datos que nos hayas enviado por correo escribiendo a '+CONTACT_EMAIL+'.'],['Cambios','Podemos actualizar esta política. La fecha de última actualización aparece al inicio de la página.']]},
+        terms:{t:'Términos de uso',sub:'Última actualización: octubre de 2026.',b:[['Uso del sitio','EraOne es un sitio educativo y de divulgación. Puedes usarlo para aprender y compartir sus páginas. No debes intentar interferir con su funcionamiento ni usarlo con fines ilícitos.'],['Naturaleza del contenido','Los artículos y las simulaciones son simplificaciones con fines educativos y se ofrecen «tal cual». No sustituyen fuentes científicas profesionales y no deben usarse para tomar decisiones técnicas, de seguridad o de ingeniería.'],['Propiedad intelectual','Los textos, el diseño y el código de EraOne pertenecen a sus autores. Las imágenes proceden de Pexels y se rigen por su licencia. Puedes citar fragmentos breves indicando la fuente.'],['Enlaces externos','Podemos enlazar a sitios de terceros sobre los que no tenemos control ni responsabilidad.'],['Limitación de responsabilidad','No garantizamos que el sitio esté libre de errores ni disponible de forma continua, y no nos hacemos responsables de daños derivados de su uso.'],['Cambios','Estos términos pueden actualizarse; el uso continuado del sitio implica su aceptación.']]}};
+        function renderInfoPage(k){const pg=INFO_PAGES[k];return `<div class="max-w-3xl mx-auto px-4 py-12">${sectionHeading(pg.t,pg.sub)}<div class="space-y-6">${pg.b.map(x=>`<section class="rounded-2xl border border-white/10 bg-slate-900/60 p-6 md:p-8"><h2 class="text-xl md:text-2xl font-bold text-white mb-3">${x[0]}</h2><p class="text-slate-300 leading-relaxed">${x[1]}</p></section>`).join('')}</div><div class="mt-10 text-center"><button onclick="switchSection('home')" class="text-amber-400 font-bold hover:text-amber-300">← Volver al inicio</button></div></div>`;}
         const IMGS=['https://images.pexels.com/photos/37824750/pexels-photo-37824750.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/13344256/pexels-photo-13344256.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/32961169/pexels-photo-32961169.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/7736151/pexels-photo-7736151.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/10144162/pexels-photo-10144162.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/34012639/pexels-photo-34012639.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/17621401/pexels-photo-17621401.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/37474090/pexels-photo-37474090.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/8237959/pexels-photo-8237959.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/17505900/pexels-photo-17505900.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/9408779/pexels-photo-9408779.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/26607689/pexels-photo-26607689.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/17662495/pexels-photo-17662495.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/38039464/pexels-photo-38039464.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/38687094/pexels-photo-38687094.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/38207820/pexels-photo-38207820.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/7736065/pexels-photo-7736065.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/38039151/pexels-photo-38039151.png?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/38600715/pexels-photo-38600715.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/35845484/pexels-photo-35845484.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/35845331/pexels-photo-35845331.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/18827608/pexels-photo-18827608.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/18814283/pexels-photo-18814283.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/18212022/pexels-photo-18212022.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/18211969/pexels-photo-18211969.jpeg?auto=compress&cs=tinysrgb&w=1200','https://images.pexels.com/photos/12491775/pexels-photo-12491775.jpeg?auto=compress&cs=tinysrgb&w=1200'];
         const imgFor=k=>{let h=0;for(const ch of String(k))h=(h*31+ch.charCodeAt(0))%9973;return IMGS[h%IMGS.length];};
         function decorateCards(){document.querySelectorAll('[onclick^="openModalById"]').forEach(el=>{if(el.dataset.img||el.querySelector('img'))return;el.dataset.img=1;const m=el.getAttribute('onclick').match(/'([^']+)'/);const im=document.createElement('img');im.src=imgFor(m[1]);im.loading='lazy';im.alt='';im.className='w-full h-40 object-cover rounded-lg mb-4 opacity-90 group-hover:opacity-100 transition-opacity';im.onerror=()=>im.remove();el.prepend(im);});}
@@ -1198,6 +1224,25 @@
         SIMS.binary.info=['Más de la mitad de las estrellas parecidas al Sol tienen compañera. Ambas orbitan su centro de masa común, que queda más cerca de la más masiva.','Medir sus órbitas es la forma más directa de determinar la masa de las estrellas.'];
         const SIM_ORDER=['solar','moon','lab','impact','planet','star','transit','binary','galaxy','supernova','blackhole','collision','orbital','expansion','web'];
         let activeSim='solar', G=null;
+        const ABOUT={
+        solar:['El Sol y los ocho planetas orbitando a su alrededor.','El movimiento orbital relativo de los planetas y datos básicos de cada uno.','Las órbitas se dibujan circulares, las distancias y los tamaños están comprimidos y la velocidad es visual, no a tiempo real.','NASA Planetary Fact Sheet; NASA Solar System Exploration'],
+        moon:['Sol, Tierra y Luna vistos desde el polo norte terrestre.','Cómo la posición de la Luna produce sus fases y cuándo puede haber eclipses según la inclinación orbital (≈5,1°).','Distancias y tamaños fuera de escala; el ciclo se simplifica a 29,5 días, los límites de eclipse son aproximados y la vista lateral está exagerada.','NASA Eclipse Web Site (Espenak y Meeus); NASA Moon Exploration'],
+        lab:['Los planetas del sistema solar y la Luna.','Masa, radio, gravedad superficial y temperatura media, y tu peso equivalente.','La temperatura media es global y varía mucho según el lugar; en los gigantes gaseosos se toma a 1 bar. La masa se muestra en escala logarítmica.','NASA Planetary Fact Sheets'],
+        impact:['Un asteroide que atraviesa la atmósfera y choca con la Tierra.','La energía cinética (E = ½mv²), su comparación con eventos conocidos y una estimación del cráter.','Usa leyes de escalado simplificadas y un umbral heurístico de explosión aérea; no calcula daños ni efectos atmosféricos. El dibujo no está a escala.','Collins, Melosh y Marcus (2005), Meteoritics & Planetary Science; NASA Planetary Defense'],
+        planet:['Un planeta hipotético que orbita una estrella.','Gravedad, velocidad de escape, temperatura media estimada y una puntuación orientativa de habitabilidad.','Modelo de equilibrio térmico con albedo fijo (0,3) y efecto invernadero simple; ignora clima, geología y campo magnético. La zona habitable es aproximada.','Kopparapu et al. (2013), zonas habitables; NASA Exoplanet Archive'],
+        star:['La evolución de una estrella según su masa inicial.','Las etapas desde la nube de gas hasta el remanente y la duración aproximada de su vida (≈10¹⁰ años × M⁻²·⁵).','Los umbrales de masa (0,5, 8 y 20 M☉) son orientativos; tamaños y colores no son a escala; se ignoran metalicidad, rotación y compañeras.','NASA Imagine the Universe; ESA/Hubble, materiales educativos'],
+        transit:['Un planeta que cruza el disco de su estrella visto desde la Tierra.','La caída de brillo, la duración del tránsito y la distancia orbital (tercera ley de Kepler).','Disco estelar uniforme (sin oscurecimiento del limbo), órbita circular y ruido simulado. No es un análisis de datos reales.','NASA Exoplanet Archive; misiones Kepler y TESS'],
+        binary:['Dos estrellas que orbitan su centro de masa común.','Cómo cambian las órbitas, el periodo y la posición del centro de masa con las masas, la separación y la excentricidad.','Problema newtoniano de dos cuerpos; radios estelares y separación mínima fuera de escala; sin transferencia de masa ni efectos relativistas.','Leyes de Kepler; NASA Imagine the Universe'],
+        galaxy:['Una galaxia generada con estrellas distribuidas estadísticamente.','Cómo influyen los brazos, el núcleo y la materia oscura en la rotación y la forma.','La curva de rotación está simplificada, el halo es esquemático y las proporciones no son reales. Los brazos se enrollan con el tiempo a diferencia de las ondas de densidad reales.','Rubin y Ford (1970), curvas de rotación; NASA/ESA Hubble'],
+        supernova:['La explosión de una estrella masiva tras el colapso de su núcleo.','La expansión de los restos, las capas de elementos y el tipo de remanente.','La escala de tiempo es logarítmica, el umbral entre estrella de neutrones y agujero negro (≈25 M☉) es orientativo y la distribución de capas es esquemática.','Woosley y Janka (2005), Nature Physics; NASA Chandra X-ray Observatory'],
+        blackhole:['Un agujero negro con disco de acreción.','El horizonte, la sombra, la órbita estable más interna y la dilatación temporal según masa y giro.','No es un trazado real de rayos: el efecto Doppler y la curvatura de la luz son aproximaciones artísticas. El ISCO usa la fórmula para agujeros de Kerr y el tiempo, la métrica de Schwarzschild.','Bardeen, Press y Teukolsky (1972); Event Horizon Telescope Collaboration (2019)'],
+        collision:['La fusión de dos objetos compactos.','El acercamiento en espiral, la señal de ondas gravitacionales y la energía radiada.','La forma de onda es cualitativa; la energía radiada (≈5 % o ≈0,5 % de la masa) y la frecuencia (≈4400/M Hz) son aproximaciones.','LIGO Scientific Collaboration (2016), GW150914, Physical Review Letters 116, 061102'],
+        orbital:['Un satélite que orbita la Tierra tras ser lanzado con cierta altitud y velocidad.','El tipo de trayectoria (circular, elíptica, de escape o suborbital) y sus velocidades características.','Gravedad newtoniana de dos cuerpos, sin atmósfera, achatamiento terrestre ni Luna; el movimiento está acelerado.','NASA/JPL, mecánica orbital; Curtis, Orbital Mechanics for Engineering Students'],
+        expansion:['Galaxias en un universo en expansión.','Cómo el factor de escala, el corrimiento al rojo y la edad dependen de H₀, la materia y la energía oscura.','Universo homogéneo sin radiación; las posiciones de las galaxias son ilustrativas y la velocidad de recesión se calcula para una galaxia de referencia.','Planck Collaboration (2020), parámetros cosmológicos; ESA Planck'],
+        web:['Una distribución esquemática de galaxias a gran escala.','Filamentos, cúmulos y vacíos según el grado de agrupamiento.','No es un mapa real ni una simulación de N cuerpos; las proporciones por tipo son ilustrativas.','Sloan Digital Sky Survey; proyecto IllustrisTNG']};
+        function aboutHTML(id){const a=ABOUT[id];if(!a)return'';const s=SIMS[id],mod=id==='solar'?'Velocidad de animación, separación orbital y planeta seleccionado.':s.ctl.map(c=>c.l).join(', ')+'.';
+            const it=(ic,t,x)=>`<div class="rounded-xl bg-white/5 border border-white/5 p-4"><div class="flex items-center gap-2 text-cyan-300 font-semibold mb-2"><i data-lucide="${ic}" size="16"></i>${t}</div><p class="text-sm text-slate-300 leading-relaxed">${x}</p></div>`;
+            return `<div class="mx-auto px-4 md:px-6 pb-12" style="max-width:var(--sim-w,1180px)"><section class="rounded-2xl border border-cyan-300/20 bg-cyan-950/10 p-5 md:p-7"><h2 class="text-xl md:text-2xl font-bold text-white mb-4">Sobre esta simulación</h2><div class="grid md:grid-cols-2 gap-4">${it('help-circle','¿Qué representa?',a[0])}${it('sliders-horizontal','¿Qué puedes modificar?',mod)}${it('eye','¿Qué muestra?',a[1])}${it('alert-triangle','¿Qué limitaciones tiene?',a[2])}</div><p class="text-xs text-slate-400 mt-4"><strong class="text-slate-300">Fuentes y referencias:</strong> ${a[3]}.</p></section></div>`;}
         function openSim(id){switchSection('simulations');selectSim(id);}
         function selectSim(id){
             activeSim=id;const v=document.getElementById('sim-viewer');v.classList.remove('hidden');v.classList.add('flex');document.body.style.overflow='hidden';
@@ -1205,7 +1250,7 @@
             document.getElementById('sv-select').innerHTML=SIM_ORDER.map(k=>`<option value="${k}"${k===id?' selected':''}>${String(SIMS[k].n).padStart(2,'0')} · ${SIMS[k].title}</option>`).join('');
             const PH={1:'Fase 1 · Primeras simulaciones',2:'Fase 2 · Estrellas y planetas',3:'Fase 3 · Galaxias y extremos',4:'Fase 4 · Universo a gran escala'};let last=0;
             document.getElementById('sv-rail').innerHTML=SIM_ORDER.map(k=>{const q=SIMS[k],on=k===id,h=q.phase!==last?`<div class="text-[11px] uppercase tracking-[.18em] text-slate-500 px-2 pt-4 pb-2">${PH[q.phase]}</div>`:'';last=q.phase;return h+`<button onclick="selectSim('${k}')" class="w-full flex items-center gap-3 text-left rounded-xl px-3 py-2.5 mb-1 transition-colors ${on?'bg-cyan-300/15 border border-cyan-300/40 text-white':'border border-transparent text-slate-300 hover:bg-white/5'}"><i data-lucide="${q.icon}" size="16" class="${on?'text-cyan-300':'text-slate-500'} shrink-0"></i><span class="text-sm leading-snug">${q.title}</span></button>`;}).join('')+`<div class="relative mt-5 rounded-xl overflow-hidden h-36"><img src="${imgFor('rail')}" alt="" loading="lazy" onerror="this.remove()" class="absolute inset-0 w-full h-full object-cover opacity-70"><div class="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent"></div><p class="absolute bottom-3 left-3 right-3 text-xs text-slate-200">Cada simulación es un modelo educativo simplificado del cosmos.</p></div>`;
-            const m=document.getElementById('sv-main');setSimSize(simSize);m.innerHTML=id==='solar'?renderSolarSim():renderGenericSim(id);m.scrollTop=0;
+            const m=document.getElementById('sv-main');setSimSize(simSize);m.innerHTML=(id==='solar'?renderSolarSim():renderGenericSim(id))+aboutHTML(id);m.scrollTop=0;
             lucide.createIcons();setupSims();
         }
         let simSize=50;
@@ -1453,14 +1498,6 @@
                             <p class="text-sm opacity-90 mb-4">"El Árbol de los Inventos" en alta resolución. Ideal para imprimir.</p>
                             <button class="bg-white text-orange-600 text-sm font-bold py-2 px-4 rounded shadow hover:bg-slate-100 transition-colors w-full">
                                 Descargar PDF (Gratis)
-                            </button>
-                        </div>
-
-                        <div class="bg-slate-800/40 p-6 rounded-xl border border-slate-700 text-center">
-                            <h3 class="text-xl font-bold mb-2 text-slate-100">Quiz Cósmico</h3>
-                            <p class="text-sm text-slate-400 mb-4">¿En qué momento de la historia del universo encaja tu personalidad?</p>
-                            <button class="border border-slate-500 text-slate-300 hover:border-amber-500 hover:text-amber-500 text-sm font-bold py-2 px-4 rounded w-full transition-colors">
-                                Hacer el Quiz
                             </button>
                         </div>
                     </div>
